@@ -1,24 +1,64 @@
 import { defaultSkill } from "../../graphics/paths.ts";
 import { calcDistance, randomInt, scaledTileSize } from "../../../utils/math.ts";
 import { CallbackTimer } from "../../../utils/time.ts";
-import { Actor } from "../actors/actor.ts";
 import { Mob } from "../actors/mobs/mob.ts";
 import { Player } from "../actors/player.ts";
 import { log } from "../logs.ts";
+import {EntityUIInfo} from "../actors/actor.ts";
+import {AnimatedImageManager} from "../../graphics/image.ts";
 
-export class Skill {
+export class Skill implements EntityUIInfo {
     static damageType: { PHYSICAL: string; MAGICAL: string; ABSOLUTE: string } = {
         PHYSICAL: "physical",
         MAGICAL: "magical",
         ABSOLUTE: "absolute"
     };
 
+    get image(): AnimatedImageManager | null | undefined {
+        return this._image;
+    }
+
+    set image(value: AnimatedImageManager | null) {
+        this._image = value;
+    }
+    get note(): string | undefined {
+        return this._note;
+    }
+
+    set note(value: string) {
+        this._note = value;
+    }
+    get rarity(): "common" | "uncommon" | "rare" | "epic" | "legendary" | "godlike" {
+        return this._rarity;
+    }
+
+    set rarity(value: "common" | "uncommon" | "rare" | "epic" | "legendary" | "godlike") {
+        this._rarity = value;
+    }
+    get description(): string {
+        return this._description;
+    }
+
+    set description(value: string) {
+        this._description = value;
+    }
+    get name(): string {
+        return this._name;
+    }
+
+    set name(value: string) {
+        this._name = value;
+    }
+
+    private _name: string = "Item";
+    private _image?: AnimatedImageManager | null;
+    private _description: string = "No description";
+    private _note?: string;
+    private _rarity: "common" | "uncommon" | "rare" | "epic" | "legendary" | "godlike" = "common";
+
     private bind: any | null;
-    public name: string;
     public icon: string;
     public animation: any | null;
-    public description: string;
-    public note: string;
     public minDamage: number;
     public maxDamage: number;
     public damageType: string;
@@ -54,17 +94,17 @@ export class Skill {
     }
 
     useSkill(): boolean {
-        if (this.owner.image.currentAnimation.disposable) {
+        if (this.owner.image!.currentAnimation.disposable) {
             this.owner.renderState = "idle";
         }
         
-        if (this.range < calcDistance(this.owner, this.owner.target) / scaledTileSize()) {
+        if (this.range < calcDistance(this.owner, this.owner.target!) / scaledTileSize()) {
             this.stop();
-            log("system", `${this.owner.target.name} is out of range!`, "red");
+            log("system", `${this.owner.target!.name} is out of range!`, "red");
             return false;
         }
         
-        if (this.process.cooldown.getLeftTime() > 0) {
+        if (this.process.cooldown!.getLeftTime() > 0) {
             log("system", `${this.name} is on cooldown!`, "red");
         } else {
             this.animation.create(this.owner.target.x, this.owner.target.y);
@@ -73,12 +113,12 @@ export class Skill {
         
         if (!this.process.id) {
             this.process.start();
-            if (this.process.cooldown.done) {
+            if (this.process.cooldown!.done) {
                 return false;
             }
             
          } else {
-             if (!this.process.cooldown.done) {
+             if (!this.process.cooldown!.done) {
 
              }
          }

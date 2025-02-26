@@ -1,5 +1,6 @@
 import React from "react";
-import {Button} from "./button.ts";
+import Button from "../components/Button.tsx";
+import {Window} from "../components/Window.tsx";
 
 interface MenuProps {
     onNewGame?: () => void;
@@ -11,11 +12,11 @@ interface MenuProps {
     onMainMenu?: () => void;
 }
 
-const MainMenu: React.FC<MenuProps> = ({ onNewGame, onLoadGame, onShortcuts, onSettings }) => (
-    <div className="menuDiv">
+export const MainMenu: React.FC<MenuProps> = ({ onNewGame, onLoadGame, onShortcuts, onSettings }) => (
+    <Window styleType={"menu-div"}>
         <Button onClick={onNewGame}>new game</Button>
         {onLoadGame && <Button onClick={onLoadGame}>load game</Button>}
         {onShortcuts && <Button onClick={onShortcuts}>shortcuts</Button>}
         {onSettings && <Button onClick={onSettings}>settings</Button>}
-    </div>
+    </Window>
 );

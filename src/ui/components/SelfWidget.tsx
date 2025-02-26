@@ -1,5 +1,4 @@
 import React from "react";
-import {ProgressBar} from "./progressBar.ts";
 
 interface HealthBarProps {
     value: number;
@@ -8,8 +7,8 @@ interface HealthBarProps {
     className?: string;
 }
 
-const SelfWidget: React.FC<HealthBarProps> = ({ value, max, id, className }) => (
-    <ProgressBar
+export const SelfWidget: React.FC<HealthBarProps> = ({ value, max, id, className }) => (
+    <progress
         id={id || 'health'}
         className={className || 'stat-bar'}
         value={value}

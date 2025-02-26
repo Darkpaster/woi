@@ -1,52 +1,19 @@
-$black: #000000;
-$white: #ffffff;
-$grey: #808080;
-$dark-grey: #404040;
-$light-grey: #c0c0c0;
-
-$mainInterfaceBackgroundColor: rgba(28, 27, 56, 0.7);
-$mainInterfaceFontColor: $white;
+$mainInterfaceBackgroundColor: #303030;
+$mainNonActiveInterfaceColor: #2F4F2F;
+$mainActiveInterfaceColor: #D4A017;
+$mainHUDColor: #8B4513;
+$secondaryInterfaceColor: #4F6D7A;
+$mainInterfaceFontColor: #E6D8AC;
 
 $primary-color: #00b34d;
 $secondary-color: #00ff1a;
 
+$godlikeColor: red;
 $legendaryColor: orange;
 $eliteColor: blueviolet;
 $rareColor: blue;
 $uncommonColor: green;
-$commonColor: $grey;
-
-p {
-  display: block;
-}
-.hidden {
-  display: none;
-}
-.legendary {
-  color: $legendaryColor;
-}
-.elite {
-  color: $eliteColor
-}
-.rare {
-  color: $rareColor;
-}
-.uncommon {
-  color: $uncommonColor;
-}
-.common {
-  color: $commonColor;
-}
-
-@font-face {
-  font-family: "PixelFont";
-  src: url("../../assets/fonts/Planes_ValMore.ttf");
-}
-$mainFont: 'PixelFont';
-
-html {
-  font-family: $mainFont;
-}
+$commonColor: grey;
 
 // Миксины
 @mixin flex-center {
@@ -64,83 +31,175 @@ html {
   transition: $property $duration ease-in-out;
 }
 
-// Вложенность
-.container {
-  @include flex-center;
-  background-color: $primary-color;
+
+.primary {
+  background-color: $mainNonActiveInterfaceColor;
   color: white;
-  font-family: $font-stack;
-  height: 100vh;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  @include transition(all, 0.3s);
 
-  .button {
-    background-color: $secondary-color;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    @include transition(all, 0.3s);
-
-    &:hover {
-      background-color: darken($secondary-color, 10%);
-    }
+  &:hover {
+    background-color: darken($mainActiveInterfaceColor, 10%);
   }
-}
-
-// Использование вложенных селекторов и псевдоклассов
-.navbar {
-  background-color: $primary-color;
-  padding: 1rem;
-
-  ul {
-    list-style: none;
-    padding: 0;
-
-    li {
-      display: inline;
-      margin-right: 1rem;
-
-      a {
-        color: white;
-        text-decoration: none;
-        @include transition(color, 0.3s);
-
-        &:hover {
-          color: lighten($primary-color, 20%);
-        }
-      }
-    }
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@font-face {
-  font-family: "PixelFont";
-  src: url("./src/assets/fonts/Planes_ValMore.ttf");
-}
-
-* {
-  font-family: "PixelFont";
 }
 
 :root {
   --cursor: auto;
+  overflow: hidden;
 }
+
+p {
+  display: block;
+}
+
+.hidden {
+  display: none;
+}
+
+.godlike {
+  color: $godlikeColor;
+}
+
+.legendary {
+  color: $legendaryColor;
+}
+
+.elite {
+  color: $eliteColor
+}
+
+.rare {
+  color: $rareColor;
+}
+
+.uncommon {
+  color: $uncommonColor;
+}
+
+.common {
+  color: $commonColor;
+}
+
+@font-face {
+  font-family: "PixelFont";
+  src: url("../../assets/fonts/Planes_ValMore.ttf");
+}
+
+$mainFont: 'PixelFont';
+
+html {
+  font-family: $mainFont;
+}
+
+.cell:hover {
+  background-color: $mainActiveInterfaceColor;
+}
+
+.menuButton:hover {
+  background-color: $mainActiveInterfaceColor;
+  transition-duration: 0.3s;
+}
+
+.menuButton:active {
+  background-color: $mainInterfaceFontColor;
+}
+
+.menuButton:disabled {
+  background-color: $mainNonActiveInterfaceColor;
+}
+
+.ui-div {
+  background-color: $mainInterfaceBackgroundColor;
+  color: $mainInterfaceFontColor;
+  border: 3px solid $mainHUDColor;
+  border-radius: 10px;
+  z-index: 10;
+
+  .menuButton {
+    width: 60%;
+    height: 50px;
+    font-size: large;
+    //cursor: pointer;
+  }
+
+  .cell {
+    width: 10%;
+    height: 10%;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .menu-div {
+    width: 20vw;
+    height: 60vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+  }
+
+  .cell-type {
+    width: 30vw;
+    margin: 30px;
+    bottom: 0;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-flow: row wrap;
+    align-content: start;
+    position: absolute;
+
+    .inventory-div {
+      height: 30vw;
+      right: 0;
+      overflow-y: scroll;
+      overflow-x: hidden;
+    }
+
+    .panel-div {
+      height: 3vw;
+      left: calc(50% - 18vw);
+      overflow: hidden;
+    }
+  }
+
+  .item-info {
+    top: 0;
+    right: 0;
+    padding: 10px;
+    width: max-content;
+    max-width: 400px;
+    position: absolute;
+    z-index: 7;
+  }
+
+  .chat-div {
+    position: absolute;
+    height: 25vh;
+    margin: 30px;
+    width: 25vw;
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex-direction: column;
+    padding: 10px;
+    left: 0;
+    bottom: 0;
+  }
+
+  #chat-input {
+    margin: 30px;
+    bottom: 0;
+    left: 0;
+    width: 25vw;
+    /* height: 10%; */
+    height: 20px;
+    align-self: flex-end;
+    position: fixed;
+  }
+}
+
 
 #root {
   width: 100vw;
@@ -150,11 +209,12 @@ html {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  color: white;
-  background-image: url("./src/assets/backgrounds/menu/pixel-art.jpg");
+  //color: white;
+  background-image: url("../../../src/assets/backgrounds/menu/pixel-art.jpg");
   background-repeat: no-repeat;
   background-size: cover;
 }
+
 
 #title {
   font-size: 70px;
@@ -164,122 +224,23 @@ html {
   animation: titleAnimation 2s infinite alternate;
 }
 
+
 @keyframes titleAnimation {
   from {
-    text-shadow: 0 0 10px #00b34d;
+    text-shadow: 0 0 10px #30b300;
   }
   to {
-    text-shadow: 0 0 30px #00b34d;
+    text-shadow: 0 0 30px #2d00b3;
   }
 }
 
 #canvas {
-  border: 3px solid black;
+  //border: 3px solid black;
 
-  top: 0;
+  //top: 0;
   position: absolute;
   display: none;
 }
-
-#menu {
-  z-index: 10;
-  width: 20vw;
-  height: 60vh;
-}
-
-.menuDiv {
-  background-color: rgba(28, 27, 56, 0.7);
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  align-items: center;
-  border-radius: 10px;
-  border: 3px solid black;
-}
-
-.inventory-div {
-  background-color: rgba(28, 27, 56, 0.7);
-  width: 30vw;
-  height: 30vw;
-  position: absolute;
-  margin: 30px;
-  right: 0;
-  bottom: 0;
-  border-radius: 10px;
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: flex-start;
-  align-items: flex-start;
-  align-content: start;
-  border: 2px solid black;
-  z-index: 5;
-  overflow-y: scroll;
-  overflow-x: hidden;
-}
-
-.panel-div {
-  background-color: rgba(28, 27, 56, 0.7);
-  width: 30vw;
-  height: 3vw;
-  position: absolute;
-  margin: 30px;
-  bottom: 0;
-  left: calc(50% - 18vw);
-  border-radius: 10px;
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: flex-start;
-  align-items: flex-start;
-  align-content: start;
-  border: 2px solid black;
-  z-index: 5;
-  overflow: hidden;
-}
-
-.item-info {
-  top: 0;
-  right: 0;
-  padding: 10px;
-  width: max-content;
-  max-width: 400px;
-  background-color: rgba(28, 27, 56, 0.7);
-  position: absolute;
-  border-radius: 10px;
-  border: 2px solid black;
-  z-index: 12;
-}
-
-.chat-div {
-  position: absolute;
-  height: 25vh;
-  margin: 30px;
-  width: 25vw;
-  overflow-y: auto;
-  overflow-x: hidden;
-  background-color: rgba(28, 27, 56, 0.7);
-  border-radius: 10px;
-  flex-direction: column;
-  padding: 10px;
-  left: 0;
-  bottom: 0;
-  z-index: 10;
-}
-
-#chat-input {
-  margin: 30px;
-  bottom: 0;
-  left: 0;
-  width: 25vw;
-  /* height: 10%; */
-  height: 20px;
-  background-color: rgba(28, 27, 56, 0.7);
-  border-color: black;
-  align-self: flex-end;
-  position: fixed;
-}
-
 
 
 .stat-bar, .stat-bar-enemy {
@@ -291,6 +252,7 @@ html {
   top: 0;
   z-index: 5;
 }
+
 .stat-bar-enemy {
   left: 20%;
 }
@@ -300,47 +262,12 @@ html {
   border-radius: 10px;
   cursor: pointer;
 }
+
 .inventory-div::-webkit-scrollbar-track {
   background-color: rgba(28, 27, 56, 0.7);
   border-radius: 10px;
 }
+
 .inventory-div::-webkit-scrollbar {
   background-color: rgba(28, 27, 56, 0.7);
 }
-
-.menuButton {
-  width: 60%;
-  height: 50px;
-  background-color: rgba(28, 27, 56, 1);
-  border: 3px solid black;
-  border-radius: 10px;
-  font-size: large;
-  cursor: pointer;
-  color: white;
-}
-
-
-
-.cell {
-  width: 10%;
-  height: 10%;
-  border: 4px solid black;
-  border-radius: 10px;
-  background-color: rgba(28, 27, 56, 0.7);
-  background-size: cover;
-  background-position: center;
-}
-
-.cell:hover {
-  background-color: rgba(54, 52, 108, 0.7);;
-}
-
-.menuButton:hover {
-  background-color: #00b34d;
-  transition-duration: 0.3s;
-}
-
-.menuButton:active {
-  background-color: #00ff1a;
-}
-

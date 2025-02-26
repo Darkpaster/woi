@@ -18,12 +18,6 @@ export class Mob extends Actor {
     timer: TimeDelay;
     idle: boolean;
     private _agroRadius: number;
-    x: number;
-    y: number;
-    offsetX: number;
-    offsetY: number;
-    nextPosX: number;
-    nextPosY: number;
 
     constructor() {
         super();
@@ -40,11 +34,11 @@ export class Mob extends Actor {
         this.x = scaledTileSize() * randomInt(getCurrentLocation().floor[0].length - 1);
         this.y = scaledTileSize() * randomInt(getCurrentLocation().floor[0].length - 1);
 
-        let cond = getWallTile(this.getPosX(), this.getPosY()).props.isWalkable;
+        let cond = getWallTile(this.posX, this.posY).props.isWalkable;
         while (!cond) {
             this.x = scaledTileSize() * randomInt(getCurrentLocation().floor[0].length - 1);
             this.y = scaledTileSize() * randomInt(getCurrentLocation().floor[0].length - 1);
-            const test = getWallTile(this.getPosX(), this.getPosY());
+            const test = getWallTile(this.posX, this.posY);
             cond = test.props.isWalkable;
         }
     }
@@ -60,8 +54,8 @@ export class Mob extends Actor {
     static getMobsOnTile(x: number, y: number): Mob[] {
         const result: Mob[] = []
         for (const mob of Mob.mobList) {
-            if (mob.getPosX() === Math.floor(x / scaledTileSize())
-                && mob.getPosY() === Math.floor(y / scaledTileSize())) {
+            if (mob.posX === Math.floor(x / scaledTileSize())
+                && mob.posX === Math.floor(y / scaledTileSize())) {
                 result.push(mob);
             }
         }
@@ -100,27 +94,27 @@ export class Mob extends Actor {
         const tempDiffY = diff.y - this.y;
 
         if (tempDiffX < 0) {
-            this.nextPosX = this.getPosX() + 1;
+            this.nextPosX = this.posX + 1;
         } else {
-            this.nextPosX = this.getPosX();
+            this.nextPosX = this.posX;
         }
 
         if (tempDiffY < 0) {
-            this.nextPosY = this.getPosY() + 1;
+            this.nextPosY = this.posY+ 1;
         } else {
-            this.nextPosY = this.getPosY();
+            this.nextPosY = this.posY;
         }
 
         const collision = this.collision(Mob.mobList);
 
         if (collision.x) {
             this.x = diff.x;
-            this.nextPosX = this.getPosX();
+            this.nextPosX = this.posY;
         }
 
         if (collision.y) {
             this.y = diff.y;
-            this.nextPosY = this.getPosY();
+            this.nextPosY = this.posY;
         }
 
         this.offsetX = diff.x = diff.x - this.x;
@@ -128,20 +122,6 @@ export class Mob extends Actor {
 
         return diff;
     }
-
-    // #testCollision() {
-    //     const rtrn = false;
-    //     const collision = this.collision(Mob.mobList);
-    //     if (collision.x) {
-    //         this.x = diff.x;
-    //         rtrn = true;
-    //     }
-    //     if (collision.y) {
-    //         this.y = diff.y;
-    //         rtrn = true;
-    //     }
-    //     return rtrn;
-    // }
 
     setState(): void {
         if (calcDistance(player, this) < this.agroRadius) {
@@ -224,46 +204,46 @@ export class Mob extends Actor {
                 this.direction = "right";
                 break;
             case 1:
-                this.x -= the.moveSpeed / 2;
-                the.direction = "left";
+                this.x -= this.moveSpeed / 2;
+                this.direction = "left";
                 break;
             case 2:
-                the.y += the.moveSpeed / 2;
+                this.y += this.moveSpeed / 2;
                 break;
             case 3:
-                the.y -= the.moveSpeed / 2;
+                this.y -= this.moveSpeed / 2;
                 break;
         }
     }
 
     flee(): void {
-        if (this.x < player.x) {
-            the.x -= the.moveSpeed;
-            the.direction = "left";
-        } else if (this.x > player.x) {
-            the.x += the.moveSpeed;
-            the.direction = "right";
-        } else if (this.y < player.y) {
-            the.y -= the.moveSpeed;
-        } else if (this.y > player.y) {
-            the.y += the.moveSpeed;
+        if (this.x < player!.x) {
+            this.x -= this.moveSpeed;
+            this.direction = "left";
+        } else if (this.x > player!.x) {
+            this.x += this.moveSpeed;
+            this.direction = "right";
+        } else if (this.y < player!.y) {
+            this.y -= this.moveSpeed;
+        } else if (this.y > player!.y) {
+            this.y += this.moveSpeed;
         }
     }
 
-    spellEvents(): boolean {
-        let success: boolean = false;
-
-        for (const spell ofthis.spellBook) {
-            success = spell.useSkill(this, player);     
-       } 
-        
-       return success;  
-    }
+    // spellEvents(): boolean {
+    //     let success: boolean = false;
+    //
+    //     for (const spell of this.spellbook) {
+    //         success = spell.useSkill(this, player);
+    //    }
+    //
+    //    return success;
+    // }
 
 dealDamage(damage: number, source: any = null): void {
     super.dealDamage(damage, source);
     if(this.HP <= 0){         
-          th die();
+          this.die();
     player.target = null;
 }
 }

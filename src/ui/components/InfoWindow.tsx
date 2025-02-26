@@ -1,13 +1,16 @@
 // Компонент для отображения информационного окна при наведении на элемент
+import {ItemType} from "../GameUI.tsx";
+import React from "react";
+
 interface InfoWindowProps {
-    item: any;
+    item: ItemType;
     position: { left: number; top: number };
     onClose: () => void;
 }
 
-const InfoWindow: React.FC<InfoWindowProps> = ({ item, position, onClose }) => {
+export const InfoWindow: React.FC<InfoWindowProps> = ({ item, position, onClose }) => {
     return (
-        <div className={`info-window ${item.rarity}`}
+        <div className={`info-window ${item!.rarity}`}
              style={{
                  position: 'absolute',
                  left: position.left,
@@ -20,15 +23,15 @@ const InfoWindow: React.FC<InfoWindowProps> = ({ item, position, onClose }) => {
              }}
              onMouseLeave={onClose}
         >
-            <big>{item.name}</big>
+            <big>{item!.name}</big>
             <br />
             <br />
-            {item.description}
-            {item.note && (
+            {item!.description}
+            {item!.note && (
                 <>
                     <br />
                     <br />
-                    {item.note}
+                    {item!.note}
                 </>
             )}
         </div>

@@ -1,5 +1,4 @@
 import { villagerManager } from "../../graphics/animations.ts";
-import { pressDown, pressLeft, pressRight, pressUp } from "../../../ui/input/input.ts";
 import { calcDistance, scaledTileSize } from "../../../utils/math.ts";
 import { smallPotionOfHealing } from "../items/consumable/potions/smallPotionOfHealing.ts";
 import { Slash } from "../skills/slash.ts";
@@ -38,20 +37,25 @@ export class Player extends Actor {
 	equipmentSize: number;
 	skillPoints: number;
 
+	public pressDown: boolean = false;
+	public pressUp: boolean = false;
+	public pressLeft: boolean = false;
+	public pressRight: boolean = false;
+
 	constructor() {
 		super();
-		this.setX(this.getX() + scaledTileSize() * 20);
-		this.setHP(500);
-		this.setHT(500);
-		this.setMinDamage(15);
-		this.setMaxDamage(35);
-		this.setCriticalChance(0.1);
-		this.setMoveSpeed(4);
+		this.x += scaledTileSize() * 20;
+		this.HP = 500;
+		this.HT = 500;
+		this.minDamage = 15;
+		this.maxDamage = 35;
+		this.criticalChance = 0.1;
+		this.moveSpeed = 4;
 		this.AA = true;
 		this.image = villagerManager;
-		this.setName("Player");
+		this.name = "Player";
 		this.inventory = new Array(200);
-		this.spellBook = [new Slash({owner: this}), null, null, null, null, null, null, null];
+		this.spellBook = [new Slash(this), null, null, null, null, null, null, null];
 
 		for (let i = 0; i < this.inventory.length / 10; i++) {
 			this.inventory[i] = new smallPotionOfHealing();
@@ -150,16 +154,16 @@ export class Player extends Actor {
 		}
 	}
 
-	updatePlayer(): { x: number, y: number } | undefined {
+	updatePlayer(): { x: number, y: number } {
 		let cnt: boolean = false;
 
-		if (this.getX() % scaledTileSize() !== 0) {
-			this.setX(this.getX() - this.getOffsetX());
+		if (this.x % scaledTileSize() !== 0) {
+			this.x -= this.offsetX;
 			cnt = true;
 		}
 
-		if (this.getY % scaledTileSize() !== 0) {
-			this.setY(this.getY() - this.getOffsetY());
+		if (this.y % scaledTileSize() !== 0) {
+			this.y -= this.offsetY;
 			cnt = true;
 		}
 
@@ -171,34 +175,34 @@ export class Player extends Actor {
 			this.attackEvents();
 		}
 
-		this.nextPosY = this.getPosY();
+		this.nextPosY = this.posY;
 
 		const cameraDiff = { x: this.x, y: this.y };
 
-		if (pressUp) {
+		if (this.pressUp) {
 			this.y -= this.moveSpeed;
-		} else if (pressDown) {
+		} else if (this.pressDown) {
 			this.y += this.moveSpeed;
 		}
 
-		if (pressLeft) {
+		if (this.pressLeft) {
 			this.direction = "left";
 			this.x -= this.moveSpeed;
-		} else if (pressRight) {
+		} else if (this.pressRight) {
 			this.direction = "right";
 			this.x += this.moveSpeed;
 		}
 
 		if (cameraDiff.x - this.x < 0) {
-			this.nextPosX = this.getPosX() + 1;
+			this.nextPosX = this.posX + 1;
 		} else {
-			this.nextPosX = this.getPosX();
+			this.nextPosX = this.posX;
 		}
 
 		if (cameraDiff.y - this.y < 0) {
-			this.nextPosY = this.getPosY() + 1;
+			this.nextPosY = this.posY + 1;
 		} else {
-			this.nextPosY = this.getPosY();
+			this.nextPosY = this.posY;
 		}
 
 		const collision = this.collision(Mob.mobList);

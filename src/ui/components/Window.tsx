@@ -1,8 +1,8 @@
 import {ReactNode} from "react";
 
-const Window = ({ children }: { children: ReactNode }) => {
+export const Window = ({ children, styleType }: { children: ReactNode, styleType: string }) => {
   return (
-    <div className="window">
+    <div className={styleType}>
       {children}
     </div>
   );

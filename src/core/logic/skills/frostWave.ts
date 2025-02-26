@@ -2,8 +2,7 @@ import { frostBall } from "../../graphics/paths.ts";
 import { Skill } from "./skill.ts";
 
 export class FrostWave extends Skill {
-    name: string;
-    icon: string; 
+    icon: string;
     minDamage: number;
     maxDamage: number;
     range: number;

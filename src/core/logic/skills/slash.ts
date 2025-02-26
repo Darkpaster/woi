@@ -4,19 +4,13 @@ import { slashEffect } from "../../graphics/sprites.ts";
 import { Player } from "../actors/player.ts";
 import { Skill } from "./skill.ts";
 
-interface SlashProps {
-    owner: Player; // Replace 'any' with the appropriate type for owner
-}
-
 export class Slash extends Skill {
     icon: string;
     animation: AnimatedEffect;
-    name: string;
     minDamage: number;
     maxDamage: number;
-    description: string;
 
-    constructor({ owner }: SlashProps) {
+    constructor(owner: Player) {
         super(owner);
         this.icon = slash;
         this.animation = slashEffect;

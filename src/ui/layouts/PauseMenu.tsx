@@ -1,5 +1,5 @@
 import React from "react";
-import {Button} from "./button.ts";
+import Button from "../components/Button.tsx";
 
 interface MenuProps {
     onNewGame?: () => void;
@@ -11,8 +11,8 @@ interface MenuProps {
     onMainMenu?: () => void;
 }
 
-const PauseMenu: React.FC<MenuProps> = ({ onResume, onSave, onShortcuts, onSettings, onMainMenu }) => (
-    <div className="menuDiv">
+export const PauseMenu: React.FC<MenuProps> = ({ onResume, onSave, onShortcuts, onSettings, onMainMenu }) => (
+    <div className="pause-menu-div">
         <Button onClick={onResume}>resume</Button>
         {onSave && <Button onClick={onSave}>save</Button>}
         {onShortcuts && <Button onClick={onShortcuts}>shortcuts</Button>}

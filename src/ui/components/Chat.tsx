@@ -3,7 +3,7 @@
 import React, {useEffect, useState} from "react";
 import {getLogHistory, Message} from "../../core/logic/logs.ts";
 
-const Chat: React.FC = () => {
+export const Chat: React.FC = () => {
     const [messages, setMessages] = useState<Message[]>([]);
 
     useEffect(() => {

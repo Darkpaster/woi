@@ -62,12 +62,12 @@ export class CallbackTimer {
     callback: () => void;
     delay: number;
     id: NodeJS.Timeout | null;
-    cooldown: { id?: any; done?: boolean; restart?: () => void } | null;
+    cooldown: CallbackTimer | null;
     done: boolean;
     startTime: number;
 
     constructor(callback: () => void = () => { console.log("default") }, delay: number = 1000, cooldown:
-        { id?: any; done?: boolean; restart?: () => void } | null = null) {
+        CallbackTimer | null = null) {
         this.callback = callback;
         this.delay = delay;
         this.id = null;
@@ -96,15 +96,15 @@ export class CallbackTimer {
         }
     }
 
-    setCallback(callback: () => void): void {
+    public setCallback(callback: () => void): void {
         this.callback = callback;
     }
 
-    setDelay(delay: number): void {
+    public setDelay(delay: number): void {
         this.delay = delay;
     }
 
-    stop(): void {
+    private stop(): void {
         clearTimeout(this.id || 0);
         this.id = null;
     }
@@ -114,11 +114,11 @@ export class CallbackTimer {
         this.start();
     }
 
-    getLeftTime(): number {
+    public getLeftTime(): number {
         return (this.delay - (Date.now() - this.startTime));
     }
 
-    getLeftTimePercent(): number {
+    public getLeftTimePercent(): number {
         return (this.delay - (Date.now() - this.startTime)) / this.delay;
     }
 }

@@ -20,7 +20,7 @@ interface Entity {
 }
 
 export function calcDistance(entity1: Actor, entity2: Actor): number {
-    return Math.sqrt(Math.pow(entity2.getX() - entity1.getX(), 2) + Math.pow(entity2.getY() - entity1.getY(), 2));
+    return Math.sqrt(Math.pow(entity2.x - entity1.x, 2) + Math.pow(entity2.y - entity1.y, 2));
 }
 
 export function calcDistanceX(entity1: Entity, entity2: Entity): number {
