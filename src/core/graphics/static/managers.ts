@@ -1,5 +1,5 @@
-import { AnimatedImageManager } from "./image.ts";
-import { boar, loading, villager } from "./sprites.ts";
+import { AnimatedImageManager } from "../image.ts";
+import { boar, loading, villager } from "./animatedSprites.ts";
 
 
 export const madBoarManager = new AnimatedImageManager(boar);

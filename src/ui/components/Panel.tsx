@@ -1,10 +1,11 @@
 // Компонент панели навыков
 import Button from "./Button.tsx";
 import React, {useEffect, useState} from "react";
-import {player} from "../../core/logic/update.ts";
 import {Item} from "../../core/logic/items/item.ts";
 import {Skill} from "../../core/logic/skills/skill.ts";
 import {Actor} from "../../core/logic/actors/actor.ts";
+import {player} from "../../core/main.ts";
+
 
 interface PanelProps {
     onShowInfo: <T extends Item|Skill|Actor>(skill: T, rect: DOMRect) => void;

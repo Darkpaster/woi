@@ -1,8 +1,8 @@
 import { settings } from "../config/settings.ts";
-import { graphics } from "../graphics/graphics.ts";
 import { updateZoom } from "./update.ts";
 import { getCurrentLocation } from "./world/locationList.ts";
 import { scaledTileSize } from "../../utils/math.ts";
+import {graphics} from "../main.ts";
 
 interface CameraConstructor {
     x: number;
@@ -13,7 +13,7 @@ export class Camera {
     private _zoom: number;
 
     constructor({ x, y }: CameraConstructor) {
-        graphics.translate(-x + window.innerWidth / 2 - scaledTileSize(), -y + window.innerHeight / 2 - scaledTileSize());
+        graphics!.ctx!.translate(-x + window.innerWidth / 2 - scaledTileSize(), -y + window.innerHeight / 2 - scaledTileSize());
         this._zoom = settings.defaultTileScale;
     }
 
@@ -27,12 +27,12 @@ export class Camera {
     }
 
     public update(diff: { x: number; y: number }, x: number, y: number): void {
-        graphics.translate(diff.x, diff.y);
+        graphics!.ctx!.translate(diff.x, diff.y);
         if (getCurrentLocation().floor.length * scaledTileSize() < y || y < 0) {
-            graphics.translate(0, -diff.y);
+            graphics!.ctx!.translate(0, -diff.y);
         }
         if (getCurrentLocation().floor[0].length * scaledTileSize() < x || x < 0) {
-            graphics.translate(-diff.x, 0);
+            graphics!.ctx!.translate(-diff.x, 0);
         }
     }
 }

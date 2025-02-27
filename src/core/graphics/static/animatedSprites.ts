@@ -1,4 +1,4 @@
-import { AnimatedEffect, AnimatedImage } from "./image.ts";
+import { AnimatedEffect, AnimatedImage } from "../image.ts";
 import { attackEffect, madBoar, runningWolf, villagerDrunk } from "./paths.ts";
 
 interface CharacterAnimations {

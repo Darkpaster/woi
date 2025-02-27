@@ -1,7 +1,15 @@
 import {EntityUIInfo} from "../actors/actor.ts";
 import {AnimatedImageManager} from "../../graphics/image.ts";
+import * as console from "node:console";
 
 export class Item implements EntityUIInfo {
+    get sprite(): string | null | undefined {
+        return this._sprite;
+    }
+
+    set sprite(value: string | null) {
+        this._sprite = value;
+    }
     get stackable(): boolean {
         return this._stackable;
     }
@@ -16,11 +24,11 @@ export class Item implements EntityUIInfo {
     set actions(value: any[]) {
         this._actions = value;
     }
-    get image(): AnimatedImageManager | null | undefined | string {
+    get image(): AnimatedImageManager | null | undefined {
         return this._image;
     }
 
-    set image(value: AnimatedImageManager | null | string) {
+    set image(value: AnimatedImageManager | null) {
         this._image = value;
     }
     get note(): string | undefined {
@@ -55,7 +63,8 @@ export class Item implements EntityUIInfo {
     private _actions: any[];
 
     private _name: string = "Item";
-    private _image?: AnimatedImageManager | null | string;
+    private _image?: null | AnimatedImageManager;
+    private _sprite?: null | string;
     private _description: string = "No description";
     private _note?: string;
     private _rarity: "common" | "uncommon" | "rare" | "epic" | "legendary" | "godlike" = "common";
@@ -63,7 +72,6 @@ export class Item implements EntityUIInfo {
     constructor() {
         this._stackable = false;
         this._actions = [];
-        this._image = "";
     }
 
     public onUse(): void {

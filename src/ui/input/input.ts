@@ -1,7 +1,6 @@
-import {useEffect, useState, useRef} from "react";
-import {canvas} from "../../core/graphics/graphics.js";
+import {useEffect, useState, useRef, RefObject} from "react";
 import {Mob} from "../../core/logic/actors/mobs/mob.js";
-import {camera, player} from "../../core/logic/update.js";
+import {camera, player} from "../../core/main.ts";
 import {scaledTileSize} from "../../utils/math.js";
 import {clickAt} from "../GameUI.tsx";
 
@@ -32,9 +31,9 @@ function clickOffsetY() {
     return player!.y - window.innerHeight / 2 + scaledTileSize();
 }
 
-export function useKeyboard() {
+export function useKeyboard(canvasRef: RefObject<HTMLCanvasElement | null>) {
     const [keysPressed, setKeysPressed] = useState(new Set());
-    const canvasRef = useRef(canvas);
+    // const canvasRef = useRef(canvas);
 
     useEffect(() => {
         const handleKeyDown = (event: { key: unknown; preventDefault: () => void; }) => {

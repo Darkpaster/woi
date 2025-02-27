@@ -1,13 +1,20 @@
-import { defaultSkill } from "../../graphics/paths.ts";
+import { defaultSkill } from "../../graphics/static/paths.ts";
 import { calcDistance, randomInt, scaledTileSize } from "../../../utils/math.ts";
 import { CallbackTimer } from "../../../utils/time.ts";
 import { Mob } from "../actors/mobs/mob.ts";
 import { Player } from "../actors/player.ts";
 import { log } from "../logs.ts";
 import {EntityUIInfo} from "../actors/actor.ts";
-import {AnimatedImageManager} from "../../graphics/image.ts";
+import {AnimatedEffect, AnimatedImageManager} from "../../graphics/image.ts";
 
 export class Skill implements EntityUIInfo {
+    get sprite(): string | null | undefined {
+        return this._sprite;
+    }
+
+    set sprite(value: string | null) {
+        this._sprite = value;
+    }
     static damageType: { PHYSICAL: string; MAGICAL: string; ABSOLUTE: string } = {
         PHYSICAL: "physical",
         MAGICAL: "magical",
@@ -52,13 +59,14 @@ export class Skill implements EntityUIInfo {
 
     private _name: string = "Item";
     private _image?: AnimatedImageManager | null;
+    private _sprite?: string | null;
     private _description: string = "No description";
     private _note?: string;
     private _rarity: "common" | "uncommon" | "rare" | "epic" | "legendary" | "godlike" = "common";
 
     private bind: any | null;
     public icon: string;
-    public animation: any | null;
+    public animation: AnimatedEffect | null;
     public minDamage: number;
     public maxDamage: number;
     public damageType: string;
@@ -107,7 +115,7 @@ export class Skill implements EntityUIInfo {
         if (this.process.cooldown!.getLeftTime() > 0) {
             log("system", `${this.name} is on cooldown!`, "red");
         } else {
-            this.animation.create(this.owner.target.x, this.owner.target.y);
+            this.animation!.create(this.owner.target!.x, this.owner.target!.y);
         }
 
         
@@ -133,7 +141,7 @@ export class Skill implements EntityUIInfo {
              realDamage -= target.defense; 
          }
          
-         this.owner.target.dealDamage(realDamage, this.owner);
+         this.owner.target!.dealDamage(realDamage, this.owner);
      }
 
      stop(): void {

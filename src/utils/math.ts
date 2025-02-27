@@ -1,5 +1,7 @@
 import { settings } from "../core/config/settings.ts";
 import { Actor } from "../core/logic/actors/actor.ts";
+import {Player} from "../core/logic/actors/player.ts";
+import {Mob} from "../core/logic/actors/mobs/mob.ts";
 
 export function randomString(...strings: string[]): string {
     return strings[Math.floor(Math.random() * strings.length)];
@@ -14,19 +16,14 @@ export function scaledTileSize(): number {
     return settings.tileSize * settings.defaultTileScale;
 }
 
-interface Entity {
-    x: number;
-    y: number;
+export function calcDistance(entity1: Player|Mob|Actor|null, entity2: Player|Mob|Actor|null): number {
+    return Math.sqrt(Math.pow(entity2!.x - entity1!.x, 2) + Math.pow(entity2!.y - entity1!.y, 2));
 }
 
-export function calcDistance(entity1: Actor, entity2: Actor): number {
-    return Math.sqrt(Math.pow(entity2.x - entity1.x, 2) + Math.pow(entity2.y - entity1.y, 2));
-}
-
-export function calcDistanceX(entity1: Entity, entity2: Entity): number {
+export function calcDistanceX<T extends Actor>(entity1: T, entity2: T): number {
     return Math.abs(entity1.x - entity2.x);
 }
 
-export function calcDistanceY(entity1: Entity, entity2: Entity): number {
+export function calcDistanceY<T extends Actor>(entity1: T, entity2: T): number {
     return Math.abs(entity1.y - entity2.y);
 }

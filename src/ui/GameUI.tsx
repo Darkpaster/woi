@@ -1,7 +1,5 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState, useEffect, useCallback, useRef} from 'react';
 import {pauseMusic, playMusic, resumeMusic} from '../core/audio/music.ts';
-import {hideCanvas, setBlur, showCanvas} from '../core/graphics/graphics.ts';
-import {player} from '../core/logic/update.ts';
 import {MainMenu} from "./layouts/MainMenu.tsx";
 import {PauseMenu} from "./layouts/PauseMenu.tsx";
 import {SelfWidget} from "./components/SelfWidget.tsx";
@@ -10,19 +8,20 @@ import {Panel} from "./components/Panel.tsx";
 import {Chat} from "./components/Chat.tsx";
 import {Inventory} from "./components/Inventory.tsx";
 import {InfoWindow} from "./components/InfoWindow.tsx";
-import {game, pauseLoop} from "../core/main.ts";
+import {init, pauseLoop, player, startLoop} from "../core/main.ts";
 import {Item} from "../core/logic/items/item.ts";
 import {Actor} from "../core/logic/actors/actor.ts";
 import {Skill} from "../core/logic/skills/skill.ts";
-// Предполагается, что game и pauseLoop доступны в вашем проекте
+import {useKeyboard} from "./input/input.ts";
 
 export type ItemType = Item | Actor | Skill | null;
 
-// Основной компонент игрового интерфейса
+let canvas: HTMLCanvasElement | null;
+
+
 export const GameUI: React.FC = () => {
-    // Состояние игры: главное меню, игра на паузе или игровой процесс
+
     const [gameState, setGameState] = useState<'mainMenu' | 'paused' | 'inGame'>('mainMenu');
-    // Состояния для дополнительных элементов интерфейса
     const [showInventory, setShowInventory] = useState(false);
     const [infoItem, setInfoItem] = useState<ItemType>(null);
     const [infoPosition, setInfoPosition] = useState<{ left: number; top: number } | null>(null);
@@ -31,7 +30,44 @@ export const GameUI: React.FC = () => {
     const [targetHealth, setTargetHealth] = useState(player!.target ? player!.target.HP : 0);
     const [targetMaxHealth, setTargetMaxHealth] = useState(player!.target ? player!.target.HT : 100);
 
-    // Периодически обновляем данные о здоровье
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const handleKeyboard = useKeyboard(canvasRef);
+
+    // Инициализация canvas после монтирования компонента
+    useEffect(() => {
+        canvas = canvasRef.current;
+        if (canvas) {
+            canvas.height = window.innerHeight;
+            canvas.width = window.innerWidth;
+
+        }
+        document.getElementById('init')!.addEventListener('click', (event) => {
+            (event.target as HTMLCanvasElement).remove();
+            document.getElementById("root")!.style.display = "flex";
+            canvas!.style.display = "block";
+            // playMusic("main");
+        });
+
+        init();
+
+        // Пример: динамический импорт модулей, не связанных с React,
+        // который выполняется уже после того, как DOM загружен:
+        // import('../core/logic/someModule').then(mod => {
+        //     // Используйте модуль по необходимости
+        //     mod.initialize();
+        // });
+    }, []);
+
+    function hideCanvas(): void {
+        canvas!.style.display = "none";
+    }
+
+    function showCanvas(): void {
+        canvas!.style.display = "block";
+        canvas!.setAttribute('tabindex', '0');
+        canvas!.focus();
+    }
+
     useEffect(() => {
         const interval = setInterval(() => {
             setHealth(player!.HP);
@@ -44,7 +80,6 @@ export const GameUI: React.FC = () => {
         return () => clearInterval(interval);
     }, []);
 
-    // Колбэки для отображения/скрытия информационного окна
     const handleShowInfo = useCallback((item: ItemType, rect: DOMRect) => {
         const infoWidth = 200; // можно рассчитать динамически
         const infoHeight = 100;
@@ -60,21 +95,18 @@ export const GameUI: React.FC = () => {
         setInfoPosition(null);
     }, []);
 
-    // Обработчики нажатий в меню
     const handleNewGame = () => {
         setGameState('inGame');
         showCanvas();
-        game();
-        // Сброс скрытия интерфейса, воспроизведение музыки, запуск игрового цикла и т.п.
+        startLoop();
         playMusic('garden');
-        // game();
     };
 
     const handleResume = () => {
         setGameState('inGame');
         resumeMusic();
         // canvas.setAttribute('tabindex', '0');
-        game();
+        startLoop();
     };
 
     const handleMainMenu = () => {
@@ -86,34 +118,17 @@ export const GameUI: React.FC = () => {
 
     return (
         <>
-            <button id="init" style={{textAlign: "center", fontSize: "2000px", color: "black", backgroundColor: "black", border: "none"}}
-            onClick={(event) => {
-                (event.target as HTMLElement).remove();
-                document.getElementById("root")!.style.display = "flex";
-                canvas!.style.display = "block";
-                playMusic("main");
-            }}>click
-            </button>
-            <canvas id="canvas" onLoad={
-                () => {
-                    canvas!.height = window.innerHeight;
-                    canvas!.width = window.innerWidth;
-            }}></canvas>
+            <canvas id="canvas" ref={canvasRef}></canvas>
             <div id="welcome-div">
-                {/* Заголовок */}
                 <header id="title" style={{display: gameState === 'inGame' ? 'none' : 'block'}}>
                     The Aftermath Trail
                 </header>
-
-                {/* Меню */}
                 {gameState === 'mainMenu' && (
                     <MainMenu onNewGame={handleNewGame}/>
                 )}
                 {gameState === 'paused' && (
                     <PauseMenu onResume={handleResume} onMainMenu={handleMainMenu}/>
                 )}
-
-                {/* Игровой интерфейс */}
                 {gameState === 'inGame' && (
                     <div id="interface-layer">
                         <div id="static-interface">
@@ -141,7 +156,6 @@ export const GameUI: React.FC = () => {
     );
 };
 
-// Функция для эмуляции клика по элементу по id (для совместимости)
 export const clickAt = (button: string): void => {
     document.getElementById(button)?.click();
 };

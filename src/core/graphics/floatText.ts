@@ -11,12 +11,12 @@ interface FloatTextProps {
 }
 
 export class FloatText {
-    private x: number;
+    private readonly x: number;
     private y: number;
     private text: string | number;
     private lifeTime: TimeDelay;
-    private fillStyle: string;
-    private crit: boolean;
+    private readonly fillStyle: string;
+    private readonly crit: boolean;
 
     constructor({ text, x, y, color, crit }: FloatTextProps) {
         if (crit) {
@@ -46,9 +46,6 @@ export class FloatText {
 
     update(): boolean {
         this.y--;
-        if (this.lifeTime.timeIsUp()) {
-            return true;
-        }
-        return false;
+        return !!this.lifeTime.timeIsUp();
     }
 }

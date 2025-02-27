@@ -1,4 +1,4 @@
-$mainInterfaceBackgroundColor: #303030;
+$mainInterfaceBackgroundColor: rgba(48, 48, 48, 0.9);
 $mainNonActiveInterfaceColor: #2F4F2F;
 $mainActiveInterfaceColor: #D4A017;
 $mainHUDColor: #8B4513;
@@ -22,6 +22,12 @@ $commonColor: grey;
   align-items: center;
 }
 
+@mixin flex-column {
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
 @mixin grid-center {
   display: grid;
   place-items: center;
@@ -32,22 +38,44 @@ $commonColor: grey;
 }
 
 
-.primary {
-  background-color: $mainNonActiveInterfaceColor;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  @include transition(all, 0.3s);
-
-  &:hover {
-    background-color: darken($mainActiveInterfaceColor, 10%);
-  }
-}
+//.primary {
+//  background-color: $mainNonActiveInterfaceColor;
+//  color: white;
+//  border: none;
+//  padding: 10px 20px;
+//  cursor: pointer;
+//  @include transition(all, 0.3s);
+//
+//  &:hover {
+//    background-color: darken($mainActiveInterfaceColor, 10%);
+//  }
+//}
 
 :root {
   --cursor: auto;
   overflow: hidden;
+  background-color: black;
+}
+
+body {
+  margin: 0;
+}
+
+#root {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: none;
+  @include flex-column();
+  background-image: url("../../../src/assets/backgrounds/menu/pixel-art.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+#welcome-div {
+  display: flex;
+  @include flex-column();
 }
 
 p {
@@ -91,23 +119,11 @@ $mainFont: 'PixelFont';
 
 html {
   font-family: $mainFont;
+  color: $mainInterfaceFontColor;
 }
 
 .cell:hover {
   background-color: $mainActiveInterfaceColor;
-}
-
-.menuButton:hover {
-  background-color: $mainActiveInterfaceColor;
-  transition-duration: 0.3s;
-}
-
-.menuButton:active {
-  background-color: $mainInterfaceFontColor;
-}
-
-.menuButton:disabled {
-  background-color: $mainNonActiveInterfaceColor;
 }
 
 .ui-div {
@@ -116,104 +132,102 @@ html {
   border: 3px solid $mainHUDColor;
   border-radius: 10px;
   z-index: 10;
-
-  .menuButton {
-    width: 60%;
-    height: 50px;
-    font-size: large;
-    //cursor: pointer;
-  }
-
-  .cell {
-    width: 10%;
-    height: 10%;
-    background-size: cover;
-    background-position: center;
-  }
-
-  .menu-div {
-    width: 20vw;
-    height: 60vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    align-items: center;
-  }
-
-  .cell-type {
-    width: 30vw;
-    margin: 30px;
-    bottom: 0;
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
-    flex-flow: row wrap;
-    align-content: start;
-    position: absolute;
-
-    .inventory-div {
-      height: 30vw;
-      right: 0;
-      overflow-y: scroll;
-      overflow-x: hidden;
-    }
-
-    .panel-div {
-      height: 3vw;
-      left: calc(50% - 18vw);
-      overflow: hidden;
-    }
-  }
-
-  .item-info {
-    top: 0;
-    right: 0;
-    padding: 10px;
-    width: max-content;
-    max-width: 400px;
-    position: absolute;
-    z-index: 7;
-  }
-
-  .chat-div {
-    position: absolute;
-    height: 25vh;
-    margin: 30px;
-    width: 25vw;
-    overflow-y: auto;
-    overflow-x: hidden;
-    flex-direction: column;
-    padding: 10px;
-    left: 0;
-    bottom: 0;
-  }
-
-  #chat-input {
-    margin: 30px;
-    bottom: 0;
-    left: 0;
-    width: 25vw;
-    /* height: 10%; */
-    height: 20px;
-    align-self: flex-end;
-    position: fixed;
-  }
 }
 
+.menu-button {
+  width: 60%;
+  height: 50px;
+  font-size: large;
+  cursor: pointer;
+}
+.menu-button:hover {
+  background-color: $mainActiveInterfaceColor;
+  transition-duration: 0.3s;
+}
 
-#root {
-  width: 100vw;
-  height: 100vh;
-  background-color: black;
-  display: none;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  //color: white;
-  background-image: url("../../../src/assets/backgrounds/menu/pixel-art.jpg");
-  background-repeat: no-repeat;
+.menu-button:active {
+  background-color: $mainInterfaceFontColor;
+}
+
+.menu-button:disabled {
+  background-color: $mainNonActiveInterfaceColor;
+}
+
+.cell {
+  width: 10%;
+  height: 10%;
   background-size: cover;
+  background-position: center;
 }
+
+.menu-div {
+  width: 20vw;
+  height: 60vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.cell-type {
+  width: 30vw;
+  margin: 30px;
+  bottom: 0;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-flow: row wrap;
+  align-content: start;
+  position: absolute; //rat
+}
+
+.inventory-div {
+  height: 30vw;
+  right: 0;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.panel-div {
+  height: 3vw;
+  left: calc(50% - 18vw);
+  overflow: hidden;
+}
+
+.item-info {
+  top: 0;
+  right: 0;
+  padding: 10px;
+  width: max-content;
+  max-width: 400px;
+  position: absolute;
+  z-index: 7;
+}
+
+.chat-div {
+  position: absolute;
+  height: 25vh;
+  margin: 30px;
+  width: 25vw;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex-direction: column;
+  padding: 10px;
+  left: 0;
+  bottom: 0;
+}
+
+#chat-input {
+  margin: 30px;
+  bottom: 0;
+  left: 0;
+  width: 25vw;
+  /* height: 10%; */
+  height: 20px;
+  align-self: flex-end;
+  position: fixed;
+}
+
 
 
 #title {
@@ -235,9 +249,7 @@ html {
 }
 
 #canvas {
-  //border: 3px solid black;
-
-  //top: 0;
+  top: 0;
   position: absolute;
   display: none;
 }
@@ -250,7 +262,7 @@ html {
   margin: 30px;
   left: 0;
   top: 0;
-  z-index: 5;
+  z-index: 10;
 }
 
 .stat-bar-enemy {
@@ -258,16 +270,16 @@ html {
 }
 
 .inventory-div::-webkit-scrollbar-thumb {
-  background-color: rgba(49, 47, 112, 0.7);
+  background-color: $mainHUDColor;
   border-radius: 10px;
   cursor: pointer;
 }
 
 .inventory-div::-webkit-scrollbar-track {
-  background-color: rgba(28, 27, 56, 0.7);
+  background-color: rgba(48, 45, 131, 0.7);
   border-radius: 10px;
 }
 
 .inventory-div::-webkit-scrollbar {
-  background-color: rgba(28, 27, 56, 0.7);
+  background-color: rgba(106, 104, 159, 0.7);
 }

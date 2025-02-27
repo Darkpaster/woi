@@ -1,7 +1,7 @@
 import { settings } from "../config/settings.ts";
 import { scaledTileSize } from "../../utils/math.ts";
 import { Delay } from "../../utils/time.ts";
-import { effectList } from "./graphics.ts";
+import {graphics} from "../main.ts";
 
 export class AnimatedImageManager {
     list: Record<string, AnimatedImage>;
@@ -26,13 +26,13 @@ export class AnimatedImageManager {
         const current = this.list[sheet];
         const prevAnimation = this.currentAnimation;
         if (prevAnimation.disposable && !prevAnimation.endOfAnimation) {
-            prevAnimation.animate(ctx, this.isFlipped, x, y, direction);
+            prevAnimation.render(ctx, this.isFlipped, x, y, direction);
             return;
         }
         if (!current) {
             alert(sheet + " not found in AnimatedImageManager");
         }
-        this.isFlipped = current.animate(ctx, this.isFlipped, x, y, direction);
+        this.isFlipped = current.render(ctx, this.isFlipped, x, y, direction);
         this.currentAnimation = current;
         if (prevAnimation.name !== this.currentAnimation.name) {
             prevAnimation.currentFrame = 0;
@@ -42,6 +42,13 @@ export class AnimatedImageManager {
 }
 
 export class AnimatedImage extends Image {
+    get manager(): AnimatedImageManager | undefined{
+        return this._manager;
+    }
+
+    set manager(value: AnimatedImageManager) {
+        this._manager = value;
+    }
     name: string;
     src: string;
     framesNumber: number;
@@ -49,6 +56,7 @@ export class AnimatedImage extends Image {
     framesRate: Delay;
     disposable: boolean;
     endOfAnimation: boolean;
+    private _manager: AnimatedImageManager | undefined;
 
     constructor(name: string, src: string, framesNumber: number, disposable: boolean = false,
         framesRate: number = 400) {
@@ -62,8 +70,8 @@ export class AnimatedImage extends Image {
         this.endOfAnimation = false;
     }
 
-    animate(ctx: CanvasRenderingContext2D, isFlipped: boolean, x: number, y: number, direction: string): boolean {
-        if (!this.manager.flipX) {
+    render(ctx: CanvasRenderingContext2D, isFlipped: boolean, x: number, y: number, direction: string): boolean {
+        if (!this.manager!.flipX) {
             isFlipped = false;
         }
         if (this.endOfAnimation) {
@@ -115,10 +123,10 @@ export class AnimatedEffect extends Image {
     framesNumber: number
     framesRate: Delay
     currentFrame: number
-    ax: number
-    ay: number
+    ax: number = 0;
+    ay: number = 0;
 
-    constructor(src: string, framesNumber: number, framesRate = 200, scale = settings.defaultTileScale) {
+    constructor(src: string, framesNumber: number, framesRate = 200) {
         super()
         this.name = "name";
         this.src = src;
@@ -130,10 +138,10 @@ export class AnimatedEffect extends Image {
     create(x: number, y: number) {
         this.ax = x;
         this.ay = y;
-        effectList.push(this);
+        graphics?.effectList.push(this);
     }
 
-    animate(ctx: CanvasRenderingContext2D): boolean {
+    render(ctx: CanvasRenderingContext2D): boolean {
         let spriteWidth = this.width / this.framesNumber;
         let spriteHeight = this.height;
         let cutX = this.currentFrame * spriteWidth;
@@ -159,19 +167,29 @@ export class StaticImage extends Image {
     constructor(src: string) {
         super()
         this.src = src;
-        //... existing code
     }
 }
 
 
-export class tileImage extends StaticImage {
-    tile: any | null
+export class tileImage {
+
+    private _tile: ImageBitmap | null = null;  // Initializing with null since it will be set later
 
     constructor(src: string, tileX: number, tileY: number, _tileSize = settings.tileSize) {
-        super(src)
-        //  this.tile = null;
-        this.onload = () => createImageBitmap(this, tileX * _tileSize, tileY * _tileSize, _tileSize, _tileSize).then(bitmap => {
+        const image: HTMLImageElement = new Image();
+        image.src = src;
+        image.onload = () => createImageBitmap(image, tileX * _tileSize, tileY * _tileSize, _tileSize, _tileSize).then(bitmap => {
             this.tile = bitmap;
+        }).catch((error) => {
+            console.error("Error creating ImageBitmap:", error);
         });
+    }
+
+    get tile(): ImageBitmap {
+        return <ImageBitmap>this._tile;
+    }
+
+    set tile(value: ImageBitmap) {
+        this._tile = value;
     }
 }

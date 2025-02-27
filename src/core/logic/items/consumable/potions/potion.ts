@@ -1,4 +1,4 @@
-import { greyPotion } from "../../../../graphics/paths.ts";
+import { greyPotion } from "../../../../graphics/static/paths.ts";
 import { Item } from "../../item.ts";
 
 export class Potion extends Item {
@@ -7,7 +7,7 @@ export class Potion extends Item {
 
     constructor() {
         super();
-        this.image = greyPotion;
+        this.sprite = greyPotion;
         this.name = "Unknown potion";
         this.description = "It has unknown effects.";
         this.cooldown = 0;

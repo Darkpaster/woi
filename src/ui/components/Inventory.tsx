@@ -1,9 +1,10 @@
 // Компонент инвентаря
 import Button from "./Button.tsx";
 import React, {useEffect, useState} from "react";
-import {player} from "../../core/logic/update.ts";
 import {Item} from "../../core/logic/items/item.ts";
 import {ItemType} from "../GameUI.tsx";
+import {player} from "../../core/main.ts";
+
 
 interface InventoryProps {
     onShowInfo: (item: ItemType, rect: DOMRect) => void;

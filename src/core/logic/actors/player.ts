@@ -1,4 +1,4 @@
-import { villagerManager } from "../../graphics/animations.ts";
+import { villagerManager } from "../../graphics/static/managers.ts";
 import { calcDistance, scaledTileSize } from "../../../utils/math.ts";
 import { smallPotionOfHealing } from "../items/consumable/potions/smallPotionOfHealing.ts";
 import { Slash } from "../skills/slash.ts";
@@ -18,10 +18,11 @@ interface Equipment {
 	ring2: any;
 }
 
+
+
 export class Player extends Actor {
 	AA: boolean;
 	inventory: Array<any>;
-	spellBook: Array<Slash | null>;
 	equipment: Equipment;
 	strength: number;
 	dexterity: number;
@@ -110,10 +111,6 @@ export class Player extends Actor {
 	unEquip(item: any): void {
 		this.pickUp(item);
 		this.equipmentSlot(null);
-	}
-
-	learn(spell: any): void {
-		this.spellBook.push(spell);
 	}
 
 
@@ -222,7 +219,8 @@ export class Player extends Actor {
 	}
 
 	selectNearestTarget(): void {
-		let nearest: { x: number; y: number } = this.target || { x: 0, y: 0 };
+		let nearest: Mob | Player = this.target || Mob.mobList[0];
+		const prevTarget: Mob | Player = nearest;
 		for (const mob of Mob.mobList) {
 			const dist: number = calcDistance(mob, this);
 			if (dist < 430) {
@@ -231,7 +229,7 @@ export class Player extends Actor {
 				}
 			}
 		}
-		if (nearest.x === 0) {
+		if (prevTarget === nearest) {
 			return;
 		}
 		this.target = nearest;

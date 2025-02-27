@@ -1,22 +1,40 @@
 import { FloatText } from "../../graphics/floatText.ts";
-import { floatTextList } from "../../graphics/graphics.ts";
 import { AnimatedImageManager } from "../../graphics/image.ts";
 import { getActorTile, getTile, getWallTile } from "../../graphics/tileSprites.ts";
 import { calcDistance, randomInt, scaledTileSize } from "../../../utils/math.ts";
 import { TimeDelay } from "../../../utils/time.ts";
 import { getCurrentLocation } from "../world/locationList.ts";
-import { Player } from "./player.ts";
+// import { Player } from "./player.ts";
 import {Mob} from "./mobs/mob.ts";
+import {Skill} from "../skills/skill.ts";
+import {Slash} from "../skills/slash.ts";
+import {graphics} from "../../main.ts";
+import {settings} from "../../config/settings.ts";
 
 export interface EntityUIInfo {
 	name: string;
-	image?: AnimatedImageManager | null | string;
+	image?: AnimatedImageManager | null;
+	sprite?: string | null;
 	description: string;
 	note?: string;
 	rarity: "common" | "uncommon" | "rare" | "epic" | "legendary" | "godlike";
 }
 
 export class Actor implements EntityUIInfo {
+	get sprite(): string | null | undefined {
+		return this._sprite;
+	}
+
+	set sprite(value: string | null ) {
+		this._sprite = value;
+	}
+	get spellBook(): Array<Skill | null> {
+		return this._spellBook;
+	}
+
+	set spellBook(value: Array<Skill | null>) {
+		this._spellBook = value;
+	}
 	get posY(): number {
 		return Math.floor(this._y / scaledTileSize())
 	}
@@ -39,11 +57,11 @@ export class Actor implements EntityUIInfo {
 	public set x(value: number) {
 		this._x = value;
 	}
-	public get target(): Mob | Player | undefined {
+	public get target(): Mob | undefined | any {
 		return this._target;
 	}
 
-	public set target(value: Mob | Player) {
+	public set target(value: Mob | any) {
 		this._target = value;
 	}
 	public get direction(): string {
@@ -75,7 +93,7 @@ export class Actor implements EntityUIInfo {
 		this._attackDelay = value;
 	}
 	public get moveSpeed(): number {
-		return this._moveSpeed * 5;
+		return this._moveSpeed * settings.defaultTileScale;
 	}
 
 	public set moveSpeed(value: number) {
@@ -201,7 +219,7 @@ export class Actor implements EntityUIInfo {
 		this._offsetX = value;
 	}
 
-	public get image(): string | AnimatedImageManager | null | undefined {
+	public get image(): AnimatedImageManager | null | undefined {
 		return this._image;
 	}
 
@@ -238,7 +256,8 @@ export class Actor implements EntityUIInfo {
 	}
 
 	private _name: string = "???";
-	private _image?: AnimatedImageManager | null | string;
+	private _image?: AnimatedImageManager | null;
+	private _sprite?: string | null;
 	private _description: string = "Unknown creature";
 	private _note?: string;
 	private _rarity: "common" | "uncommon" | "rare" | "epic" | "legendary" | "godlike" = "common";
@@ -269,10 +288,27 @@ export class Actor implements EntityUIInfo {
 	private _attackRange: number = 1;
 	private _renderState: string = "idle";
 	private _direction: string = "down";
-	private _target?: Mob | Player;
 
+	private _target?: Mob | any;
 
-	protected dealDamage(damage: number, source?: Actor | null): void {
+	private _spellBook: Array<Skill | null> = [];
+
+	public setCoordinates(x: number, y: number) {
+		const result = { x: this.x, y: this.y }
+		this.x = x;
+		this.y = y;
+		result.x -= this.x;
+		result.y -= this.y;
+		return result
+	}
+
+	autoAttack(): void {
+		if (this._attackDelay.timeIsUp()) {
+			this.target!.dealDamage(randomInt(this._minDamage, this._maxDamage), this);
+		}
+	}
+
+	dealDamage(damage: number, source?: Actor | null): void {
 		let realDamage: number = damage;
 		let crit: boolean = false;
 
@@ -289,27 +325,25 @@ export class Actor implements EntityUIInfo {
 		}
 
 		this._HP -= realDamage;
-		floatTextList.push(new FloatText({text: realDamage, x: this._x, y: this._y, color: this instanceof Player ? "red" : "orange", crit: crit}));
+		graphics?.floatTextList.push(new FloatText({text: realDamage, x: this._x, y: this._y, color: this instanceof Mob ? "orange" : "red", crit: crit}));
+	}
+
+	learn<T extends Skill>(spell: T): void {
+		this._spellBook.push(spell);
 	}
 
 	heal(value: number): void {
 		const realValue: number = Math.min(value, this._HT - this._HP);
 		this._HP += realValue;
-		floatTextList.push(new FloatText({text: value, x: this._x, y: this._y, color: "green", crit: false}));
-	}
-
-	autoAttack(): void {
-		if (this._attackDelay.timeIsUp()) {
-			this._target?.dealDamage(randomInt(this._minDamage, this._maxDamage), this);
-		}
+		graphics?.floatTextList.push(new FloatText({text: value, x: this._x, y: this._y, color: "green", crit: false}));
 	}
 
 	inRangeOfAttack(): boolean {
-		return calcDistance(this._target!, this) < scaledTileSize() * this._attackRange * 1.5;
+		return calcDistance(this.target!, this) < scaledTileSize() * this._attackRange * 1.5;
 	}
 
 	attackEvents(): boolean {
-		if (this._target == null) {
+		if (this.target == null) {
 			return false
 		}
 
@@ -328,7 +362,7 @@ export class Actor implements EntityUIInfo {
 	collision(mobs: Array<Actor>): { x: boolean, y: boolean } {
 		const stop: { x: boolean, y: boolean } = { x: false, y: false };
 
-		if (!getWallTile(this._nextPosX!, this._nextPosY!).props.isWalkable) {
+		if (!getWallTile(this._nextPosX!, this._nextPosY!)!.props.isWalkable) {
 			stop.x = stop.y = true;
 		}
 

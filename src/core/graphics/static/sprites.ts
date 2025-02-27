@@ -1,4 +1,4 @@
-import { StaticImage, tileImage } from "./image.ts";
+import { StaticImage, tileImage } from "../image.ts";
 
 // export const backgroundSheet1 = new StaticImage("src/assets/backgrounds/Battleground1.png"),
 // backgroundSheet2 = new StaticImage("src/assets/backgrounds/Battleground2.png"),

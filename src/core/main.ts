@@ -1,35 +1,40 @@
-import { settings } from "./config/settings.js";
-import { render } from "./graphics/graphics.js";
-import { init, update } from "./logic/update.js";
+import {settings} from "./config/settings.js";
+import {update} from "./logic/update.js";
+import {Player} from "./logic/actors/player.ts";
+import {Camera} from "./logic/camera.ts";
+import {setCurrentLocation} from "./logic/world/locationList.ts";
+import {Slash} from "./logic/skills/slash.ts";
+import {madBoar} from "./logic/actors/mobs/enemies/madBoar.ts";
+import {Graphics} from "./graphics/graphics.ts";
 // import { initComponents } from "./ui/components.js";
 
-let gameState: string = "menu";
+export let player: Player | null = null,
+    camera: Camera | null = null,
+    graphics: Graphics;
 
-export function getState(): string {
-    return gameState;
+
+player = new Player();
+
+export function init(): void {
+    setCurrentLocation("spawn");
+    graphics = new Graphics(document.getElementById("canvas") as HTMLCanvasElement);
+    camera = new Camera({x: player.x, y: player.y});
+    player.learn(new Slash(player));
+    for (let index: number = 0; index < 50; index++) {
+        new madBoar();
+    }
 }
-
-export function setState(state: string): void {
-    gameState = state;
-}
-
-init();
-
-// initComponents();
-
 
 let mainLoop: NodeJS.Timeout | null = null;
 
-export function game(): void {
-    gameState = "playing";
+export function startLoop(): void {
     mainLoop = setInterval(() => {
         update();
-        render();
+        graphics!.render();
     }, settings.delay());
 }
 
 export function pauseLoop(): void {
-    gameState = "paused";
     if (mainLoop) {
         clearInterval(mainLoop);
     }

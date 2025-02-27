@@ -1,7 +1,7 @@
 import { getWallTile, tiles } from "../../../graphics/tileSprites.ts";
 import { calcDistance, calcDistanceX, calcDistanceY, randomInt, scaledTileSize } from "../../../../utils/math.ts";
 import { TimeDelay } from "../../../../utils/time.ts";
-import { player } from "../../update.ts";
+import { player } from "../../../main.ts";
 import { getCurrentLocation } from "../../world/locationList.ts";
 
 import { Actor } from "../actor.ts";

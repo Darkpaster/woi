@@ -1,18 +1,13 @@
-import { AnimatedEffect } from "../../graphics/image.ts";
-import { slash } from "../../graphics/paths.ts";
-import { slashEffect } from "../../graphics/sprites.ts";
+import { slash } from "../../graphics/static/paths.ts";
+import { slashEffect } from "../../graphics/static/animatedSprites.ts";
 import { Player } from "../actors/player.ts";
 import { Skill } from "./skill.ts";
 
 export class Slash extends Skill {
-    icon: string;
-    animation: AnimatedEffect;
-    minDamage: number;
-    maxDamage: number;
 
     constructor(owner: Player) {
         super(owner);
-        this.icon = slash;
+        this.sprite = slash;
         this.animation = slashEffect;
         this.name = "Slash";
         this.minDamage = 60;

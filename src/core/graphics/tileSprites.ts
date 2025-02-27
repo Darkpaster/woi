@@ -62,7 +62,7 @@ export const tiles: Record<number, Tile> = {
 };
 
 export function getActorTile(actor: Actor): Tile | undefined {
-    return tiles[getCurrentLocation().floor[actor.getPosY()][actor.getPosX()]];
+    return tiles[getCurrentLocation().floor[actor.posY][actor.posX]];
 }
 
 export function getTile(posX:number, posY:number): Tile | undefined {
