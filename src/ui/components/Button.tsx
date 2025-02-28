@@ -9,7 +9,7 @@ const Button = ({children, onClick = () => alert("Undefined onClick handler."), 
 )=> {
     return (
         <>
-            <button onMouseEnter={onMouseEnter} className={`ui-div ${styleType}`} onClick={onClick}>{children}</button>
+            <button onMouseEnter={onMouseEnter} className={`${styleType}`} onClick={onClick}>{children}</button>
         </>
     );
 }

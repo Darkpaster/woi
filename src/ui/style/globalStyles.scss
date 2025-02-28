@@ -68,7 +68,7 @@ body {
   padding: 0;
   display: none;
   @include flex-column();
-  background-image: url("../../../src/assets/backgrounds/menu/pixel-art.jpg");
+  background-image: url("../../../src/assets/backgrounds/menu/449522-Pixel-Cat-fantasy-art-digital-art-river-castle-844731993.jpg");
   background-repeat: no-repeat;
   background-size: cover;
 }
@@ -118,8 +118,11 @@ p {
 $mainFont: 'PixelFont';
 
 html {
-  font-family: $mainFont;
   color: $mainInterfaceFontColor;
+}
+
+* {
+  font-family: $mainFont;
 }
 
 .cell:hover {
@@ -129,8 +132,8 @@ html {
 .ui-div {
   background-color: $mainInterfaceBackgroundColor;
   color: $mainInterfaceFontColor;
-  border: 3px solid $mainHUDColor;
-  border-radius: 10px;
+  border: 1px solid $mainInterfaceFontColor;
+  //border-radius: 10px;
   z-index: 10;
 }
 
@@ -154,8 +157,8 @@ html {
 }
 
 .cell {
-  width: 10%;
-  height: 10%;
+  width: 3vw;
+  height: 3vw;
   background-size: cover;
   background-position: center;
 }
@@ -171,18 +174,18 @@ html {
 
 .cell-type {
   width: 30vw;
-  margin: 30px;
   bottom: 0;
   display: flex;
   justify-content: flex-start;
   align-items: flex-start;
   flex-flow: row wrap;
   align-content: start;
-  position: absolute; //rat
+  position: absolute;
 }
 
 .inventory-div {
   height: 30vw;
+  margin: 30px;
   right: 0;
   overflow-y: scroll;
   overflow-x: hidden;

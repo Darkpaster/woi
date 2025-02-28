@@ -4,7 +4,7 @@ import {camera, player} from "../../core/main.ts";
 import {scaledTileSize} from "../../utils/math.js";
 import {clickAt} from "../GameUI.tsx";
 
-const bindings = {
+export const bindings = {
     up: "w",
     down: "s",
     left: "a",
@@ -21,7 +21,70 @@ const bindings = {
     b2: "2",
     b3: "3",
     b4: "4",
+    b5: "5",
+    b6: "6",
+    b7: "7",
+    b8: "8",
+    b9: "9",
 };
+
+export const actions = {
+    up: (down: boolean) => {
+        player!.pressUp = down;
+
+    },
+    down: (down: boolean) => {
+        player!.pressDown = down;
+
+    },
+    left: (down: boolean) => {
+        player!.pressLeft = down;
+
+    },
+    right: (down: boolean) => {
+        player!.pressRight = down;
+
+    },
+    pause: () => {
+
+    },
+    inventory: () => {
+
+    },
+    fullscreen: () => {
+
+    },
+    zoomIn: () => {
+        if (camera!.zoom < 4) camera!.zoom += 1;
+
+    },
+    zoomOut: () => {
+        if (camera!.zoom > 2) camera!.zoom -= 1;
+
+    },
+    tab: (event: { preventDefault: () => void; }) => {
+        event.preventDefault();
+        player?.selectNearestTarget?.();
+    },
+    shift: () => {
+
+    },
+    enter: () => {
+
+    },
+    b1: () => {
+
+    },
+    b2: () => {
+
+    },
+    b3: () => {
+
+    },
+    b4: () => {
+
+    },
+}
 
 function clickOffsetX() {
     return player!.x - window.innerWidth / 2 + scaledTileSize();
@@ -41,29 +104,28 @@ export function useKeyboard(canvasRef: RefObject<HTMLCanvasElement | null>) {
 
             switch (event.key) {
                 case bindings.left:
-                    player!.pressLeft = true;
+                    actions.left(true);
                     break;
                 case bindings.up:
-                    player!.pressUp = true;
+                    actions.up(true);
                     break;
                 case bindings.right:
-                    player!.pressRight = true;
+                    actions.right(true);
                     break;
                 case bindings.down:
-                    player!.pressDown = true;
+                    actions.down(true);
                     break;
                 case bindings.zoomIn:
-                    if (camera!.zoom < 4) camera!.zoom += 1;
+                    actions.zoomIn();
                     break;
                 case bindings.zoomOut:
-                    if (camera!.zoom > 2) camera!.zoom -= 1;
+                    actions.zoomOut();
                     break;
                 case bindings.tab:
-                    event.preventDefault();
-                    player?.selectNearestTarget?.();
+                    actions.tab(event)
                     break;
                 case bindings.b1:
-                    clickAt("skill-0");
+                    actions.b1();
                     break;
             }
         };
@@ -80,19 +142,19 @@ export function useKeyboard(canvasRef: RefObject<HTMLCanvasElement | null>) {
                     clickAt("resume");
                     break;
                 case bindings.inventory:
-                    clickAt("open-close-inventory");
+                    actions.inventory();
                     break;
                 case bindings.left:
-                    player!.pressLeft = false;
+                    actions.left(false);
                     break;
                 case bindings.up:
-                    player!.pressUp = false;
+                    actions.up(false);
                     break;
                 case bindings.right:
-                    player!.pressRight = false;
+                    actions.right(false);
                     break;
                 case bindings.down:
-                    player!.pressDown = false;
+                    actions.down(false);
                     break;
                 case "e":
                     if (player) player.AA = !player.AA;
@@ -118,6 +180,7 @@ export function useKeyboard(canvasRef: RefObject<HTMLCanvasElement | null>) {
             canvasEl.addEventListener("contextmenu", handleContextMenu);
         }
 
+
         return () => {
             if (canvasEl) {
                 canvasEl.removeEventListener("keydown", handleKeyDown);
@@ -126,6 +189,7 @@ export function useKeyboard(canvasRef: RefObject<HTMLCanvasElement | null>) {
                 canvasEl.removeEventListener("contextmenu", handleContextMenu);
             }
         };
+
     }, []);
 
     return keysPressed;

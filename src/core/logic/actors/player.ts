@@ -50,7 +50,7 @@ export class Player extends Actor {
 		this.HT = 500;
 		this.minDamage = 15;
 		this.maxDamage = 35;
-		this.criticalChance = 0.1;
+		this.criticalChance = 0.3;
 		this.moveSpeed = 4;
 		this.AA = true;
 		this.image = villagerManager;

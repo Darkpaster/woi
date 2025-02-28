@@ -1,8 +1,11 @@
 import {scaledTileSize} from "../../utils/math.ts";
 import {tiles} from "./tileSprites.ts";
 import {getCurrentLocation} from "../logic/world/locationList.ts";
-import {settings} from "../config/settings.ts";
 import {graphics, player} from "../main.ts";
+import {selector1} from "./static/sprites.ts";
+import {Mob} from "../logic/actors/mobs/mob.ts";
+import {AnimatedEffect, AnimatedImageManager} from "./image.ts";
+import {FloatText} from "./floatText.ts";
 
 export class Graphics {
     get ctx(): CanvasRenderingContext2D | null | undefined {
@@ -17,20 +20,12 @@ export class Graphics {
         return this._floatTextList;
     }
 
-    set floatTextList(value: Array<any>) {
-        this._floatTextList = value;
-    }
-
     get effectList(): Array<any> {
         return this._effectList;
     }
 
-    set effectList(value: Array<any>) {
-        this._effectList = value;
-    }
-
-    private _floatTextList: Array<any> = [];
-    private _effectList: Array<any> = [];
+    private readonly _floatTextList: Array<FloatText> = [];
+    private readonly _effectList: Array<AnimatedEffect> = [];
     private _ctx: CanvasRenderingContext2D | null | undefined;
 
     constructor(canvas: HTMLCanvasElement) {
@@ -39,7 +34,6 @@ export class Graphics {
 
     public render(): void {
         if (this.ctx) {
-            this.ctx.font = 7 * settings.defaultTileScale + "px pixel";
             this.renderTilemap();
             this.renderActors();
             this.renderEffects();
@@ -48,18 +42,18 @@ export class Graphics {
     }
 
     private renderActors(): void {
-        // try {
-        //     this.ctx!.fillStyle = "blue";
-        //     player!.image!.render(player!.renderState, this.ctx, player!.x, player!.y, player!.direction);
-        //     for (const mob of Mob.mobList) {
-        //         mob.image!.render(mob.renderState, this.ctx, mob.x, mob.y, mob.direction);
-        //         this.ctx!.fillText(mob.name, mob.x, mob.y);
-        //     }
-        //     this.ctx!.drawImage(selector1.tile, player!.target!.x || 0, player!.target?.y || 0, scaledTileSize(), scaledTileSize());
-        //     this.ctx!.fillText(player!.name, player!.x, player!.y);
-        // } catch (e) {
-        //     console.error(e);
-        // }
+        const ctx = <CanvasRenderingContext2D>this.ctx;
+        ctx.fillStyle = "blue";
+        player!.image!.render(player!.renderState, ctx, player!.x, player!.y, player!.direction);
+        for (const mob of Mob.mobList) {
+            mob.image!.render(mob.renderState, ctx, mob.x, mob.y, mob.direction);
+            ctx.fillText(mob.name, mob.x, mob.y);
+        }
+        if (player!.target) {
+            ctx.drawImage(selector1.tile, player!.target.x || 0, player!.target.y || 0, scaledTileSize(), scaledTileSize());
+        }
+        // console.log(player!.name);
+        ctx.fillText(player!.name, player!.x, player!.y);
     }
 
     private renderEffects(): void {
@@ -75,8 +69,8 @@ export class Graphics {
         if (!length) return;
 
         while (length--) {
-            const text: any = this.floatTextList[length];
-            text.render(this.ctx);
+            const text: FloatText = this.floatTextList[length];
+            text.render(<CanvasRenderingContext2D>this.ctx);
             if (text.update()) {
                 this.floatTextList.splice(this.floatTextList.indexOf(text), 1);
             }

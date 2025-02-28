@@ -36,12 +36,11 @@ export class FloatText {
         ctx.fillStyle = this.fillStyle;
 
         if (this.crit) {
-            ctx.font = `${7 * settings.defaultTileScale * 2}px pixel`;
+            ctx.font = `${7 * settings.defaultTileScale * 2}px PixelFont`;
         }
         
         ctx.fillText(this.text.toString(), this.x, this.y);
-
-        ctx.font = `${7 * settings.defaultTileScale * 1}px pixel`;
+        ctx.font = `${7 * settings.defaultTileScale * 1}px PixelFont`;
     }
 
     update(): boolean {

@@ -2,15 +2,16 @@ import { settings } from "../config/settings.ts";
 import { scaledTileSize } from "../../utils/math.ts";
 import { Delay } from "../../utils/time.ts";
 import {graphics} from "../main.ts";
+import {AnimationList} from "./static/animatedSprites.ts";
 
 export class AnimatedImageManager {
-    list: Record<string, AnimatedImage>;
+    list: AnimationList;
     isFlipped: boolean;
     currentAnimation: AnimatedImage;
     flipX: boolean;
     horizontalSheet: boolean;
 
-    constructor(list: Record<string, AnimatedImage>, flipX: boolean = true, horizontalSheet: boolean = true) {
+    constructor(list: AnimationList, flipX: boolean = true, horizontalSheet: boolean = true) {
         this.list = list;
         this.isFlipped = false;
         this.currentAnimation = this.list["idle"] || this.list[Object.keys(this.list)[0]];
@@ -23,7 +24,7 @@ export class AnimatedImageManager {
     }
 
     render(sheet: string, ctx: CanvasRenderingContext2D, x: number, y: number, direction: string): void {
-        const current = this.list[sheet];
+        const current: AnimatedImage = this.list[sheet];
         const prevAnimation = this.currentAnimation;
         if (prevAnimation.disposable && !prevAnimation.endOfAnimation) {
             prevAnimation.render(ctx, this.isFlipped, x, y, direction);
@@ -41,7 +42,11 @@ export class AnimatedImageManager {
 
 }
 
-export class AnimatedImage extends Image {
+export class AnimatedImage {
+    get image(): HTMLImageElement {
+        return this._image;
+    }
+
     get manager(): AnimatedImageManager | undefined{
         return this._manager;
     }
@@ -49,8 +54,9 @@ export class AnimatedImage extends Image {
     set manager(value: AnimatedImageManager) {
         this._manager = value;
     }
+
+    private readonly _image: HTMLImageElement = new Image();
     name: string;
-    src: string;
     framesNumber: number;
     currentFrame: number;
     framesRate: Delay;
@@ -59,13 +65,12 @@ export class AnimatedImage extends Image {
     private _manager: AnimatedImageManager | undefined;
 
     constructor(name: string, src: string, framesNumber: number, disposable: boolean = false,
-        framesRate: number = 400) {
-        super();
+        framesRate: number = 20) {
+        this.image.src = src;
         this.name = name;
-        this.src = src;
         this.framesNumber = framesNumber;
         this.currentFrame = 0;
-        this.framesRate = new Delay(Math.floor(framesRate / settings.delay()));
+        this.framesRate = new Delay(Math.floor(framesRate * settings.delay()));
         this.disposable = disposable;
         this.endOfAnimation = false;
     }
@@ -77,8 +82,8 @@ export class AnimatedImage extends Image {
         if (this.endOfAnimation) {
             this.endOfAnimation = false;
         }
-        let spriteWidth = this.width / this.framesNumber;
-        let spriteHeight = this.height;
+        let spriteWidth = this.image.width / this.framesNumber;
+        let spriteHeight = this.image.height;
         let cutX = this.currentFrame * spriteWidth;
         let cutY = 0;
         // if (!this.manager.horizontalSheet) {
@@ -93,12 +98,12 @@ export class AnimatedImage extends Image {
         if (flipX) {
             ctx.save();
             ctx.scale(-1, 1);
-            ctx.drawImage(this, cutX, cutY, spriteWidth,
+            ctx.drawImage(this.image, cutX, cutY, spriteWidth,
                 spriteHeight, -x - scaledTileSize(), y,
                 spriteWidth * settings.defaultTileScale, spriteHeight * settings.defaultTileScale);
             ctx.restore();
         } else {
-            ctx.drawImage(this, cutX, cutY, spriteWidth,
+            ctx.drawImage(this.image, cutX, cutY, spriteWidth,
                 spriteHeight, x, y, spriteWidth * settings.defaultTileScale, spriteHeight * settings.defaultTileScale);
         }
 
@@ -117,19 +122,21 @@ export class AnimatedImage extends Image {
     }
 }
 
-export class AnimatedEffect extends Image {
+export class AnimatedEffect {
+    get image(): HTMLImageElement {
+        return this._image;
+    }
     name: string
-    src: string
     framesNumber: number
     framesRate: Delay
     currentFrame: number
     ax: number = 0;
     ay: number = 0;
+    private readonly _image: HTMLImageElement = new Image();
 
     constructor(src: string, framesNumber: number, framesRate = 200) {
-        super()
         this.name = "name";
-        this.src = src;
+        this._image.src = src;
         this.framesNumber = framesNumber;
         this.framesRate = new Delay(Math.floor(framesRate / settings.delay()));
         this.currentFrame = 0;
@@ -142,11 +149,11 @@ export class AnimatedEffect extends Image {
     }
 
     render(ctx: CanvasRenderingContext2D): boolean {
-        let spriteWidth = this.width / this.framesNumber;
-        let spriteHeight = this.height;
+        let spriteWidth = this.image.width / this.framesNumber;
+        let spriteHeight = this.image.height;
         let cutX = this.currentFrame * spriteWidth;
         let cutY = 0;
-        ctx.drawImage(this, cutX, cutY, spriteWidth,
+        ctx.drawImage(this.image, cutX, cutY, spriteWidth,
             spriteHeight, this.ax, this.ay, scaledTileSize(), scaledTileSize());
 
         if (this.framesRate.timeIsUp()) {

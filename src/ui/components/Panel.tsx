@@ -1,10 +1,12 @@
 // Компонент панели навыков
 import Button from "./Button.tsx";
-import React, {useEffect, useState} from "react";
+import React, {RefObject, useEffect, useRef, useState} from "react";
 import {Item} from "../../core/logic/items/item.ts";
 import {Skill} from "../../core/logic/skills/skill.ts";
 import {Actor} from "../../core/logic/actors/actor.ts";
 import {player} from "../../core/main.ts";
+import {Window} from "./Window.tsx";
+import {actions} from "../input/input.ts";
 
 
 interface PanelProps {
@@ -15,15 +17,33 @@ interface PanelProps {
 export const Panel: React.FC<PanelProps> = ({ onShowInfo, onHideInfo }) => {
     const [spellBook, setSpellBook] = useState(player!.spellBook);
 
+    const panelRef: RefObject<HTMLDivElement|null> = useRef<HTMLDivElement>(null);
+
     useEffect(() => {
         const interval = setInterval(() => {
             setSpellBook([...player!.spellBook]);
         }, 100);
+
+
+        const panel = panelRef.current;
+        const buttons: HTMLCollection = panel!.children;
+        for (let i: number = 0; i < buttons.length; i++) {
+            const action = actions[`b${i+1}`];
+            if (action) {
+                actions[`b${i+1}`] = () => {
+                    (buttons.item(i) as HTMLElement).click();
+                }
+                console.log(`Successful: ${actions["b"+(i+1)]}`);
+            } else {
+                console.warn(`No such action: b${i+1}`);
+            }
+        }
+
         return () => clearInterval(interval);
     }, []);
 
     return (
-        <div className="panel-div">
+        <div ref={panelRef} className="ui-div panel-div cell-type">
             {spellBook.map((skill, index) => {
                 let displayText = String(index + 1);
                 let fontSize = '15px';
@@ -37,7 +57,8 @@ export const Panel: React.FC<PanelProps> = ({ onShowInfo, onHideInfo }) => {
                 return (
                     <Button
                         key={index}
-                        className="cell"
+                        id={`skill-${index}`}
+                        styleType="ui-div cell"
                         onMouseEnter={(e) => {
                             if (skill) {
                                 const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();

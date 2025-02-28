@@ -21,7 +21,7 @@ interface MenuProps {
 
 export const MainMenu: React.FC<MenuProps> = ({ onNewGame, onLoadGame, onShortcuts, onSettings }) => (
     <Window styleType={"menu-div"}>
-        <Button onClick={onNewGame} styleType={"menu-button"}>new game</Button>
+        <Button onClick={onNewGame} styleType={"ui-div menu-button"}>new game</Button>
         {onLoadGame && <Button onClick={onLoadGame}>load game</Button>}
         {onShortcuts && <Button onClick={onShortcuts}>shortcuts</Button>}
         {onSettings && <Button onClick={onSettings}>settings</Button>}

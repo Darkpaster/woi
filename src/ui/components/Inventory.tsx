@@ -35,11 +35,11 @@ export const Inventory: React.FC<InventoryProps> = ({ onShowInfo, onHideInfo }) 
     }, []);
 
     return (
-        <div className="inventory-div">
+        <div className="inventory-div ui-div cell-type">
             {inventory.map((item : Item, index) => (
                 <Button
                     key={index}
-                    className="cell"
+                    className="cell ui-div"
                     onClick={() => {
                         if (item) {
                             item.onUse();

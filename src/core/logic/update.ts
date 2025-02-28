@@ -1,14 +1,15 @@
 import { settings } from "../config/settings.ts";
 import { randomInt, scaledTileSize } from "../../utils/math.ts";
-import { Delay } from "../../utils/time.ts";
+import { TimeDelay } from "../../utils/time.ts";
 import { Mob } from "./actors/mobs/mob.ts";
-import {camera, player} from "../main.ts";
+import {camera, graphics, player} from "../main.ts";
 
-const updateRate: Delay = new Delay(Math.round(100 / settings.delay()));
+const updateRate: TimeDelay = new TimeDelay(25);
 
 export function update(): void {
     if (updateRate.timeIsUp()) {
         camera!.update(player!.updatePlayer(), player!.x, player!.y);
+        graphics.ctx!.font = 7 * settings.defaultTileScale + "px PixelFont";
         // updateInGameUI();
         for (const mob of Mob.mobList) {
             mob.update();

@@ -12,7 +12,7 @@ import {init, pauseLoop, player, startLoop} from "../core/main.ts";
 import {Item} from "../core/logic/items/item.ts";
 import {Actor} from "../core/logic/actors/actor.ts";
 import {Skill} from "../core/logic/skills/skill.ts";
-import {useKeyboard} from "./input/input.ts";
+import {actions, useKeyboard} from "./input/input.ts";
 
 export type ItemType = Item | Actor | Skill | null;
 
@@ -31,7 +31,7 @@ export const GameUI: React.FC = () => {
     const [targetMaxHealth, setTargetMaxHealth] = useState(player!.target ? player!.target.HT : 100);
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const handleKeyboard = useKeyboard(canvasRef);
+    const keyboardListeners = useKeyboard(canvasRef);
 
     // Инициализация canvas после монтирования компонента
     useEffect(() => {
@@ -50,6 +50,10 @@ export const GameUI: React.FC = () => {
 
         init();
 
+        actions.inventory = () => {
+            setShowInventory(!z);
+        }
+
         // Пример: динамический импорт модулей, не связанных с React,
         // который выполняется уже после того, как DOM загружен:
         // import('../core/logic/someModule').then(mod => {
@@ -67,6 +71,7 @@ export const GameUI: React.FC = () => {
         canvas!.setAttribute('tabindex', '0');
         canvas!.focus();
     }
+
 
     useEffect(() => {
         const interval = setInterval(() => {
