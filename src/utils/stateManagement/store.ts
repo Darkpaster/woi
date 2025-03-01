@@ -1,17 +1,21 @@
 import { configureStore } from "@reduxjs/toolkit";
 import uiReducer from "./uiSlice";
-import playerReducer from "./playerSlice";
-import chatReducer from "./chatSlice";
-import gameReducer from "./gameSlice";
+import {useDispatch, useSelector, useStore} from "react-redux";
 
 export const store = configureStore({
     reducer: {
         ui: uiReducer,
-        player: playerReducer,
-        chat: chatReducer,
-        game: gameReducer,
+        // player: playerReducer,
+        // chat: chatReducer,
+        // game: gameReducer,
     },
 });
 
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+type AppStore = typeof store;
+type RootState = ReturnType<AppStore['getState']>;
+type AppDispatch = AppStore['dispatch'];
+
+
+export const useMyDispatch = useDispatch.withTypes<AppDispatch>()
+export const useMySelector = useSelector.withTypes<RootState>()
+export const useMyStore = useStore.withTypes<AppStore>()

@@ -1,15 +1,17 @@
-import React from "react";
+import React, {CSSProperties, MouseEventHandler} from "react";
 
-const Button = ({children, onClick = () => alert("Undefined onClick handler."), styleType = "", onMouseEnter}: {
+const Button = ({children, onClick = () => alert("Undefined onClick handler."), styleType, style, onMouseLeave, onMouseEnter}: {
                     children: React.ReactNode,
-                    styleType?: string,
                     onClick?: () => void,
-                    onMouseEnter?: (e: never) => void
-                } & React.HTMLAttributes<HTMLButtonElement>
+                    onMouseLeave?: () => void;
+                    styleType: string,
+                    style?: CSSProperties,
+                    onMouseEnter?: MouseEventHandler<HTMLButtonElement>
+                }
 )=> {
     return (
         <>
-            <button onMouseEnter={onMouseEnter} className={`${styleType}`} onClick={onClick}>{children}</button>
+            <button className={styleType} style={style} onMouseLeave={onMouseLeave} onMouseEnter={onMouseEnter} onClick={onClick}>{children}</button>
         </>
     );
 }

@@ -13,8 +13,11 @@ import {Item} from "../core/logic/items/item.ts";
 import {Actor} from "../core/logic/actors/actor.ts";
 import {Skill} from "../core/logic/skills/skill.ts";
 import {actions, useKeyboard} from "./input/input.ts";
+import uiSlice, {toggleInventory, UIState} from "../utils/stateManagement/uiSlice.ts";
+import {useMyDispatch, useMySelector} from "../utils/stateManagement/store.ts";
+import {RootState} from "@reduxjs/toolkit/query";
 
-export type ItemType = Item | Actor | Skill | null;
+export type ItemType<T extends Item | Actor | Skill> = T;
 
 let canvas: HTMLCanvasElement | null;
 
@@ -22,15 +25,23 @@ let canvas: HTMLCanvasElement | null;
 export const GameUI: React.FC = () => {
 
     const [gameState, setGameState] = useState<'mainMenu' | 'paused' | 'inGame'>('mainMenu');
-    const [showInventory, setShowInventory] = useState(false);
-    const [infoItem, setInfoItem] = useState<ItemType>(null);
-    const [infoPosition, setInfoPosition] = useState<{ left: number; top: number } | null>(null);
+    // const [showInventory, setShowInventory] = useState(false);
+    // const [infoEntity, setInfoEntity] = useState<ItemType<Item | Actor | Skill> | null>(null);
+    // const [infoPosition, setInfoPosition] = useState<{ left: number; top: number } | null>(null);
     const [health, setHealth] = useState(player!.HP);
     const [maxHealth, setMaxHealth] = useState(player!.HT);
     const [targetHealth, setTargetHealth] = useState(player!.target ? player!.target.HP : 0);
     const [targetMaxHealth, setTargetMaxHealth] = useState(player!.target ? player!.target.HT : 100);
 
+
+    const infoEntity = useMySelector((state: { ui: UIState}) => state.ui.infoEntity);
+    const infoPosition = useMySelector((state: { ui: UIState}) => state.ui.infoPosition);
+    const isInventoryOpen = useMySelector((state: { ui: UIState}) => state.ui.isInventoryOpen);
+
+    const dispatch = useMyDispatch();
+
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    // const infoWindowRef = useRef<HTMLDivElement | null>(null);
     const keyboardListeners = useKeyboard(canvasRef);
 
     // Инициализация canvas после монтирования компонента
@@ -39,20 +50,34 @@ export const GameUI: React.FC = () => {
         if (canvas) {
             canvas.height = window.innerHeight;
             canvas.width = window.innerWidth;
-
         }
-        document.getElementById('init')!.addEventListener('click', (event) => {
-            (event.target as HTMLCanvasElement).remove();
-            document.getElementById("root")!.style.display = "flex";
-            canvas!.style.display = "block";
-            // playMusic("main");
-        });
 
-        init();
+
+        const initButton = document.getElementById('init');
+        if (initButton) {
+            initButton!.addEventListener('click', (event) => {
+                (event.target as HTMLCanvasElement).remove();
+                document.getElementById("root")!.style.display = "flex";
+                canvas!.style.display = "block";
+                // playMusic("main");
+            });
+
+            init();
+        }
 
         actions.inventory = () => {
-            setShowInventory(!z);
+            dispatch(toggleInventory());
         }
+
+        const interval = setInterval(() => {
+            setHealth(player!.HP);
+            setMaxHealth(player!.HT);
+            if (player!.target) {
+                setTargetHealth(player!.target.HP);
+                setTargetMaxHealth(player!.target.HT);
+            }
+        }, 100);
+        return () => clearInterval(interval);
 
         // Пример: динамический импорт модулей, не связанных с React,
         // который выполняется уже после того, как DOM загружен:
@@ -72,33 +97,18 @@ export const GameUI: React.FC = () => {
         canvas!.focus();
     }
 
+    // const handleShowInfo = useCallback((item: ItemType<Item | Actor | Skill>, rect: DOMRect) => {
+    //     setInfoPosition({
+    //         left: rect.left,
+    //         top: rect.top,
+    //     });
+    //     setInfoItem(item);
+    // }, []);
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setHealth(player!.HP);
-            setMaxHealth(player!.HT);
-            if (player!.target) {
-                setTargetHealth(player!.target.HP);
-                setTargetMaxHealth(player!.target.HT);
-            }
-        }, 100);
-        return () => clearInterval(interval);
-    }, []);
-
-    const handleShowInfo = useCallback((item: ItemType, rect: DOMRect) => {
-        const infoWidth = 200; // можно рассчитать динамически
-        const infoHeight = 100;
-        setInfoPosition({
-            left: rect.left - infoWidth,
-            top: rect.top - infoHeight / 2,
-        });
-        setInfoItem(item);
-    }, []);
-
-    const handleHideInfo = useCallback(() => {
-        setInfoItem(null);
-        setInfoPosition(null);
-    }, []);
+    // const handleHideInfo = useCallback(() => {
+    //     setInfoItem(null);
+    //     setInfoPosition(null);
+    // }, []);
 
     const handleNewGame = () => {
         setGameState('inGame');
@@ -141,19 +151,15 @@ export const GameUI: React.FC = () => {
                             {player!.target && (
                                 <TargetWidget value={targetHealth} max={targetMaxHealth}/>
                             )}
-                            <Panel onShowInfo={handleShowInfo} onHideInfo={handleHideInfo}/>
+                            <Panel />
                             <Chat/>
                         </div>
-                        {showInventory && (
-                            <Inventory onShowInfo={handleShowInfo} onHideInfo={handleHideInfo}/>
+                        {isInventoryOpen && (
+                            <Inventory />
                         )}
-                        {infoItem && infoPosition && (
-                            <InfoWindow
-                                item={infoItem}
-                                position={infoPosition}
-                                onClose={handleHideInfo}
-                            />
-                        )}
+                        {
+                            infoEntity && infoPosition && (<InfoWindow entity={infoEntity} position={infoPosition}/>)
+                        }
                     </div>
                 )}
             </div>

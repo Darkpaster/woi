@@ -1,41 +1,54 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {Item} from "../../core/logic/items/item.ts";
+import {Actor} from "../../core/logic/actors/actor.ts";
+import {Skill} from "../../core/logic/skills/skill.ts";
+import {WritableDraft} from "immer";
 
-interface UIState {
-    isPaused: boolean;
+export interface UIState {
     isInventoryOpen: boolean;
-    isMainMenuOpen: boolean;
+    gameState: 'mainMenu' | 'paused' | 'inGame';
+    infoEntity: WritableDraft<Item> | WritableDraft<Actor> | WritableDraft<Skill> | null,
+    infoPosition: { left: number; top: number } | null;
+    // playerHealth: number,
+    // playerTotalHealth: number,
+    // targetHealth: number,
+    // targetTotalHealth: number,
+    canvasRef: HTMLCanvasElement | null;
 }
 
 const initialState: UIState = {
-    isPaused: false,
     isInventoryOpen: false,
-    isMainMenuOpen: true,
+    gameState: "mainMenu",
+    infoEntity: null,
+    infoPosition: null,
+    // playerHealth: player!.HP,
+    // playerTotalHealth: player!.HT,
+    // targetHealth: player!.target.HP,
+    // targetTotalHealth: player!.target.HT,
+    canvasRef: null,
 };
 
 const uiSlice = createSlice({
     name: "ui",
     initialState,
     reducers: {
-        togglePause(state) {
-            state.isPaused = !state.isPaused;
-        },
-        openInventory(state) {
-            state.isInventoryOpen = true;
-        },
-        closeInventory(state) {
-            state.isInventoryOpen = false;
+        setGameState(state, action: PayloadAction<'mainMenu' | 'paused' | 'inGame'>) {
+            state.gameState = action.payload;
         },
         toggleInventory(state) {
             state.isInventoryOpen = !state.isInventoryOpen;
         },
-        openMainMenu(state) {
-            state.isMainMenuOpen = true;
+        setInfoEntity(state, action: PayloadAction<WritableDraft<Item> | WritableDraft<Actor> | WritableDraft<Skill> | null>) {
+            state.infoEntity = action.payload;
         },
-        closeMainMenu(state) {
-            state.isMainMenuOpen = false;
+        setInfoPosition(state, action: PayloadAction<{ left: number; top: number } | null>) {
+            state.infoPosition = action.payload;
+        },
+        setCanvasRef(state, action: PayloadAction<WritableDraft<HTMLCanvasElement> | null>) {
+            state.canvasRef = action.payload;
         },
     },
 });
 
-export const { togglePause, openInventory, closeInventory, toggleInventory, openMainMenu, closeMainMenu } = uiSlice.actions;
+export const { setGameState, toggleInventory, setInfoPosition, setCanvasRef, setInfoEntity } = uiSlice.actions;
 export default uiSlice.reducer;

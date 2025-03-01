@@ -84,6 +84,9 @@ export const actions = {
     b4: () => {
 
     },
+    b5: () => {
+
+    },
 }
 
 function clickOffsetX() {
@@ -126,6 +129,18 @@ export function useKeyboard(canvasRef: RefObject<HTMLCanvasElement | null>) {
                     break;
                 case bindings.b1:
                     actions.b1();
+                    break;
+                case bindings.b2:
+                    actions.b2();
+                    break;
+                case bindings.b3:
+                    actions.b3();
+                    break;
+                case bindings.b4:
+                    actions.b4();
+                    break;
+                case bindings.b5:
+                    actions.b5();
                     break;
             }
         };

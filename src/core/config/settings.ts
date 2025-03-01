@@ -15,7 +15,7 @@ export const settings: {
     delay(): number;
 } = {
     fullScreen: false,
-    language: "en",
+    language: "ru",
     difficulty: "normal",
     graphics: "high",
     soundVolume: 100,

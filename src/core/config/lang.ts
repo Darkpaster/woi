@@ -7,6 +7,7 @@ import german from "./langs/german.ts";
 import italian from "./langs/Italian.ts";
 import ukrainian from "./langs/ukrainian.ts";
 import armenian from "./langs/armenian.ts";
+import {settings} from "./settings.ts";
 
 type textList = {
     ok: string;
@@ -101,4 +102,9 @@ export const lang: LangType = {
     hy: {
         ...armenian
     },
+}
+
+
+export function txtList(): textList {
+    return lang[settings.language];
 }

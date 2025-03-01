@@ -4,12 +4,14 @@ import React, {useEffect, useState} from "react";
 import {Item} from "../../core/logic/items/item.ts";
 import {ItemType} from "../GameUI.tsx";
 import {player} from "../../core/main.ts";
+import {setInfoEntity, setInfoPosition} from "../../utils/stateManagement/uiSlice.ts";
+import {useMyDispatch} from "../../utils/stateManagement/store.ts";
 
 
-interface InventoryProps {
-    onShowInfo: (item: ItemType, rect: DOMRect) => void;
-    onHideInfo: () => void;
-}
+// interface InventoryProps {
+//     onShowInfo: (item: ItemType<Item>, rect: DOMRect) => void;
+//     onHideInfo: () => void;
+// }
 
 // Вспомогательная функция для определения цвета редкости
 const getRarityColor = (rarity: string): string => {
@@ -18,17 +20,20 @@ const getRarityColor = (rarity: string): string => {
             return 'grey';
         case 'rare':
             return 'blue';
+        case 'uncommon':
+            return 'green';
         default:
             return 'white';
     }
 };
 
-export const Inventory: React.FC<InventoryProps> = ({ onShowInfo, onHideInfo }) => {
+export const Inventory = () => {
     const [inventory, setInventory] = useState(player!.inventory);
+
+    const dispatch = useMyDispatch();
 
     useEffect(() => {
         const interval = setInterval(() => {
-            // Обновляем копию инвентаря из глобального объекта
             setInventory([...player!.inventory]);
         }, 100);
         return () => clearInterval(interval);
@@ -39,7 +44,7 @@ export const Inventory: React.FC<InventoryProps> = ({ onShowInfo, onHideInfo }) 
             {inventory.map((item : Item, index) => (
                 <Button
                     key={index}
-                    className="cell ui-div"
+                    styleType="ui-div cell"
                     onClick={() => {
                         if (item) {
                             item.onUse();
@@ -49,12 +54,16 @@ export const Inventory: React.FC<InventoryProps> = ({ onShowInfo, onHideInfo }) 
                     onMouseEnter={(e) => {
                         if (item) {
                             const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-                            onShowInfo(item, rect);
+                            dispatch(setInfoPosition({left: rect.x, top: rect.y}));
+                            dispatch(setInfoEntity(item));
                         }
                     }}
-                    onMouseLeave={onHideInfo}
+                    onMouseLeave={() => {
+                        dispatch(setInfoEntity(null));
+                        dispatch(setInfoPosition(null));
+                    }}
                     style={{
-                        backgroundImage: item ? `url(${item.image})` : undefined,
+                        backgroundImage: item ? `url(${item.sprite})` : undefined,
                         borderColor: item ? getRarityColor(item.rarity) : 'black',
                         cursor: item ? 'pointer' : 'default',
                     }}

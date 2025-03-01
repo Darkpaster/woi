@@ -48,10 +48,10 @@ export default {
 
     madBoar: "Mad Boar",
     madBoarDescription: "A furious boar that charges at anything in its path.",
-    unknownPotion: "Unknown Potion",
-    unknownPotionDescription: "The effects are mysterious, proceed with caution.",
+    unknownPotion: "Potion of healing",
+    unknownPotionDescription: "On use it heals for {minPower} - {maxPower} points.",
     slash: "Slash",
-    slashDescription: "A powerful strike dealing heavy damage.",
+    slashDescription: "Hits enemy for {minDamage} - {maxDamage} damage.",
 
     cooldownMessage: "Ability is on cooldown.",
     tooFarMessage: "Target is too far.",
