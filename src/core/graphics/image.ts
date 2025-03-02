@@ -1,6 +1,6 @@
 import { settings } from "../config/settings.ts";
 import { scaledTileSize } from "../../utils/math.ts";
-import { Delay } from "../../utils/time.ts";
+import {Delay, TimeDelay} from "../../utils/time.ts";
 import {graphics} from "../main.ts";
 import {AnimationList} from "./static/animatedSprites.ts";
 
@@ -21,6 +21,7 @@ export class AnimatedImageManager {
         for (const key in this.list) {
             this.list[key].manager = this;
         }
+
     }
 
     render(sheet: string, ctx: CanvasRenderingContext2D, x: number, y: number, direction: string): void {
@@ -59,20 +60,33 @@ export class AnimatedImage {
     name: string;
     framesNumber: number;
     currentFrame: number;
-    framesRate: Delay;
+    framesRate: TimeDelay;
     disposable: boolean;
+    imageSize: number;
+    widthSize: number = 0;
+    heightSize: number = 0;
     endOfAnimation: boolean;
     private _manager: AnimatedImageManager | undefined;
 
-    constructor(name: string, src: string, framesNumber: number, disposable: boolean = false,
-        framesRate: number = 20) {
+    constructor(name: string, src: string, framesNumber: number = 3, framesRate: number = 5,
+                imageSize: number = settings.tileSize, disposable: boolean = false) {
         this.image.src = src;
         this.name = name;
         this.framesNumber = framesNumber;
         this.currentFrame = 0;
-        this.framesRate = new Delay(Math.floor(framesRate * settings.delay()));
+        this.framesRate = new TimeDelay(Math.floor(framesRate * settings.delay()));
         this.disposable = disposable;
         this.endOfAnimation = false;
+        this.imageSize = imageSize;
+        this.image.onload = () => {
+            this.widthSize = Math.floor(((this.image.width / framesNumber) / (this.image.height) * imageSize) * settings.defaultTileScale);
+            this.heightSize = Math.floor(((this.image.height) / (this.image.width / framesNumber) * imageSize) * settings.defaultTileScale);
+        }
+    }
+
+    public update() {
+        this.widthSize = Math.floor(((this.image.width / this.framesNumber) / (this.image.height) * this.imageSize) * settings.defaultTileScale);
+        this.heightSize = Math.floor(((this.image.height) / (this.image.width / this.framesNumber) * this.imageSize) * settings.defaultTileScale);
     }
 
     render(ctx: CanvasRenderingContext2D, isFlipped: boolean, x: number, y: number, direction: string): boolean {
@@ -95,21 +109,24 @@ export class AnimatedImage {
         // const renderXOffset = spriteWidth * this.scale / 2;
         // const renderYOffset = spriteHeight * this.scale / 2;
         const flipX = direction === "left" || isFlipped && direction !== "right";
+
         if (flipX) {
             ctx.save();
             ctx.scale(-1, 1);
             ctx.drawImage(this.image, cutX, cutY, spriteWidth,
                 spriteHeight, -x - scaledTileSize(), y,
-                spriteWidth * settings.defaultTileScale, spriteHeight * settings.defaultTileScale);
+                this.widthSize, this.heightSize);
             ctx.restore();
         } else {
             ctx.drawImage(this.image, cutX, cutY, spriteWidth,
-                spriteHeight, x, y, spriteWidth * settings.defaultTileScale, spriteHeight * settings.defaultTileScale);
+                spriteHeight, x, y, this.widthSize,
+                this.heightSize);
         }
 
         if (this.framesRate.timeIsUp()) {
             this.currentFrame++;
             if (this.currentFrame >= this.framesNumber) {
+                this.update();
                 this.currentFrame = 0;
                 if (this.disposable) {
                     this.endOfAnimation = true;
@@ -180,7 +197,7 @@ export class StaticImage extends Image {
 
 export class tileImage {
 
-    private _tile: ImageBitmap | null = null;  // Initializing with null since it will be set later
+    private _tile: ImageBitmap | null = null;
 
     constructor(src: string, tileX: number, tileY: number, _tileSize = settings.tileSize) {
         const image: HTMLImageElement = new Image();

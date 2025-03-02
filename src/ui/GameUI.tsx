@@ -1,7 +1,6 @@
 import React, {useState, useEffect, useCallback, useRef} from 'react';
 import {pauseMusic, playMusic, resumeMusic} from '../core/audio/music.ts';
 import {MainMenu} from "./layouts/MainMenu.tsx";
-import {PauseMenu} from "./layouts/PauseMenu.tsx";
 import {SelfWidget} from "./components/SelfWidget.tsx";
 import {TargetWidget} from "./components/TargetWidget.tsx";
 import {Panel} from "./components/Panel.tsx";
@@ -15,7 +14,7 @@ import {Skill} from "../core/logic/skills/skill.ts";
 import {actions, useKeyboard} from "./input/input.ts";
 import uiSlice, {toggleInventory, UIState} from "../utils/stateManagement/uiSlice.ts";
 import {useMyDispatch, useMySelector} from "../utils/stateManagement/store.ts";
-import {RootState} from "@reduxjs/toolkit/query";
+import Auth from "./layouts/Auth.tsx";
 
 export type ItemType<T extends Item | Actor | Skill> = T;
 
@@ -23,16 +22,11 @@ let canvas: HTMLCanvasElement | null;
 
 
 export const GameUI: React.FC = () => {
-
-    const [gameState, setGameState] = useState<'mainMenu' | 'paused' | 'inGame'>('mainMenu');
-    // const [showInventory, setShowInventory] = useState(false);
-    // const [infoEntity, setInfoEntity] = useState<ItemType<Item | Actor | Skill> | null>(null);
-    // const [infoPosition, setInfoPosition] = useState<{ left: number; top: number } | null>(null);
+    const [gameState, setGameState] = useState<'auth' | 'mainMenu' | 'paused' | 'inGame'>('mainMenu');
     const [health, setHealth] = useState(player!.HP);
     const [maxHealth, setMaxHealth] = useState(player!.HT);
     const [targetHealth, setTargetHealth] = useState(player!.target ? player!.target.HP : 0);
     const [targetMaxHealth, setTargetMaxHealth] = useState(player!.target ? player!.target.HT : 100);
-
 
     const infoEntity = useMySelector((state: { ui: UIState}) => state.ui.infoEntity);
     const infoPosition = useMySelector((state: { ui: UIState}) => state.ui.infoPosition);
@@ -41,7 +35,6 @@ export const GameUI: React.FC = () => {
     const dispatch = useMyDispatch();
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    // const infoWindowRef = useRef<HTMLDivElement | null>(null);
     const keyboardListeners = useKeyboard(canvasRef);
 
     // Инициализация canvas после монтирования компонента
@@ -51,7 +44,6 @@ export const GameUI: React.FC = () => {
             canvas.height = window.innerHeight;
             canvas.width = window.innerWidth;
         }
-
 
         const initButton = document.getElementById('init');
         if (initButton) {
@@ -79,12 +71,6 @@ export const GameUI: React.FC = () => {
         }, 100);
         return () => clearInterval(interval);
 
-        // Пример: динамический импорт модулей, не связанных с React,
-        // который выполняется уже после того, как DOM загружен:
-        // import('../core/logic/someModule').then(mod => {
-        //     // Используйте модуль по необходимости
-        //     mod.initialize();
-        // });
     }, []);
 
     function hideCanvas(): void {
@@ -96,19 +82,6 @@ export const GameUI: React.FC = () => {
         canvas!.setAttribute('tabindex', '0');
         canvas!.focus();
     }
-
-    // const handleShowInfo = useCallback((item: ItemType<Item | Actor | Skill>, rect: DOMRect) => {
-    //     setInfoPosition({
-    //         left: rect.left,
-    //         top: rect.top,
-    //     });
-    //     setInfoItem(item);
-    // }, []);
-
-    // const handleHideInfo = useCallback(() => {
-    //     setInfoItem(null);
-    //     setInfoPosition(null);
-    // }, []);
 
     const handleNewGame = () => {
         setGameState('inGame');
@@ -133,16 +106,17 @@ export const GameUI: React.FC = () => {
 
     return (
         <>
+            <header id="title" style={{display: gameState === 'inGame' ? 'none' : 'block'}}>
+                The Aftermath Trail
+            </header>
             <canvas id="canvas" ref={canvasRef}></canvas>
             <div id="welcome-div">
-                <header id="title" style={{display: gameState === 'inGame' ? 'none' : 'block'}}>
-                    The Aftermath Trail
-                </header>
-                {gameState === 'mainMenu' && (
-                    <MainMenu onNewGame={handleNewGame}/>
+                <span id="version" style={{display: gameState === 'inGame' ? 'none' : 'block', bottom: 0, right: 0, position: "absolute"}}>v1.0.0</span>
+                {gameState === 'auth' && (
+                    <Auth onLogin={() => setGameState("mainMenu")} />
                 )}
-                {gameState === 'paused' && (
-                    <PauseMenu onResume={handleResume} onMainMenu={handleMainMenu}/>
+                {(gameState === 'mainMenu' || gameState === "paused") && (
+                    <MainMenu onStartGame={handleNewGame}/>
                 )}
                 {gameState === 'inGame' && (
                     <div id="interface-layer">
@@ -165,8 +139,4 @@ export const GameUI: React.FC = () => {
             </div>
         </>
     );
-};
-
-export const clickAt = (button: string): void => {
-    document.getElementById(button)?.click();
 };

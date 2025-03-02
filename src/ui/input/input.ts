@@ -2,7 +2,6 @@ import {useEffect, useState, useRef, RefObject} from "react";
 import {Mob} from "../../core/logic/actors/mobs/mob.js";
 import {camera, player} from "../../core/main.ts";
 import {scaledTileSize} from "../../utils/math.js";
-import {clickAt} from "../GameUI.tsx";
 
 export const bindings = {
     up: "w",
@@ -154,7 +153,7 @@ export function useKeyboard(canvasRef: RefObject<HTMLCanvasElement | null>) {
 
             switch (event.key) {
                 case bindings.pause:
-                    clickAt("resume");
+                    // clickAt("resume");
                     break;
                 case bindings.inventory:
                     actions.inventory();

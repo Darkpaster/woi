@@ -1,13 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
 import uiReducer from "./uiSlice";
+
+import AuthSlice from "./authSlice"
+
 import {useDispatch, useSelector, useStore} from "react-redux";
 
 export const store = configureStore({
     reducer: {
         ui: uiReducer,
-        // player: playerReducer,
-        // chat: chatReducer,
-        // game: gameReducer,
+        auth: AuthSlice,
     },
 });
 

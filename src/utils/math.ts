@@ -3,10 +3,6 @@ import { Actor } from "../core/logic/actors/actor.ts";
 import {Player} from "../core/logic/actors/player.ts";
 import {Mob} from "../core/logic/actors/mobs/mob.ts";
 
-export function randomString(...strings: string[]): string {
-    return strings[Math.floor(Math.random() * strings.length)];
-}
-
 export function randomInt(min: number, max: number = 0): number {
     return max > 0 ? Math.round(Math.random() * (max - min)) + min :
     Math.round(Math.random() * min);

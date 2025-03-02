@@ -1,10 +1,10 @@
-import { getWallTile, tiles } from "../../../graphics/tileSprites.ts";
-import { calcDistance, calcDistanceX, calcDistanceY, randomInt, scaledTileSize } from "../../../../utils/math.ts";
-import { TimeDelay } from "../../../../utils/time.ts";
-import { player } from "../../../main.ts";
-import { getCurrentLocation } from "../../world/locationList.ts";
+import {getWallTile, tiles} from "../../../graphics/tileSprites.ts";
+import {calcDistance, calcDistanceX, calcDistanceY, randomInt, scaledTileSize} from "../../../../utils/math.ts";
+import {TimeDelay} from "../../../../utils/time.ts";
+import {player} from "../../../main.ts";
+import {getCurrentLocation} from "../../world/locationList.ts";
 
-import { Actor } from "../actor.ts";
+import {Actor} from "../actor.ts";
 
 export class Mob extends Actor {
     static mobList: Mob[] = [];
@@ -25,7 +25,6 @@ export class Mob extends Actor {
         this.timer = new TimeDelay(1000);
         this.idle = true;
         this._agroRadius = 5;
-
         this.spawn();
     }
 
@@ -78,17 +77,17 @@ export class Mob extends Actor {
         }
 
         if (cnt) {
-            return { x: this.offsetX, y: this.offsetY }
+            return {x: this.offsetX, y: this.offsetY}
         }
 
-        const diff = { x: this.x, y: this.y };
+        const diff = {x: this.x, y: this.y};
 
         this.setState();
 
         // Assuming events is a method that exists in the context.
         // If it's not defined yet, the type should be adjusted accordingly.
         // The following line may need to be updated based on the actual implementation.
-        //this.events();
+        this.events();
 
         const tempDiffX = diff.x - this.x;
         const tempDiffY = diff.y - this.y;
@@ -100,7 +99,7 @@ export class Mob extends Actor {
         }
 
         if (tempDiffY < 0) {
-            this.nextPosY = this.posY+ 1;
+            this.nextPosY = this.posY + 1;
         } else {
             this.nextPosY = this.posY;
         }
@@ -115,6 +114,12 @@ export class Mob extends Actor {
         if (collision.y) {
             this.y = diff.y;
             this.nextPosY = this.posY;
+        }
+
+        if (tempDiffX === 0 && tempDiffY === 0) {
+            this.renderState = "idle";
+        } else {
+            this.renderState = "walk";
         }
 
         this.offsetX = diff.x = diff.x - this.x;
@@ -166,10 +171,11 @@ export class Mob extends Actor {
         }
     }
 
-    calcPath(): void { }
+    calcPath(): void {
+    }
 
     getDirectPathTiles(): Array<any> {
-        const ray = { x: player.x, y: player.y };
+        const ray = {x: player.x, y: player.y};
         const tilesNum = Math.floor(calcDistance(player, this) / scaledTileSize());
         const pathX = calcDistanceX(player, this);
         const pathY = calcDistanceY(player, this);
@@ -240,16 +246,16 @@ export class Mob extends Actor {
     //    return success;
     // }
 
-dealDamage(damage: number, source: any = null): void {
-    super.dealDamage(damage, source);
-    if(this.HP <= 0){         
-          this.die();
-    player.target = null;
-}
-}
+    dealDamage(damage: number, source: any = null): void {
+        super.dealDamage(damage, source);
+        if (this.HP <= 0) {
+            this.die();
+            player!.target = null;
+        }
+    }
 
 
-die(): void {
-    Mob.mobList.splice(Mob.mobList.indexOf(this), 1);
-}
+    die(): void {
+        Mob.mobList.splice(Mob.mobList.indexOf(this), 1);
+    }
 }

@@ -15,7 +15,7 @@ const ModalWindow: React.FC<WindowProps> = ({ children = "Undefined", buttons = 
                 <b className='windowContent'>{children}</b>
             </div>
             <div className='dialogButtonDiv'>
-                {buttons.map((content) => <Button key={content} onClick={() => setVisible(false)}>{content}</Button>)}
+                {buttons.map((content) => <Button key={content} styleType={"ui-div"} onClick={() => setVisible(false)}>{content}</Button>)}
             </div>
         </dialog>,
         (document.getElementById("root") as Element)

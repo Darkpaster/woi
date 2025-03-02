@@ -1,20 +1,9 @@
-// Компонент панели навыков
 import Button from "./Button.tsx";
 import React, {RefObject, useEffect, useRef, useState} from "react";
-import {Item} from "../../core/logic/items/item.ts";
-import {Skill} from "../../core/logic/skills/skill.ts";
-import {Actor} from "../../core/logic/actors/actor.ts";
 import {player} from "../../core/main.ts";
 import {actions} from "../input/input.ts";
 import {setInfoEntity, setInfoPosition} from "../../utils/stateManagement/uiSlice.ts";
 import {useMyDispatch, useMySelector} from "../../utils/stateManagement/store.ts";
-import {WritableDraft} from "immer";
-
-
-// interface PanelProps {
-//     onShowInfo: <T extends Item|Skill|Actor>(skill: T, rect: DOMRect) => void;
-//     onHideInfo: () => void;
-// }
 
 export const Panel = () => {
     const [spellBook, setSpellBook] = useState(player!.spellBook);
@@ -40,7 +29,7 @@ export const Panel = () => {
                 }
                 console.log(`Successful: ${actions["b"+(i+1)]}`);
             } else {
-                console.warn(`No such action: b${i+1}`);
+                console.log(`No such action: b${i+1}`);
             }
         }
 

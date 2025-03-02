@@ -44,11 +44,7 @@ $commonColor: grey;
 //  border: none;
 //  padding: 10px 20px;
 //  cursor: pointer;
-//  @include transition(all, 0.3s);
-//
-//  &:hover {
-//    background-color: darken($mainActiveInterfaceColor, 10%);
-//  }
+
 //}
 
 :root {
@@ -133,7 +129,7 @@ html {
   background-color: $mainInterfaceBackgroundColor;
   color: $mainInterfaceFontColor;
   border: 1px solid $mainInterfaceFontColor;
-  //border-radius: 10px;
+  border-radius: 10px;
   z-index: 10;
 }
 
@@ -142,11 +138,17 @@ html {
   height: 50px;
   font-size: large;
   cursor: pointer;
+
+    @include transition(all, 0.3s);
+
+    &:hover {
+      background-color: darken($mainActiveInterfaceColor, 10%);
+    }
 }
-.menu-button:hover {
-  background-color: $mainActiveInterfaceColor;
-  transition-duration: 0.3s;
-}
+//.menu-button:hover {
+//  background-color: $mainActiveInterfaceColor;
+//  transition-duration: 0.3s;
+//}
 
 .menu-button:active {
   background-color: $mainInterfaceFontColor;
@@ -162,6 +164,20 @@ html {
   background-size: cover;
   background-position: center;
 }
+
+.auth-div {
+  width: 20vw;
+  height: 100%;
+}
+
+.auth-div * {
+  padding-top: 1vh;
+}
+.auth-div button {
+  padding: 10px;
+  margin-top: 1vh;
+}
+
 
 .menu-div {
   width: 20vw;
@@ -229,23 +245,24 @@ html {
   position: fixed;
 }
 
-
-
 #title {
   font-size: 70px;
   z-index: 7;
   cursor: default;
   user-select: none;
+  color: #181840;
+  top: 10vh;
+  position: absolute;
   animation: titleAnimation 2s infinite alternate;
 }
 
 
 @keyframes titleAnimation {
   from {
-    text-shadow: 0 0 10px #30b300;
+    text-shadow: 0 0 10px #000000;
   }
   to {
-    text-shadow: 0 0 30px #2d00b3;
+    text-shadow: 0 0 30px gold;
   }
 }
 
@@ -260,6 +277,7 @@ html {
   width: 15vw;
   height: 3vh;
   position: absolute;
+  border-radius: 10px;
   margin: 30px;
   left: 0;
   top: 0;

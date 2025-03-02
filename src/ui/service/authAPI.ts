@@ -3,14 +3,21 @@ import axios from 'axios';
 
 // Базовая настройка для axios
 const axiosInstance = axios.create({
-    baseURL: 'https://api.example.com',  // Замените на ваш base URL
+    baseURL: 'https://localhost',  // Замените на ваш base URL
     timeout: 10000,                      // Таймаут запросов
 });
 
-const useApi = (url: string, method: string = 'GET', body = null, deps = []) => {
-    const [data, setData] = useState(null);    // Данные ответа от API
-    const [error, setError] = useState("");  // Ошибка при запросе
-    const [loading, setLoading] = useState(true); // Статус загрузки
+type apiProps = {
+    url?: string,
+    method?: "GET" | "POST" | "FETCH" | "DELETE" | "PUT",
+    body?: string|null,
+    deps?: never[]
+}
+
+const useAuthAPI = ({url, method = 'GET', body = null, deps = []}: apiProps) => {
+    const [data, setData] = useState<string|null>(null);    // Данные ответа от API
+    const [error, setError] = useState<string|unknown|null>("");  // Ошибка при запросе
+    const [loading, setLoading] = useState<boolean>(true); // Статус загрузки
 
     useEffect(() => {
         const fetchData = async () => {
@@ -25,7 +32,7 @@ const useApi = (url: string, method: string = 'GET', body = null, deps = []) => 
 
                 setData(response.data);  // Устанавливаем данные ответа
             } catch (err) {
-                setError(typeof err === 'string' ? err : "");
+                setError(err);
             } finally {
                 setLoading(false);  // Завершаем загрузку
             }
@@ -36,3 +43,5 @@ const useApi = (url: string, method: string = 'GET', body = null, deps = []) => 
 
     return { data, error, loading };
 };
+
+export default useAuthAPI;

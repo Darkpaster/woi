@@ -3,7 +3,6 @@ import { randomInt } from "../../../../../utils/math.ts";
 import { player } from "../../../../main.ts";
 import { Potion } from "./potion.ts";
 import {lang, txtList} from "../../../../config/lang.ts";
-import {settings} from "../../../../config/settings.ts";
 
 export class smallPotionOfHealing extends Potion {
 

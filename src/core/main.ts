@@ -4,14 +4,12 @@ import {Player} from "./logic/actors/player.ts";
 import {Camera} from "./logic/camera.ts";
 import {setCurrentLocation} from "./logic/world/locationList.ts";
 import {Slash} from "./logic/skills/slash.ts";
-import {madBoar} from "./logic/actors/mobs/enemies/madBoar.ts";
 import {Graphics} from "./graphics/graphics.ts";
-// import { initComponents } from "./ui/components.js";
+import {Rabbit} from "./logic/actors/mobs/neutral/rabbit.ts";
 
 export let player: Player | null = null,
     camera: Camera | null = null,
     graphics: Graphics;
-
 
 player = new Player();
 
@@ -21,7 +19,7 @@ export function init(): void {
     camera = new Camera({x: player.x, y: player.y});
     player.learn(new Slash(player));
     for (let index: number = 0; index < 50; index++) {
-        new madBoar();
+        new Rabbit();
     }
 }
 
