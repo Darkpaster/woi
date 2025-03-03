@@ -1,11 +1,10 @@
-import {werewolfManager} from "../../graphics/static/managers.ts";
+import {setKnightManager, setWerewolfManager} from "../../graphics/static/managers.ts";
 import {calcDistance, scaledTileSize} from "../../../utils/math.ts";
 import {smallPotionOfHealing} from "../items/consumable/potions/smallPotionOfHealing.ts";
 import {Slash} from "../skills/slash.ts";
 import {Actor} from "./actor.ts";
 import {Mob} from "./mobs/mob.ts";
 import {txtList} from "../../config/lang.ts";
-import {logf} from "../../../utils/debug.ts";
 
 interface Equipment {
     head: any;
@@ -53,10 +52,10 @@ export class Player extends Actor {
         this.criticalChance = 0.3;
         this.moveSpeed = 4;
         this.AA = true;
-        this.image = werewolfManager;
+        this.image = setWerewolfManager();
         this.name = txtList().ok;
         this.inventory = new Array(200);
-        this.spellBook = [new Slash(this), null, null, null, null, null, null, null];
+        this.spellBook = [new Slash(this), null, null, null, null, null, null, null, null, null];
 
         for (let i = 0; i < this.inventory.length / 10; i++) {
             this.inventory[i] = new smallPotionOfHealing();
@@ -152,27 +151,10 @@ export class Player extends Actor {
     }
 
     updatePlayer(): { x: number, y: number } {
-        let cnt: boolean = false;
-
-        if (this.x % scaledTileSize() !== 0) {
-            this.x -= this.offsetX;
-            cnt = true;
-        }
-
-        if (this.y % scaledTileSize() !== 0) {
-            this.y -= this.offsetY;
-            cnt = true;
-        }
-
-        if (cnt) {
-            return {x: this.offsetX, y: this.offsetY};
-        }
 
         if (this.AA) {
             this.attackEvents();
         }
-
-        this.nextPosY = this.posY;
 
         const cameraDiff = {x: this.x, y: this.y};
 
@@ -188,18 +170,6 @@ export class Player extends Actor {
         } else if (this.pressRight) {
             this.direction = "right";
             this.x += this.moveSpeed;
-        }
-
-        if (cameraDiff.x - this.x < 0) {
-            this.nextPosX = this.posX + 1;
-        } else {
-            this.nextPosX = this.posX;
-        }
-
-        if (cameraDiff.y - this.y < 0) {
-            this.nextPosY = this.posY + 1;
-        } else {
-            this.nextPosY = this.posY;
         }
 
         const collision = this.collision(Mob.mobList);

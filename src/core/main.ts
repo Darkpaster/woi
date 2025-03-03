@@ -6,6 +6,9 @@ import {setCurrentLocation} from "./logic/world/locationList.ts";
 import {Slash} from "./logic/skills/slash.ts";
 import {Graphics} from "./graphics/graphics.ts";
 import {Rabbit} from "./logic/actors/mobs/neutral/rabbit.ts";
+import {scaledTileSize} from "../utils/math.ts";
+import {logf} from "../utils/debug.ts";
+import {Mob} from "./logic/actors/mobs/mob.ts";
 
 export let player: Player | null = null,
     camera: Camera | null = null,
@@ -18,9 +21,15 @@ export function init(): void {
     graphics = new Graphics(document.getElementById("canvas") as HTMLCanvasElement);
     camera = new Camera({x: player.x, y: player.y});
     player.learn(new Slash(player));
-    for (let index: number = 0; index < 50; index++) {
+
+    // const rabbit = new Rabbit();
+    // rabbit.x = player.x + scaledTileSize() * 5;
+    // rabbit.y = player.y;
+    for (let index: number = 0; index < 60; index++) {
         new Rabbit();
     }
+
+    logf(Mob.mobList.length)
 }
 
 let mainLoop: NodeJS.Timeout | null = null;

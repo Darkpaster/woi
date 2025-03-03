@@ -6,13 +6,15 @@ import { Player } from "../actors/player.ts";
 import { log } from "../logs.ts";
 import {EntityUIInfo} from "../actors/actor.ts";
 import {AnimatedEffect, AnimatedImageManager} from "../../graphics/image.ts";
+import {formatString} from "../../../utils/string.ts";
+import {txtList} from "../../config/lang.ts";
 
 export class Skill implements EntityUIInfo {
-    get sprite(): string | null | undefined {
+    get icon(): string | null | undefined {
         return this._sprite;
     }
 
-    set sprite(value: string | null) {
+    set icon(value: string | null) {
         this._sprite = value;
     }
     static damageType: { PHYSICAL: string; MAGICAL: string; ABSOLUTE: string } = {
@@ -65,7 +67,6 @@ export class Skill implements EntityUIInfo {
     private _rarity: "common" | "uncommon" | "rare" | "epic" | "legendary" | "godlike" = "common";
 
     private bind: any | null;
-    public icon: string;
     public animation: AnimatedEffect | null;
     public minDamage: number;
     public maxDamage: number;
@@ -108,12 +109,12 @@ export class Skill implements EntityUIInfo {
         
         if (this.range < calcDistance(this.owner, this.owner.target!) / scaledTileSize()) {
             this.stop();
-            log("system", `${this.owner.target!.name} is out of range!`, "red");
+            log("system", formatString(txtList().tooFarMessage, this.owner.target.name), "red");
             return false;
         }
         
         if (this.process.cooldown!.getLeftTime() > 0) {
-            log("system", `${this.name} is on cooldown!`, "red");
+            log("system", formatString(txtList().cooldownMessage, this.name), "red");
         } else {
             this.animation!.create(this.owner.target!.x, this.owner.target!.y);
         }
@@ -138,7 +139,7 @@ export class Skill implements EntityUIInfo {
          let realDamage: number = randomInt(this.minDamage, this.maxDamage);
          
          if (this.owner.target.defenseType === this.damageType) {
-             realDamage -= target.defense; 
+             realDamage -= this.owner.target.defense;
          }
          
          this.owner.target!.dealDamage(realDamage, this.owner);

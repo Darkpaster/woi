@@ -20,6 +20,8 @@ export type ItemType<T extends Item | Actor | Skill> = T;
 
 let canvas: HTMLCanvasElement | null;
 
+let mounted = false;
+
 
 export const GameUI: React.FC = () => {
     const [gameState, setGameState] = useState<'auth' | 'mainMenu' | 'paused' | 'inGame'>('mainMenu');
@@ -39,27 +41,32 @@ export const GameUI: React.FC = () => {
 
     // Инициализация canvas после монтирования компонента
     useEffect(() => {
-        canvas = canvasRef.current;
-        if (canvas) {
-            canvas.height = window.innerHeight;
-            canvas.width = window.innerWidth;
+
+        if (!mounted) { //обход strictMode
+            canvas = canvasRef.current;
+            if (canvas) {
+                canvas.height = window.innerHeight;
+                canvas.width = window.innerWidth;
+            }
+
+            const initButton = document.getElementById('init');
+            if (initButton) {
+                initButton!.addEventListener('click', (event) => {
+                    (event.target as HTMLCanvasElement).remove();
+                    document.getElementById("root")!.style.display = "flex";
+                    canvas!.style.display = "block";
+                    // playMusic("main");
+                });
+
+                init();
+            }
+
+            actions.inventory = () => {
+                dispatch(toggleInventory());
+            }
         }
 
-        const initButton = document.getElementById('init');
-        if (initButton) {
-            initButton!.addEventListener('click', (event) => {
-                (event.target as HTMLCanvasElement).remove();
-                document.getElementById("root")!.style.display = "flex";
-                canvas!.style.display = "block";
-                // playMusic("main");
-            });
-
-            init();
-        }
-
-        actions.inventory = () => {
-            dispatch(toggleInventory());
-        }
+        mounted = true;
 
         const interval = setInterval(() => {
             setHealth(player!.HP);

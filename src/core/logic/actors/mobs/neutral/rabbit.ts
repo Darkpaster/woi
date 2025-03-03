@@ -1,14 +1,13 @@
 import { Mob } from "../mob.ts";
-import {rabbitManager} from "../../../../graphics/static/managers.ts";
 import {txtList} from "../../../../config/lang.ts";
+import {setRabbitManager} from "../../../../graphics/static/managers.ts";
 
 export class Rabbit extends Mob {
     constructor() {
         super();
-        this.name = txtList().copper;
-        this.image = rabbitManager;
+        this.name = txtList().say;
+        this.image = setRabbitManager();
         this.minDamage = 0;
         this.maxDamage = 2;
-        // this.spellBook.push(new FrostWave(this));
     }
 }

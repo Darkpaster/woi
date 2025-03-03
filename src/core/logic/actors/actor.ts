@@ -4,28 +4,26 @@ import { getActorTile, getTile, getWallTile } from "../../graphics/tileSprites.t
 import { calcDistance, randomInt, scaledTileSize } from "../../../utils/math.ts";
 import { TimeDelay } from "../../../utils/time.ts";
 import { getCurrentLocation } from "../world/locationList.ts";
-// import { Player } from "./player.ts";
 import {Mob} from "./mobs/mob.ts";
 import {Skill} from "../skills/skill.ts";
-import {Slash} from "../skills/slash.ts";
 import {graphics} from "../../main.ts";
 import {settings} from "../../config/settings.ts";
 
 export interface EntityUIInfo {
 	name: string;
 	image?: AnimatedImageManager | null;
-	sprite?: string | null;
+	icon?: string | null;
 	description: string;
 	note?: string;
 	rarity: "common" | "uncommon" | "rare" | "epic" | "legendary" | "godlike";
 }
 
 export class Actor implements EntityUIInfo {
-	get sprite(): string | null | undefined {
+	get icon(): string | null | undefined {
 		return this._sprite;
 	}
 
-	set sprite(value: string | null ) {
+	set icon(value: string | null ) {
 		this._sprite = value;
 	}
 	get spellBook(): Array<Skill | null> {
@@ -190,20 +188,7 @@ export class Actor implements EntityUIInfo {
 	public set HP(value: number) {
 		this._HP = value;
 	}
-	public get nextPosY(): number | undefined {
-		return this._nextPosY;
-	}
 
-	public set nextPosY(value: number) {
-		this._nextPosY = value;
-	}
-	public get nextPosX(): number | undefined {
-		return this._nextPosX;
-	}
-
-	public set nextPosX(value: number) {
-		this._nextPosX = value;
-	}
 	public get offsetY(): number {
 		return this._offsetY;
 	}
@@ -264,12 +249,10 @@ export class Actor implements EntityUIInfo {
 	
 	private _x: number = getCurrentLocation().floor[0].length / 2 * scaledTileSize();
 	private _y: number = getCurrentLocation().floor.length / 2 * scaledTileSize();
-	private readonly _posX: number = Math.floor(this._x / scaledTileSize());
-	private readonly _posY: number = Math.floor(this._y / scaledTileSize());
+	// private readonly posX: number = Math.floor(this._x / scaledTileSize());
+	// private readonly posY: number = Math.floor(this._y / scaledTileSize());
 	private _offsetX: number = 0;
 	private _offsetY: number = 0;
-	private _nextPosX?: number;
-	private _nextPosY?: number;
 	private _HP: number = 100;
 	private _HT: number = 100;
 	private _HR: number = 1;
@@ -362,9 +345,9 @@ export class Actor implements EntityUIInfo {
 	collision(mobs: Array<Actor>): { x: boolean, y: boolean } {
 		const stop: { x: boolean, y: boolean } = { x: false, y: false };
 
-		if (!getWallTile(this._nextPosX!, this._nextPosY!)!.props.isWalkable) {
-			stop.x = stop.y = true;
-		}
+		// if (!getWallTile(this._nextPosX!, this._nextPosY!)!.props.isWalkable) {
+		// 	stop.x = stop.y = true;
+		// }
 
 		return stop
 	}

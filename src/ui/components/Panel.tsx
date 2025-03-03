@@ -3,7 +3,7 @@ import React, {RefObject, useEffect, useRef, useState} from "react";
 import {player} from "../../core/main.ts";
 import {actions} from "../input/input.ts";
 import {setInfoEntity, setInfoPosition} from "../../utils/stateManagement/uiSlice.ts";
-import {useMyDispatch, useMySelector} from "../../utils/stateManagement/store.ts";
+import {useMyDispatch} from "../../utils/stateManagement/store.ts";
 
 export const Panel = () => {
     const [spellBook, setSpellBook] = useState(player!.spellBook);
@@ -41,11 +41,13 @@ export const Panel = () => {
             {spellBook.map((skill, index) => {
                 let displayText = String(index + 1);
                 let fontSize = '15px';
+                let textAlign = "end";
                 if (skill) {
                     const left = skill.process.cooldown!.getLeftTime();
                     if (left > 0) {
                         displayText = (left / 1000).toFixed(1);
                         fontSize = '20px';
+                        textAlign = "center";
                     }
                 }
                 return (
@@ -69,9 +71,10 @@ export const Panel = () => {
                             }
                         }}
                         style={{
-                            backgroundImage: skill ? `url(${skill.sprite})` : undefined,
+                            backgroundImage: skill ? `url(${skill.icon})` : undefined,
                             borderColor: 'black',
                             cursor: skill ? 'pointer' : 'default',
+                            textAlign,
                             fontSize,
                         }}
                     >

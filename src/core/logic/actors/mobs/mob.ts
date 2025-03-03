@@ -28,7 +28,7 @@ export class Mob extends Actor {
         this.spawn();
     }
 
-    spawn(): void {
+    private spawn(): void {
         Mob.mobList.push(this);
         this.x = scaledTileSize() * randomInt(getCurrentLocation().floor[0].length - 1);
         this.y = scaledTileSize() * randomInt(getCurrentLocation().floor[0].length - 1);
@@ -62,23 +62,6 @@ export class Mob extends Actor {
     }
 
     update(): { x: number; y: number } | null {
-        const scaledTile = scaledTileSize();
-
-        let cnt = false;
-
-        if (this.x % scaledTile !== 0) {
-            this.x -= this.offsetX;
-            cnt = true;
-        }
-
-        if (this.y % scaledTile !== 0) {
-            this.y -= this.offsetY;
-            cnt = true;
-        }
-
-        if (cnt) {
-            return {x: this.offsetX, y: this.offsetY}
-        }
 
         const diff = {x: this.x, y: this.y};
 
@@ -89,37 +72,14 @@ export class Mob extends Actor {
         // The following line may need to be updated based on the actual implementation.
         this.events();
 
-        const tempDiffX = diff.x - this.x;
-        const tempDiffY = diff.y - this.y;
-
-        if (tempDiffX < 0) {
-            this.nextPosX = this.posX + 1;
-        } else {
-            this.nextPosX = this.posX;
-        }
-
-        if (tempDiffY < 0) {
-            this.nextPosY = this.posY + 1;
-        } else {
-            this.nextPosY = this.posY;
-        }
-
         const collision = this.collision(Mob.mobList);
 
         if (collision.x) {
             this.x = diff.x;
-            this.nextPosX = this.posY;
         }
 
         if (collision.y) {
             this.y = diff.y;
-            this.nextPosY = this.posY;
-        }
-
-        if (tempDiffX === 0 && tempDiffY === 0) {
-            this.renderState = "idle";
-        } else {
-            this.renderState = "walk";
         }
 
         this.offsetX = diff.x = diff.x - this.x;
@@ -129,11 +89,16 @@ export class Mob extends Actor {
     }
 
     setState(): void {
-        if (calcDistance(player, this) < this.agroRadius) {
+        if (this.state !== Mob.states.CHASING && calcDistance(player, this) < this.agroRadius) {
             this.state = Mob.states.CHASING;
+            this.renderState = "walk";
             this.target = player;
         } else {
+            if (this.state === Mob.states.WANDERING) {
+                return
+            }
             this.state = Mob.states.WANDERING;
+            this.renderState = "idle";
             this.target = null;
         }
     }

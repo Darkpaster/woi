@@ -3,11 +3,11 @@ import {AnimatedImageManager} from "../../graphics/image.ts";
 import * as console from "node:console";
 
 export class Item implements EntityUIInfo {
-    get sprite(): string | null | undefined {
+    get icon(): string | null | undefined {
         return this._sprite;
     }
 
-    set sprite(value: string | null) {
+    set icon(value: string | null) {
         this._sprite = value;
     }
     get stackable(): boolean {

@@ -1,7 +1,8 @@
 export const greyPotion: string = "src/assets/items/potions/potion_1.png";
-export const redPotion: string = "src/assets/items/potions/potion_4.png";
+export const redPotion2: string = "src/assets/icons/magic-potions/Transperent/Icon33.png";
+export const redPotion: string = "src/assets/icons/paint-pixel-art/Transperent/Icon1.png"
 export const frostBall: string = "src/assets/skill-icons/tile020.png";
-export const slash: string = "src/assets/skill-icons/tile140.png";
+export const slash: string = "src/assets/icons/swordsman-icons/Icon5.png";
 export const autoAttack: string = "src/assets/skill-icons/tile127.png";
 export const defaultSkill: string = "src/assets/skill-icons/tile190.png";
 

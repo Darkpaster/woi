@@ -68,6 +68,10 @@ export class AnimatedImage {
     endOfAnimation: boolean;
     private _manager: AnimatedImageManager | undefined;
 
+    prevSize: number = 0;
+
+    // private updateSize: () => void | null = null;
+
     constructor(name: string, src: string, framesNumber: number = 3, framesRate: number = 5,
                 imageSize: number = settings.tileSize, disposable: boolean = false) {
         this.image.src = src;
@@ -78,6 +82,7 @@ export class AnimatedImage {
         this.disposable = disposable;
         this.endOfAnimation = false;
         this.imageSize = imageSize;
+        this.prevSize = settings.defaultTileScale;
         this.image.onload = () => {
             this.widthSize = Math.floor(((this.image.width / framesNumber) / (this.image.height) * imageSize) * settings.defaultTileScale);
             this.heightSize = Math.floor(((this.image.height) / (this.image.width / framesNumber) * imageSize) * settings.defaultTileScale);
@@ -90,6 +95,11 @@ export class AnimatedImage {
     }
 
     render(ctx: CanvasRenderingContext2D, isFlipped: boolean, x: number, y: number, direction: string): boolean {
+        if (this.prevSize !== settings.defaultTileScale) {
+            this.update();
+            this.prevSize = settings.defaultTileScale;
+        }
+
         if (!this.manager!.flipX) {
             isFlipped = false;
         }
@@ -114,7 +124,7 @@ export class AnimatedImage {
             ctx.save();
             ctx.scale(-1, 1);
             ctx.drawImage(this.image, cutX, cutY, spriteWidth,
-                spriteHeight, -x - scaledTileSize(), y,
+                spriteHeight, -x - this.widthSize, y,
                 this.widthSize, this.heightSize);
             ctx.restore();
         } else {
@@ -126,7 +136,6 @@ export class AnimatedImage {
         if (this.framesRate.timeIsUp()) {
             this.currentFrame++;
             if (this.currentFrame >= this.framesNumber) {
-                this.update();
                 this.currentFrame = 0;
                 if (this.disposable) {
                     this.endOfAnimation = true;

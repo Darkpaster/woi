@@ -9,7 +9,7 @@ export class FrostWave extends Skill {
         this.delay = 2000;
         this.cooldown = 20000;
         this.name = "Frost Wave";
-        this.sprite = frostBall;
+        this.icon = frostBall;
         this.minDamage = 20;
         this.maxDamage = 34;
         this.range = 6;

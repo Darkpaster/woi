@@ -37,16 +37,6 @@ $commonColor: grey;
   transition: $property $duration ease-in-out;
 }
 
-
-//.primary {
-//  background-color: $mainNonActiveInterfaceColor;
-//  color: white;
-//  border: none;
-//  padding: 10px 20px;
-//  cursor: pointer;
-
-//}
-
 :root {
   --cursor: auto;
   overflow: hidden;
@@ -145,10 +135,6 @@ html {
       background-color: darken($mainActiveInterfaceColor, 10%);
     }
 }
-//.menu-button:hover {
-//  background-color: $mainActiveInterfaceColor;
-//  transition-duration: 0.3s;
-//}
 
 .menu-button:active {
   background-color: $mainInterfaceFontColor;
@@ -177,7 +163,6 @@ html {
   padding: 10px;
   margin-top: 1vh;
 }
-
 
 .menu-div {
   width: 20vw;
@@ -214,7 +199,7 @@ html {
 }
 
 .info-div {
-  padding: 10px;
+  padding: 15px;
   width: max-content;
   max-width: 400px;
   position: absolute;

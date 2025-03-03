@@ -23,7 +23,7 @@ export class Potion extends Item {
 
     constructor() {
         super();
-        this.sprite = greyPotion;
+        this.icon = greyPotion;
         this.name = "Unknown potion";
         this.description = "It has unknown effects.";
         this.cooldown = 0;

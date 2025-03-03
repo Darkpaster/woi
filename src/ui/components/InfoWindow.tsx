@@ -30,7 +30,8 @@ export const InfoWindow: React.FC<InfoWindowProps> = ({entity, position}: InfoWi
 
     return (
         <div ref={divRef} className={`ui-div info-div`}>
-            <big style={{color: entity!.rarity}}>{entity!.name}</big>
+            <big style={
+                entity instanceof Skill ? {color: "gold"} : {color: entity!.rarity}}>{entity!.name}</big>
             <br/>
             <br/>
             {entity!.description}

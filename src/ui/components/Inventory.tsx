@@ -63,7 +63,7 @@ export const Inventory = () => {
                         dispatch(setInfoPosition(null));
                     }}
                     style={{
-                        backgroundImage: item ? `url(${item.sprite})` : undefined,
+                        backgroundImage: item ? `url(${item.icon})` : undefined,
                         borderColor: item ? getRarityColor(item.rarity) : 'black',
                         cursor: item ? 'pointer' : 'default',
                     }}

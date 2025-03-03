@@ -1,20 +1,19 @@
 import { slash } from "../../graphics/static/paths.ts";
-import { slashEffect } from "../../graphics/static/animatedSprites.ts";
 import { Player } from "../actors/player.ts";
 import { Skill } from "./skill.ts";
 import {txtList} from "../../config/lang.ts";
+import {getSlashEffect} from "../../graphics/static/animatedSprites.ts";
+import {formatString} from "../../../utils/string.ts";
 
 export class Slash extends Skill {
 
     constructor(owner: Player) {
         super(owner);
-        this.sprite = slash;
-        this.animation = slashEffect;
+        this.icon = slash;
+        this.animation = getSlashEffect();
         this.name = txtList().slash;
         this.minDamage = 60;
         this.maxDamage = 85;
-        this.description = txtList().slashDescription
-            .replace('{minDamage}', this.minDamage.toString())
-            .replace('{maxDamage}', this.maxDamage.toString());
+        this.description = formatString(txtList().slashDescription, this.minDamage, this.maxDamage);
     }
 }

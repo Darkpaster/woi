@@ -6,8 +6,9 @@ export function memoize(fn: (args: any[]) => any) {
         if (cache.has(key)) {
             return cache.get(key)
         }
-        const result = fn(...args);
+        const result = fn([...args]);
         cache.set(key, result);
+        // console.log("Not found cache!");
         return result
     }
 }

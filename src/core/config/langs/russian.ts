@@ -49,12 +49,12 @@ export default {
     madBoar: "Бешеный кабан",
     madBoarDescription: "Бешеный кабан, нападающий на всё, что движется.",
     unknownPotion: "Зелье лечения",
-    unknownPotionDescription: "При использовании лечит на {minPower} - {maxPower} очков здоровья.",
+    unknownPotionDescription: "При использовании лечит на {0} - {1} очков здоровья.",
     slash: "Взмах",
-    slashDescription: "Атакует врага взмахом меча и наносит {minDamage} - {maxDamage} единиц урона.",
+    slashDescription: "Атакует врага взмахом меча и наносит {0} - {1} единиц урона.",
 
-    cooldownMessage: "Способность на перезарядке.",
-    tooFarMessage: "Цель слишком далеко.",
-    noTargetMessage: "Цель не выбрана.",
+    cooldownMessage: "{0} на перезарядке.",
+    tooFarMessage: "{0} слишком далеко.",
+    noTargetMessage: "Нет цели.",
     notEnoughManaMessage: "Недостаточно маны."
 }

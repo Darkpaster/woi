@@ -1,4 +1,4 @@
-export function formatString(string: string, ...args: number[]) {
+export function formatString(string: string, ...args: number[]|string[]) {
     return string.replace(/{\d}/g, (key, _2) => args[Number(key.charAt(1))].toString());
 }
 
