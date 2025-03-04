@@ -1,8 +1,6 @@
-import {getWallTile, tiles} from "../../../graphics/tileSprites.ts";
 import {calcDistance, calcDistanceX, calcDistanceY, randomInt, scaledTileSize} from "../../../../utils/math.ts";
 import {TimeDelay} from "../../../../utils/time.ts";
 import {player} from "../../../main.ts";
-import {getCurrentLocation} from "../../world/locationList.ts";
 
 import {Actor} from "../actor.ts";
 
@@ -25,22 +23,22 @@ export class Mob extends Actor {
         this.timer = new TimeDelay(1000);
         this.idle = true;
         this._agroRadius = 5;
-        this.spawn();
+        // this.spawn();
     }
 
-    private spawn(): void {
-        Mob.mobList.push(this);
-        this.x = scaledTileSize() * randomInt(getCurrentLocation().floor[0].length - 1);
-        this.y = scaledTileSize() * randomInt(getCurrentLocation().floor[0].length - 1);
-
-        let cond = getWallTile(this.posX, this.posY).props.isWalkable;
-        while (!cond) {
-            this.x = scaledTileSize() * randomInt(getCurrentLocation().floor[0].length - 1);
-            this.y = scaledTileSize() * randomInt(getCurrentLocation().floor[0].length - 1);
-            const test = getWallTile(this.posX, this.posY);
-            cond = test.props.isWalkable;
-        }
-    }
+    // private spawn(): void {
+    //     Mob.mobList.push(this);
+    //     this.x = scaledTileSize() * randomInt(getCurrentLocation().floor[0].length - 1);
+    //     this.y = scaledTileSize() * randomInt(getCurrentLocation().floor[0].length - 1);
+    //
+    //     let cond = getWallTile(this.posX, this.posY).props.isWalkable;
+    //     while (!cond) {
+    //         this.x = scaledTileSize() * randomInt(getCurrentLocation().floor[0].length - 1);
+    //         this.y = scaledTileSize() * randomInt(getCurrentLocation().floor[0].length - 1);
+    //         const test = getWallTile(this.posX, this.posY);
+    //         cond = test.props.isWalkable;
+    //     }
+    // }
 
     get agroRadius(): number {
         return scaledTileSize() * this._agroRadius;
@@ -103,10 +101,10 @@ export class Mob extends Actor {
         }
     }
 
-    checkVisibility(): boolean {
-        const directPath = this.getDirectPathTiles();
-        return directPath.every((value) => value.walkable);
-    }
+    // checkVisibility(): boolean {
+    //     const directPath = this.getDirectPathTiles();
+    //     return directPath.every((value) => value.walkable);
+    // }
 
     events(): void {
         if (this.state === Mob.states.CHASING) {
@@ -136,35 +134,35 @@ export class Mob extends Actor {
         }
     }
 
-    calcPath(): void {
-    }
+    // calcPath(): void {
+    // }
 
-    getDirectPathTiles(): Array<any> {
-        const ray = {x: player.x, y: player.y};
-        const tilesNum = Math.floor(calcDistance(player, this) / scaledTileSize());
-        const pathX = calcDistanceX(player, this);
-        const pathY = calcDistanceY(player, this);
-
-        const offsetX = pathX / tilesNum || 0;
-        const offsetY = pathY / tilesNum || 0;
-
-        const foundTiles: Array<any> = [];
-
-        const pX = player.x - this.x < 0;
-        const pY = player.y - this.y < 0;
-
-        for (let i = 1; i <= tilesNum; i++) {
-            ray.x += pX ? offsetX : -offsetX;
-            ray.y += pY ? offsetY : -offsetY;
-
-            const tileX: number = Math.floor(ray.x / scaledTileSize());
-            const tileY: number = Math.floor(ray.y / scaledTileSize());
-
-            foundTiles.push(tiles[getCurrentLocation().floor[tileY][tileX]].props);
-        }
-
-        return foundTiles;
-    }
+    // getDirectPathTiles(): Array<any> {
+    //     const ray = {x: player.x, y: player.y};
+    //     const tilesNum = Math.floor(calcDistance(player, this) / scaledTileSize());
+    //     const pathX = calcDistanceX(player, this);
+    //     const pathY = calcDistanceY(player, this);
+    //
+    //     const offsetX = pathX / tilesNum || 0;
+    //     const offsetY = pathY / tilesNum || 0;
+    //
+    //     const foundTiles: Array<any> = [];
+    //
+    //     const pX = player.x - this.x < 0;
+    //     const pY = player.y - this.y < 0;
+    //
+    //     for (let i = 1; i <= tilesNum; i++) {
+    //         ray.x += pX ? offsetX : -offsetX;
+    //         ray.y += pY ? offsetY : -offsetY;
+    //
+    //         const tileX: number = Math.floor(ray.x / scaledTileSize());
+    //         const tileY: number = Math.floor(ray.y / scaledTileSize());
+    //
+    //         foundTiles.push(tiles[getCurrentLocation().floor[tileY][tileX]].props);
+    //     }
+    //
+    //     return foundTiles;
+    // }
 
     wander(): void {
         let direction: number = randomInt(200);

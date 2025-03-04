@@ -1,11 +1,12 @@
 import {scaledTileSize} from "../../utils/math.ts";
-import {tiles} from "./tileSprites.ts";
-import {getCurrentLocation} from "../logic/world/locationList.ts";
-import {graphics, player} from "../main.ts";
+import {backgroundTiles, foregroundTiles} from "./tileSprites.ts";
+import {player, worldMap} from "../main.ts";
 import {selector1} from "./static/sprites.ts";
 import {Mob} from "../logic/actors/mobs/mob.ts";
-import {AnimatedEffect, AnimatedImageManager} from "./image.ts";
+import {AnimatedEffect} from "./image.ts";
 import {FloatText} from "./floatText.ts";
+import {settings} from "../config/settings.ts";
+import {alertf, logf} from "../../utils/debug.ts";
 
 export class Graphics {
     get ctx(): CanvasRenderingContext2D | null | undefined {
@@ -78,39 +79,39 @@ export class Graphics {
     }
 
     private renderTilemap(): void {
-        const tilesY: number = Math.round(window.innerHeight / scaledTileSize() / 2) + 2;
-        const tilesX: number = Math.round(window.innerWidth / scaledTileSize() / 2) + 2;
-
-        const beforeY: number = player!.posY - tilesY + 2;
-        const afterY: number = player!.posY + tilesY;
-
-        const beforeX: number = player!.posX - tilesX + 2;
-        const afterX: number = player!.posX + tilesX;
-
-        if (this.ctx) {
-            this.ctx.fillStyle = "black";
-
-            for (let i: number = beforeY; i < afterY; i++) {
-                for (let j: number = beforeX; j < afterX; j++) {
-                    const tile: number = getCurrentLocation().floor[i][j];
-                    const wall: number = getCurrentLocation().objects[i][j];
-
-                    if (!tiles[tile]) {
-                        this.ctx.fillRect(j * scaledTileSize(), i * scaledTileSize(),
-                            scaledTileSize(), scaledTileSize());
-                        continue;
-                    }
-
-                    // console.log(typeof tiles[tile].image.tile);
-                    this.ctx.drawImage(tiles[tile].image.tile, j * scaledTileSize(), i * scaledTileSize(),
-                        scaledTileSize(), scaledTileSize());
-
-                    if (tiles[wall]) {
-                        this.ctx.drawImage(tiles[wall].image.tile, j * scaledTileSize(), i * scaledTileSize(),
-                            scaledTileSize(), scaledTileSize());
+        this.ctx!.fillStyle = "black";
+        const map = worldMap.getIndexingChunks();
+        let l: number = 0;
+        for (const layer of Object.values(map)) {
+            for (const chunk of layer) {
+                const chunkData = chunk.chunk;
+                const offsetX = chunk.startX;
+                const offsetY = chunk.startY;
+                for (let i: number = 0; i < chunkData.length; i++) {
+                    for (let j: number = 0; j < chunkData[i].length; j++) {
+                        const tile: number = chunkData[i][j];
+                        if (l === 0) {
+                            if (!backgroundTiles[tile]) {
+                                this.ctx!.fillRect((j + offsetX) * scaledTileSize(), (i + offsetY) * scaledTileSize(),
+                                    scaledTileSize(), scaledTileSize());
+                                continue;
+                            }
+                            this.ctx!.drawImage(backgroundTiles[tile].image.tile, (j + offsetX) * scaledTileSize(), (i + offsetY) * scaledTileSize(),
+                                scaledTileSize(), scaledTileSize());
+                        } else if (l === 1) {
+                            if (!foregroundTiles[tile]) {
+                                // this.ctx!.fillRect((j + offsetX) * scaledTileSize(), (i + offsetY) * scaledTileSize(),
+                                //     scaledTileSize(), scaledTileSize());
+                                continue;
+                            }
+                            this.ctx!.drawImage(foregroundTiles[tile].image.tile, (j + offsetX) * scaledTileSize(), (i + offsetY) * scaledTileSize(),
+                                scaledTileSize(), scaledTileSize());
+                        }
                     }
                 }
+
             }
+            l++;
         }
     }
 }

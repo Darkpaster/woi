@@ -1,8 +1,33 @@
 import {EntityUIInfo} from "../actors/actor.ts";
 import {AnimatedImageManager} from "../../graphics/image.ts";
 import * as console from "node:console";
+import * as console from "node:console";
+import * as console from "node:console";
+import {v4 as uuidv4} from "uuid";
+import * as console from "node:console";
 
 export class Item implements EntityUIInfo {
+    get id(): string {
+        return this._id;
+    }
+
+    set id(value: string) {
+        this._id = value;
+    }
+    get x(): number {
+        return this._x;
+    }
+
+    set x(value: number) {
+        this._x = value;
+    }
+    get y(): number {
+        return this._y;
+    }
+
+    set y(value: number) {
+        this._y = value;
+    }
     get icon(): string | null | undefined {
         return this._sprite;
     }
@@ -63,11 +88,15 @@ export class Item implements EntityUIInfo {
     private _actions: any[];
 
     private _name: string = "Item";
+    private _id: string = uuidv4();
     private _image?: null | AnimatedImageManager;
     private _sprite?: null | string;
     private _description: string = "No description";
     private _note?: string;
     private _rarity: "common" | "uncommon" | "rare" | "epic" | "legendary" | "godlike" = "common";
+
+    private _x: number = 0;
+    private _y: number = 0;
 
     constructor() {
         this._stackable = false;

@@ -44,9 +44,10 @@ export class Player extends Actor {
 
     constructor() {
         super();
-        this.x += scaledTileSize() * 20;
-        this.HP = 500;
-        this.HT = 500;
+        this.x = scaledTileSize() * 200;
+        this.y = scaledTileSize() * 160
+        this.HP = 100;
+        this.HT = 100;
         this.minDamage = 15;
         this.maxDamage = 35;
         this.criticalChance = 0.3;

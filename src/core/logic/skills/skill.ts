@@ -8,8 +8,16 @@ import {EntityUIInfo} from "../actors/actor.ts";
 import {AnimatedEffect, AnimatedImageManager} from "../../graphics/image.ts";
 import {formatString} from "../../../utils/string.ts";
 import {txtList} from "../../config/lang.ts";
+import {v4 as uuidv4} from "uuid";
 
 export class Skill implements EntityUIInfo {
+    get id(): string {
+        return this._id;
+    }
+
+    set id(value: string) {
+        this._id = value;
+    }
     get icon(): string | null | undefined {
         return this._sprite;
     }
@@ -60,6 +68,7 @@ export class Skill implements EntityUIInfo {
     }
 
     private _name: string = "Item";
+    private _id: string = uuidv4();
     private _image?: AnimatedImageManager | null;
     private _sprite?: string | null;
     private _description: string = "No description";

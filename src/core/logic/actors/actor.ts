@@ -1,15 +1,16 @@
 import { FloatText } from "../../graphics/floatText.ts";
 import { AnimatedImageManager } from "../../graphics/image.ts";
-import { getActorTile, getTile, getWallTile } from "../../graphics/tileSprites.ts";
 import { calcDistance, randomInt, scaledTileSize } from "../../../utils/math.ts";
 import { TimeDelay } from "../../../utils/time.ts";
-import { getCurrentLocation } from "../world/locationList.ts";
 import {Mob} from "./mobs/mob.ts";
 import {Skill} from "../skills/skill.ts";
 import {graphics} from "../../main.ts";
 import {settings} from "../../config/settings.ts";
 
+import {v4 as uuidv4} from "uuid"
+
 export interface EntityUIInfo {
+	id: string;
 	name: string;
 	image?: AnimatedImageManager | null;
 	icon?: string | null;
@@ -19,6 +20,13 @@ export interface EntityUIInfo {
 }
 
 export class Actor implements EntityUIInfo {
+	get id(): string {
+		return this._id;
+	}
+
+	set id(value: string) {
+		this._id = value;
+	}
 	get icon(): string | null | undefined {
 		return this._sprite;
 	}
@@ -241,14 +249,15 @@ export class Actor implements EntityUIInfo {
 	}
 
 	private _name: string = "???";
+	private _id: string = uuidv4();
 	private _image?: AnimatedImageManager | null;
 	private _sprite?: string | null;
 	private _description: string = "Unknown creature";
 	private _note?: string;
 	private _rarity: "common" | "uncommon" | "rare" | "epic" | "legendary" | "godlike" = "common";
 	
-	private _x: number = getCurrentLocation().floor[0].length / 2 * scaledTileSize();
-	private _y: number = getCurrentLocation().floor.length / 2 * scaledTileSize();
+	private _x: number = 0;
+	private _y: number = 0;
 	// private readonly posX: number = Math.floor(this._x / scaledTileSize());
 	// private readonly posY: number = Math.floor(this._y / scaledTileSize());
 	private _offsetX: number = 0;
@@ -338,9 +347,9 @@ export class Actor implements EntityUIInfo {
 		return false
 	}
 
-	getPosTile(): any {
-		return getActorTile(this);
-	}
+	// getPosTile(): any {
+	// 	return getActorTile(this);
+	// }
 
 	collision(mobs: Array<Actor>): { x: boolean, y: boolean } {
 		const stop: { x: boolean, y: boolean } = { x: false, y: false };

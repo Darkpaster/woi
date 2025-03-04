@@ -1,30 +1,29 @@
-export type EntityType = 'mob' | 'player' | 'item';
+import {scaledTileSize} from "../../utils/math.ts";
+import {player, worldMap} from "../main.ts";
+import {Mob} from "./actors/mobs/mob.ts";
+import {Item} from "./items/item.ts";
+import {Player} from "./actors/player.ts";
 
-export interface Entity {
-    id: string;
-    type: EntityType;
-    x: number;
-    y: number;
-    // другие свойства...
-}
+export type EntityType = Mob | Item | Player;
+
 
 // Простая реализация решетки для индексирования
 export class EntityManager {
-    private entities = new Map<string, Entity>();
+    private entities = new Map<string, EntityType>();
     private grid = new Map<string, Set<string>>();
-    private gridSize: number;
+    private chunkSize: number;
 
-    constructor(gridSize: number = 100) {
-        this.gridSize = gridSize;
+    constructor(gridSize: number = 32) {
+        this.chunkSize = gridSize;
     }
 
     private getGridKey(x: number, y: number): string {
-        const col = Math.floor(x / this.gridSize);
-        const row = Math.floor(y / this.gridSize);
-        return `${col}_${row}`;
+        const col = Math.floor(x / this.chunkSize);
+        const row = Math.floor(y / this.chunkSize);
+        return `${col},${row}`;
     }
 
-    addEntity(entity: Entity) {
+    addEntity(entity: EntityType) {
         this.entities.set(entity.id, entity);
         const key = this.getGridKey(entity.x, entity.y);
         if (!this.grid.has(key)) {
@@ -42,30 +41,56 @@ export class EntityManager {
         }
     }
 
-    updateEntity(entity: Entity) {
-        // Обновляем позицию, если изменилась
+    updateEntity(entity: EntityType) {
         const oldEntity = this.entities.get(entity.id);
-        if (oldEntity) {
-            const oldKey = this.getGridKey(oldEntity.x, oldEntity.y);
-            const newKey = this.getGridKey(entity.x, entity.y);
-            if (oldKey !== newKey) {
-                this.grid.get(oldKey)?.delete(entity.id);
-                if (!this.grid.has(newKey)) {
-                    this.grid.set(newKey, new Set());
-                }
-                this.grid.get(newKey)!.add(entity.id);
-            }
-            this.entities.set(entity.id, entity);
+        if (!oldEntity) {
+            return
         }
+        const oldKey = this.getGridKey(oldEntity.x, oldEntity.y);
+        const newKey = this.getGridKey(entity.x, entity.y);
+        if (oldKey !== newKey) {
+            this.grid.get(oldKey)?.delete(entity.id);
+            if (!this.grid.has(newKey)) {
+                this.grid.set(newKey, new Set());
+            }
+            this.grid.get(newKey)!.add(entity.id);
+        }
+        this.entities.set(entity.id, entity);
     }
 
+    // updateAllEntities() {
+    //     worldMap.getIndexingChunks().forEach((entity, key) => {
+    //         const newKey = this.getGridKey(entity.x, entity.y);
+    //         if (oldKey !== newKey) {
+    //             this.grid.get(oldKey)?.delete(entity.id);
+    //             if (!this.grid.has(newKey)) {
+    //                 this.grid.set(newKey, new Set());
+    //             }
+    //             this.grid.get(newKey)!.add(entity.id);
+    //         }
+    //         this.entities.set(entity.id, entity);
+    //     })
+    // }
+
     // Поиск сущностей по координатам (например, в ячейке или в окрестности)
-    findEntitiesAt(x: number, y: number): Entity[] {
+    findEntitiesAt(x: number, y: number): EntityType[] {
         const key = this.getGridKey(x, y);
         const ids = this.grid.get(key);
         if (!ids) return [];
         return Array.from(ids).map(id => this.entities.get(id)!).filter(Boolean);
     }
-}
 
-export const entityManager = new EntityManager(100);
+    findMobsAt(x: number, y: number): Mob[] {
+        const key = this.getGridKey(x, y);
+        const ids = this.grid.get(key);
+        if (!ids) return [];
+        return Array.from(ids).map(id => this.entities.get(id)!).filter((entity) => entity instanceof Mob);
+    }
+
+    findItemsAt(x: number, y: number): Item[] {
+        const key = this.getGridKey(x, y);
+        const ids = this.grid.get(key);
+        if (!ids) return [];
+        return Array.from(ids).map(id => this.entities.get(id)!).filter((entity) => entity instanceof Item);
+    }
+}
