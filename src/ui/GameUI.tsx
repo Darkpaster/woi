@@ -94,7 +94,7 @@ export const GameUI: React.FC = () => {
         setGameState('inGame');
         showCanvas();
         startLoop();
-        playMusic('garden');
+        // playMusic('garden');
     };
 
     const handleResume = () => {
@@ -107,7 +107,7 @@ export const GameUI: React.FC = () => {
     const handleMainMenu = () => {
         setGameState('mainMenu');
         hideCanvas();
-        playMusic('main');
+        // playMusic('main');
         pauseLoop();
     };
 

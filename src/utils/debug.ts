@@ -30,3 +30,17 @@ export function alertf(...logs: any[]) {
     }
     alert(output);
 }
+
+
+export function logOnce() {
+    const cache = new Map();
+
+    return function (...data: any[]) {
+        const key = data.toString();
+        if (cache.has(key)) {
+            return
+        }
+        console.log(data.toString());
+        cache.set(key, data);
+    }
+}

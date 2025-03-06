@@ -37,8 +37,8 @@ export function getKnightAnimations(): AnimationList {
 
 export function getWerewolfAnimations(): AnimationList {
     return {
-        idle: new AnimatedImage("idle", werewolfIdleSheet, 8, 3, 32),
-        walk: new AnimatedImage("walk", werewolfRunSheet, 9, 0.5, 32),
+        idle: new AnimatedImage("idle", werewolfIdleSheet, 8, 3, 48),
+        walk: new AnimatedImage("walk", werewolfRunSheet, 9, 0.5, 48),
     }
 }
 

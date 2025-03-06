@@ -27,3 +27,7 @@ export const knightRunSheet: string = "src/assets/actors/player/Knight_1/Run.png
 
 export const werewolfIdleSheet: string = "src/assets/actors/player/Black_Werewolf/Idle.png";
 export const werewolfRunSheet: string = "src/assets/actors/player/Black_Werewolf/Run.png";
+
+
+export const grass_tiles: string = "src/assets/tileMap/Environment/Tilesets/Grass_Tiles.png";
+export const vegetation_tiles: string = "src/assets/tileMap/Environment/Props/Static/Vegetation_01.png";

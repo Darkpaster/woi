@@ -59,6 +59,36 @@ type textList = {
 
     madBoar: string;
     madBoarDescription: string;
+    rabbit: string;
+    rabbitDescription: string;
+    slime: string;
+    slimeDescription: string;
+    bear: string;
+    bearDescription: string;
+
+    werewolf: string;
+    werewolfDescription: string;
+    dwarf: string;
+    dwarfDescription: string;
+    elf: string;
+    elfDescription: string;
+    human: string;
+    humanDescription: string;
+    orc: string;
+    orcDescription: string;
+    hobbit: string;
+    hobbitDescription: string;
+    vampire: string;
+    vampireDescription: string;
+    golem: string;
+    golemDescription: string;
+    berserk: string;
+    berserkDescription: string;
+    fairy: string;
+    fairyDescription: string;
+    ancientElf: string;
+    ancientElfDescription: string;
+
     unknownPotion: string;
     unknownPotionDescription: string;
     slash: string;
@@ -68,6 +98,23 @@ type textList = {
     tooFarMessage: string;
     noTargetMessage: string;
     notEnoughManaMessage: string;
+
+    tree: string;
+    treeDescription: string;
+    grass: string;
+    grassDescription: string;
+    dirt: string;
+    dirtDescription: string;
+    stone: string;
+    stoneDescription: string;
+    rock: string;
+    rockDescription: string;
+    mountain: string;
+    mountainDescription: string;
+    water: string;
+    waterDescription: string;
+    darkness: string;
+    darknessDescription: string;
 }
 
 interface LangType {

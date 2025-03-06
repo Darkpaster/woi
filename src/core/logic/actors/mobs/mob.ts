@@ -5,7 +5,6 @@ import {player} from "../../../main.ts";
 import {Actor} from "../actor.ts";
 
 export class Mob extends Actor {
-    static mobList: Mob[] = [];
     static states: { [key: string]: string } = {
         WANDERING: "wandering",
         CHASING: "chasing",
@@ -50,12 +49,12 @@ export class Mob extends Actor {
 
     static getMobsOnTile(x: number, y: number): Mob[] {
         const result: Mob[] = []
-        for (const mob of Mob.mobList) {
-            if (mob.posX === Math.floor(x / scaledTileSize())
-                && mob.posX === Math.floor(y / scaledTileSize())) {
-                result.push(mob);
-            }
-        }
+        // for (const mob of Mob.mobList) {
+        //     if (mob.posX === Math.floor(x / scaledTileSize())
+        //         && mob.posX === Math.floor(y / scaledTileSize())) {
+        //         result.push(mob);
+        //     }
+        // }
         return result
     }
 
@@ -70,15 +69,15 @@ export class Mob extends Actor {
         // The following line may need to be updated based on the actual implementation.
         this.events();
 
-        const collision = this.collision(Mob.mobList);
+        // const collision = this.collision(Mob.mobList);
 
-        if (collision.x) {
-            this.x = diff.x;
-        }
-
-        if (collision.y) {
-            this.y = diff.y;
-        }
+        // if (collision.x) {
+        //     this.x = diff.x;
+        // }
+        //
+        // if (collision.y) {
+        //     this.y = diff.y;
+        // }
 
         this.offsetX = diff.x = diff.x - this.x;
         this.offsetY = diff.y = diff.y - this.y;
@@ -219,6 +218,6 @@ export class Mob extends Actor {
 
 
     die(): void {
-        Mob.mobList.splice(Mob.mobList.indexOf(this), 1);
+        // Mob.mobList.splice(Mob.mobList.indexOf(this), 1);
     }
 }

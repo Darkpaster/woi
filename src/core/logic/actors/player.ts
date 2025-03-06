@@ -3,8 +3,6 @@ import {calcDistance, scaledTileSize} from "../../../utils/math.ts";
 import {smallPotionOfHealing} from "../items/consumable/potions/smallPotionOfHealing.ts";
 import {Slash} from "../skills/slash.ts";
 import {Actor} from "./actor.ts";
-import {Mob} from "./mobs/mob.ts";
-import {txtList} from "../../config/lang.ts";
 
 interface Equipment {
     head: any;
@@ -44,17 +42,17 @@ export class Player extends Actor {
 
     constructor() {
         super();
-        this.x = scaledTileSize() * 200;
-        this.y = scaledTileSize() * 160
+        this.x = scaledTileSize() * -2;
+        this.y = scaledTileSize() * -6;
         this.HP = 100;
         this.HT = 100;
         this.minDamage = 15;
         this.maxDamage = 35;
         this.criticalChance = 0.3;
-        this.moveSpeed = 4;
+        this.moveSpeed = 10;
         this.AA = true;
         this.image = setWerewolfManager();
-        this.name = txtList().ok;
+        this.name = "Георгий";
         this.inventory = new Array(200);
         this.spellBook = [new Slash(this), null, null, null, null, null, null, null, null, null];
 
@@ -152,7 +150,6 @@ export class Player extends Actor {
     }
 
     updatePlayer(): { x: number, y: number } {
-
         if (this.AA) {
             this.attackEvents();
         }
@@ -164,7 +161,6 @@ export class Player extends Actor {
         } else if (this.pressDown) {
             this.y += this.moveSpeed;
         }
-
         if (this.pressLeft) {
             this.direction = "left";
             this.x -= this.moveSpeed;
@@ -173,15 +169,15 @@ export class Player extends Actor {
             this.x += this.moveSpeed;
         }
 
-        const collision = this.collision(Mob.mobList);
+        // const collision = this.collision(Mob.mobList);
 
-        if (collision.x) {
-            this.x = cameraDiff.x;
-        }
-
-        if (collision.y) {
-            this.y = cameraDiff.y;
-        }
+        // if (collision.x) {
+        //     this.x = cameraDiff.x;
+        // }
+        //
+        // if (collision.y) {
+        //     this.y = cameraDiff.y;
+        // }
 
         this.offsetX = cameraDiff.x = cameraDiff.x - this.x;
         this.offsetY = cameraDiff.y = cameraDiff.y - this.y;
@@ -197,19 +193,19 @@ export class Player extends Actor {
     }
 
     selectNearestTarget(): void {
-        let nearest: Mob | Player = this.target || Mob.mobList[0];
-        const prevTarget: Mob | Player = nearest;
-        for (const mob of Mob.mobList) {
-            const dist: number = calcDistance(mob, this);
-            if (dist < 430) {
-                if (dist < calcDistance(nearest, this)) {
-                    nearest = mob;
-                }
-            }
-        }
-        if (prevTarget === nearest) {
-            return;
-        }
-        this.target = nearest;
+        // let nearest: Mob | Player = this.target || Mob.mobList[0];
+        // const prevTarget: Mob | Player = nearest;
+        // for (const mob of Mob.mobList) {
+        //     const dist: number = calcDistance(mob, this);
+        //     if (dist < 430) {
+        //         if (dist < calcDistance(nearest, this)) {
+        //             nearest = mob;
+        //         }
+        //     }
+        // }
+        // if (prevTarget === nearest) {
+        //     return;
+        // }
+        // this.target = nearest;
     }
 }

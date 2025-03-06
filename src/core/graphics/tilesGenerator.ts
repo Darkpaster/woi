@@ -1,8 +1,25 @@
 
-// import { readFileSync, writeFileSync } from "fs";
-// import * as path from "path";
+import {tileImage} from "./image.ts";
+import {logf} from "../../utils/debug.ts";
 
-interface TiledTileset {
+interface TileProps {
+    [key: string]: string|boolean|number
+}
+
+interface Tile {
+    [key: number]: {
+        name: string;
+        props: TileProps;
+        image: tileImage;
+    }
+}
+
+export const tileList: Tile = {
+
+};
+
+interface Tileset {
+    name: string;
     firstgid: number;
     tilecount: number;
     tilewidth: number;
@@ -13,40 +30,42 @@ interface TiledTileset {
     // Опциональное поле с дополнительными данными для отдельных тайлов
     tiles?: {
         id: number;
-        properties?: { name: string; type: string; value: any }[];
+        properties?: Property[];
         animation?: { tileid: number; duration: number }[];
     }[];
+    wangsets?: {
+        id: number;
+        properites?: Property[];
+        animation?: { tileid: number; duration: number }[];
+    }
+    // properties: Property[];
 }
 
-interface Tile {
-    name: string;
-    animated: boolean;
-    props: Record<string, any>;
-    image: any; // предположим, что tileImage – это класс или функция, типизировать можно подробнее
+type Property = {
+    name: string, //название свойства
+    type: string, // тип данных (хз зачем он тут)
+    propertytype?: string, //название кастомного типа
+    value: boolean | number | string; // сами данные
 }
 
-export async function generateTiles() {
+export async function generateTiles(map: any) {
 
-    const data: Response = await fetch("http://localhost:5173/public/world.json");
-    data.json().then((json) => {
-        // alertf(json);
-        // const parsedData: { layers: Layer[] } = JSON.parse(json);
-        const tilesets: TiledTileset[] = json.tilesets;
+        const tilesets: Tileset[] = map.tilesets;
 
         for (const tileset of tilesets) {
+            const tilesetImagePath = `src/assets/tileMap/forGeneration/${tileset.image.substring(tileset.image.lastIndexOf("/") + 1)}`;
 
-// Генерируемый код, который будет записан в файл foregroundTiles.ts
-            let output = "export const tileList: Record<number, Tile> = {\n";
-
-// Количество тайлов в ряду изображения tileset
             const columns = Math.floor(tileset.imagewidth / tileset.tilewidth);
 
             for (let localId = 0; localId < tileset.tilecount; localId++) {
-                // Глобальный ID = firstgid + локальный ID
-                const globalId = tileset.firstgid + localId;
 
                 // Ищем дополнительную информацию о тайле, если она задана
-                const tileData = tileset.tiles?.find(tile => tile.id === localId);
+                let tileData = tileset.tiles?.find(tile => tile.id === localId);
+
+                const hasTileData = tileData !== undefined;
+                const globalId = hasTileData
+                    ? tileData.id + tileset.firstgid
+                    : localId + tileset.firstgid;
 
                 // Если в properties присутствует свойство "name", используем его
                 let name = tileData?.properties?.find(p => p.name === "name")?.value;
@@ -54,43 +73,32 @@ export async function generateTiles() {
                     name = `Tile${globalId}`;
                 }
 
-                // Если у тайла задана анимация, считаем его анимированным
-                const animated = !!tileData?.animation;
-
                 // Вычисляем смещение (offset) тайла в tileset‑изображении:
-                // Колонка считается от 0, но в шаблоне offsetX начинается с 1.
                 const col = localId % columns;
                 const row = Math.floor(localId / columns);
-                const offsetX = col + 1; // согласно примеру: 1, 2, 3...
-                const offsetY = row;     // согласно примеру: 0, 1, 2...
 
-                // Формируем строковое представление объекта для данного тайла.
-                output += `  ${globalId}: {\n`;
-                output += `    name: '${name}',\n`;
-                output += `    animated: ${animated},\n`;
-                output += `    props: {\n`;
-                // Добавляем все свойства, кроме "name" (если они заданы)
-                if (tileData?.properties) {
-                    tileData.properties.forEach(prop => {
-                        if (prop.name !== "name") {
-                            output += `      ${prop.name}: ${JSON.stringify(prop.value)},\n`;
-                        }
-                    });
+                tileList[globalId] = {
+                    name: name.toString(),
+                    props: {
+                        isWalkable: true,
+                        renderAfter: false,
+                        damage: 0,
+                        animated: false,
+                    },
+                    image: new tileImage(tilesetImagePath, col, row),
                 }
-                output += `    },\n`;
-                output += `    image: new tileImage(vegetation_tiles, ${offsetX}, ${offsetY})\n`;
-                output += `  },\n`;
+
+                if (hasTileData && tileData.properties !== undefined) {
+                    for (const property of tileData.properties) {
+                        tileList[globalId].props[property.name] = property.value;
+                    }
+                }
+
             }
 
-            output += "};\n";
-
-// Записываем результат в файл foregroundTiles.ts
-// writeFileSync("foregroundTiles.ts", output, "utf8");
-            console.log(output);
-
-            // console.log("Tiles generated successfully in foregroundTiles.ts");
         }
-    })
 
-
+        setTimeout(() => {
+            logf(tileList);
+        }, 1000);
 }

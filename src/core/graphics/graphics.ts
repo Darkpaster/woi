@@ -1,12 +1,10 @@
 import {scaledTileSize} from "../../utils/math.ts";
-import {backgroundTiles, foregroundTiles} from "./tileSprites.ts";
-import {player, worldMap} from "../main.ts";
+import {once, player, worldMap} from "../main.ts";
 import {selector1} from "./static/sprites.ts";
-import {Mob} from "../logic/actors/mobs/mob.ts";
 import {AnimatedEffect} from "./image.ts";
 import {FloatText} from "./floatText.ts";
-import {settings} from "../config/settings.ts";
-import {alertf, logf} from "../../utils/debug.ts";
+import {tileList} from "./tilesGenerator.ts";
+import {logf} from "../../utils/debug.ts";
 
 export class Graphics {
     get ctx(): CanvasRenderingContext2D | null | undefined {
@@ -46,14 +44,13 @@ export class Graphics {
         const ctx = <CanvasRenderingContext2D>this.ctx;
         ctx.fillStyle = "blue";
         player!.image!.render(player!.renderState, ctx, player!.x, player!.y, player!.direction);
-        for (const mob of Mob.mobList) {
-            mob.image!.render(mob.renderState, ctx, mob.x, mob.y, mob.direction);
-            ctx.fillText(mob.name, mob.x, mob.y);
-        }
+        // for (const mob of Mob.mobList) {
+        //     mob.image!.render(mob.renderState, ctx, mob.x, mob.y, mob.direction);
+        //     ctx.fillText(mob.name, mob.x, mob.y);
+        // }
         if (player!.target) {
             ctx.drawImage(selector1.tile, player!.target.x || 0, player!.target.y || 0, scaledTileSize(), scaledTileSize());
-        }
-        // console.log(player!.name);
+        }//12288 1788
         ctx.fillText(player!.name, player!.x, player!.y);
     }
 
@@ -81,7 +78,6 @@ export class Graphics {
     private renderTilemap(): void {
         this.ctx!.fillStyle = "black";
         const map = worldMap.getIndexingChunks();
-        let l: number = 0;
         for (const layer of Object.values(map)) {
             for (const chunk of layer) {
                 const chunkData = chunk.chunk;
@@ -90,28 +86,16 @@ export class Graphics {
                 for (let i: number = 0; i < chunkData.length; i++) {
                     for (let j: number = 0; j < chunkData[i].length; j++) {
                         const tile: number = chunkData[i][j];
-                        if (l === 0) {
-                            if (!backgroundTiles[tile]) {
-                                this.ctx!.fillRect((j + offsetX) * scaledTileSize(), (i + offsetY) * scaledTileSize(),
-                                    scaledTileSize(), scaledTileSize());
-                                continue;
-                            }
-                            this.ctx!.drawImage(backgroundTiles[tile].image.tile, (j + offsetX) * scaledTileSize(), (i + offsetY) * scaledTileSize(),
-                                scaledTileSize(), scaledTileSize());
-                        } else if (l === 1) {
-                            if (!foregroundTiles[tile]) {
-                                // this.ctx!.fillRect((j + offsetX) * scaledTileSize(), (i + offsetY) * scaledTileSize(),
-                                //     scaledTileSize(), scaledTileSize());
-                                continue;
-                            }
-                            this.ctx!.drawImage(foregroundTiles[tile].image.tile, (j + offsetX) * scaledTileSize(), (i + offsetY) * scaledTileSize(),
-                                scaledTileSize(), scaledTileSize());
+                        if (!tileList[tile]) {
+                            continue
                         }
+                        // this.ctx!.fillRect((j + offsetX) * scaledTileSize(), (i + offsetY) * scaledTileSize(),
+                        //     scaledTileSize(), scaledTileSize());
+                        this.ctx!.drawImage(tileList[tile].image.tile, (j + offsetX) * scaledTileSize(), (i + offsetY) * scaledTileSize(),
+                            scaledTileSize(), scaledTileSize());
                     }
                 }
-
             }
-            l++;
         }
     }
 }

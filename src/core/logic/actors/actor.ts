@@ -354,9 +354,10 @@ export class Actor implements EntityUIInfo {
 	collision(mobs: Array<Actor>): { x: boolean, y: boolean } {
 		const stop: { x: boolean, y: boolean } = { x: false, y: false };
 
-		// if (!getWallTile(this._nextPosX!, this._nextPosY!)!.props.isWalkable) {
+		// if () {
 		// 	stop.x = stop.y = true;
 		// }
+		// if ()
 
 		return stop
 	}

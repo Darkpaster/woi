@@ -20,7 +20,7 @@ export const settings: {
     graphics: "high",
     soundVolume: 100,
     musicVolume: 100,
-    defaultTileScale: 3,
+    defaultTileScale: 2,
     tileSize: 16,
 
     [_fps]: 30,

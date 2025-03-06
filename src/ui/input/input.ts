@@ -178,9 +178,9 @@ export function useKeyboard(canvasRef: RefObject<HTMLCanvasElement | null>) {
 
         const handleClick = (event: { clientX: number; clientY: number; }) => {
             if (player) {
-                player.target =
-                    Mob.getMobsOnTile(event.clientX + clickOffsetX(), event.clientY + clickOffsetY())[0] ||
-                    null;
+                // player.target =
+                //     Mob.getMobsOnTile(event.clientX + clickOffsetX(), event.clientY + clickOffsetY())[0] ||
+                //     null;
             }
         };
 

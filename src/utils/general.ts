@@ -13,6 +13,21 @@ export function memoize(fn: (args: any[]) => any) {
     }
 }
 
+export function memoizeCalculation(fn: (args: number[]) => number[]) {
+    const cache = new Map();
+
+    return function (...args: number[]): number[] {
+        const key = args.toString();
+        if (cache.has(key)) {
+            return cache.get(key)
+        }
+        const result = fn([...args]);
+        cache.set(key, result);
+        // console.log("Not found cache!");
+        return result
+    }
+}
+
 function keysProjection(objects, keys) { // filter for objects keys
     if (objects.length === 0) return objects;
 

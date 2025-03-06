@@ -1,53 +1,46 @@
 import {scaledTileSize} from "../../utils/math.ts";
-import {player, worldMap} from "../main.ts";
 import {Mob} from "./actors/mobs/mob.ts";
 import {Item} from "./items/item.ts";
 import {Player} from "./actors/player.ts";
+import {MapManager} from "./world/mapManager.ts";
 
 export type EntityType = Mob | Item | Player;
 
-
-// Простая реализация решетки для индексирования
 export class EntityManager {
     private entities = new Map<string, EntityType>();
     private grid = new Map<string, Set<string>>();
-    private chunkSize: number;
 
-    constructor(gridSize: number = 32) {
-        this.chunkSize = gridSize;
-    }
-
-    private getGridKey(x: number, y: number): string {
-        const col = Math.floor(x / this.chunkSize);
-        const row = Math.floor(y / this.chunkSize);
+    private getChunkPosKey(x: number, y: number): string { //обычные координаты в чанки
+        const col = Math.floor(x / scaledTileSize() / MapManager.chunkSize);
+        const row = Math.floor(y / scaledTileSize() / MapManager.chunkSize);
         return `${col},${row}`;
     }
 
-    addEntity(entity: EntityType) {
+    public addEntity(entity: EntityType) {
         this.entities.set(entity.id, entity);
-        const key = this.getGridKey(entity.x, entity.y);
+        const key = this.getChunkPosKey(entity.x, entity.y);
         if (!this.grid.has(key)) {
             this.grid.set(key, new Set());
         }
         this.grid.get(key)!.add(entity.id);
     }
 
-    removeEntity(entityId: string) {
+    public removeEntity(entityId: string) {
         const entity = this.entities.get(entityId);
         if (entity) {
-            const key = this.getGridKey(entity.x, entity.y);
+            const key = this.getChunkPosKey(entity.x, entity.y);
             this.grid.get(key)?.delete(entityId);
             this.entities.delete(entityId);
         }
     }
 
-    updateEntity(entity: EntityType) {
+    public updateEntity(entity: EntityType) {
         const oldEntity = this.entities.get(entity.id);
         if (!oldEntity) {
             return
         }
-        const oldKey = this.getGridKey(oldEntity.x, oldEntity.y);
-        const newKey = this.getGridKey(entity.x, entity.y);
+        const oldKey = this.getChunkPosKey(oldEntity.x, oldEntity.y);
+        const newKey = this.getChunkPosKey(entity.x, entity.y);
         if (oldKey !== newKey) {
             this.grid.get(oldKey)?.delete(entity.id);
             if (!this.grid.has(newKey)) {
@@ -58,37 +51,37 @@ export class EntityManager {
         this.entities.set(entity.id, entity);
     }
 
-    // updateAllEntities() {
-    //     worldMap.getIndexingChunks().forEach((entity, key) => {
-    //         const newKey = this.getGridKey(entity.x, entity.y);
-    //         if (oldKey !== newKey) {
-    //             this.grid.get(oldKey)?.delete(entity.id);
-    //             if (!this.grid.has(newKey)) {
-    //                 this.grid.set(newKey, new Set());
-    //             }
-    //             this.grid.get(newKey)!.add(entity.id);
-    //         }
-    //         this.entities.set(entity.id, entity);
-    //     })
-    // }
+    updateAllEntities() {
+        this.entities.forEach((entity, key) => {
+            const newKey = this.getChunkPosKey(entity.x, entity.y);
+            if (key !== newKey) {
+                this.grid.get(key)?.delete(entity.id);
+                if (!this.grid.has(newKey)) {
+                    this.grid.set(newKey, new Set());
+                }
+                this.grid.get(newKey)!.add(entity.id);
+            }
+            this.entities.set(entity.id, entity);
+        })
+    }
 
     // Поиск сущностей по координатам (например, в ячейке или в окрестности)
-    findEntitiesAt(x: number, y: number): EntityType[] {
-        const key = this.getGridKey(x, y);
+    public findEntitiesAt(x: number, y: number): EntityType[] {
+        const key = this.getChunkPosKey(x, y);
         const ids = this.grid.get(key);
         if (!ids) return [];
         return Array.from(ids).map(id => this.entities.get(id)!).filter(Boolean);
     }
 
-    findMobsAt(x: number, y: number): Mob[] {
-        const key = this.getGridKey(x, y);
+    public findMobsAt(x: number, y: number): Mob[] {
+        const key = this.getChunkPosKey(x, y);
         const ids = this.grid.get(key);
         if (!ids) return [];
         return Array.from(ids).map(id => this.entities.get(id)!).filter((entity) => entity instanceof Mob);
     }
 
-    findItemsAt(x: number, y: number): Item[] {
-        const key = this.getGridKey(x, y);
+    public findItemsAt(x: number, y: number): Item[] {
+        const key = this.getChunkPosKey(x, y);
         const ids = this.grid.get(key);
         if (!ids) return [];
         return Array.from(ids).map(id => this.entities.get(id)!).filter((entity) => entity instanceof Item);
