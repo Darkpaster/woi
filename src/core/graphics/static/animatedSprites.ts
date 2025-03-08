@@ -1,6 +1,6 @@
 import { AnimatedEffect, AnimatedImage } from "../image.ts";
 import {
-    attackEffect,
+    attackEffect, human_form_idle,
     knightIdleSheet,
     knightRunSheet, madBoarIdleSheet,
     madBoarWalkSheet,
@@ -39,6 +39,13 @@ export function getWerewolfAnimations(): AnimationList {
     return {
         idle: new AnimatedImage("idle", werewolfIdleSheet, 8, 3, 48),
         walk: new AnimatedImage("walk", werewolfRunSheet, 9, 0.5, 48),
+    }
+}
+
+export function getWerewolfHumanAnimations(): AnimationList {
+    return {
+        idle: new AnimatedImage("idle", human_form_idle, 13, 3, 32),
+        walk: new AnimatedImage("walk", human_form_idle, 13, 3, 32),
     }
 }
 

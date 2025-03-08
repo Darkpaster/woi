@@ -1,5 +1,5 @@
 import {once, player} from "../../main.ts";
-import {generateTiles} from "../../graphics/tilesGenerator.ts";
+import {generateTiles, tileList} from "../../graphics/tilesGenerator.ts";
 import {memoizeCalculation} from "../../../utils/general.ts";
 import {settings} from "../../config/settings.ts";
 
@@ -84,11 +84,12 @@ export class MapManager {
     public getIndexingChunks(): IndexingChunks {
         const [tilesX, tilesY] = this.updateCalculation(settings.defaultTileScale); // оптимизация
 
-        const beforeY: number = player!.posY - tilesY - 30;
-        const afterY: number = player!.posY + tilesY;
+        const pos = { x: player!.posX, y: player!.posY};
+        const beforeY: number = pos.y - tilesY - 30;
+        const afterY: number = pos.y + tilesY;
 
-        const beforeX: number = player!.posX - tilesX - 30;
-        const afterX: number = player!.posX + tilesX;
+        const beforeX: number = pos.x - tilesX - 30;
+        const afterX: number = pos.x + tilesX;
 
         const { backgroundChunks, foregroundChunks, animatedChunks } = this.getWorldMap();
 
@@ -126,8 +127,22 @@ export class MapManager {
             startY: Number(key.substring(key.indexOf(",")+1)) }
     }
 
-    public getChunk(posX: number, posY: number): Chunk {
-        return { startX: posX, startY: posY, chunk: this.getWorldMap().backgroundChunks.get(`${posX},${posY}`)! }
+    public getChunk(posX: number, posY: number, layer: string = "background"): Chunk {
+        const key = this.getTilePosKey(posX, posY);
+        let chunks: Map<string, number[][]> | null = null;
+        if (layer === "background") {
+            chunks = this.getWorldMap().backgroundChunks;
+        }else if (layer === "foreground") {
+            chunks = this.getWorldMap().foregroundChunks;
+        } else {
+            chunks = this.getWorldMap().animatedChunks;
+        }
+        return { ...this.keyToCoors(key), chunk: chunks.get(key)! }
+    }
+
+    public getTile(posX: number, posY: number, layer: string = "background") {
+        const chunk = this.getChunk(posX, posY, layer);
+        return tileList[chunk.chunk[Math.abs(posY % MapManager.chunkSize)][Math.abs(posX % MapManager.chunkSize)]];
     }
 
     private convertToMatrix(chunk: ChunkData): number[][] {

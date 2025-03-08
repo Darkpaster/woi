@@ -3,10 +3,13 @@ import {tileImage} from "./image.ts";
 import {logf} from "../../utils/debug.ts";
 
 interface TileProps {
-    [key: string]: string|boolean|number
+    isWalkable: boolean,
+    renderAfter: boolean,
+    damage: number,
+    animated: boolean,
 }
 
-interface Tile {
+export interface Tile {
     [key: number]: {
         name: string;
         props: TileProps;
@@ -45,7 +48,7 @@ type Property = {
     name: string, //название свойства
     type: string, // тип данных (хз зачем он тут)
     propertytype?: string, //название кастомного типа
-    value: boolean | number | string; // сами данные
+    value: any; // сами данные
 }
 
 export async function generateTiles(map: any) {
@@ -90,7 +93,10 @@ export async function generateTiles(map: any) {
 
                 if (hasTileData && tileData.properties !== undefined) {
                     for (const property of tileData.properties) {
-                        tileList[globalId].props[property.name] = property.value;
+                        if (property.name in tileList[globalId].props) {
+                            // @ts-ignore
+                            tileList[globalId].props[property.name] = property.value;
+                        }
                     }
                 }
 
@@ -98,7 +104,4 @@ export async function generateTiles(map: any) {
 
         }
 
-        setTimeout(() => {
-            logf(tileList);
-        }, 1000);
 }

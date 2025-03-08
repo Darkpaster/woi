@@ -1,12 +1,5 @@
 import russian from "./langs/russian.ts";
 import english from "./langs/english.ts";
-import japanese from "./langs/japanese.ts";
-import espanol from "./langs/espanol.ts";
-import french from "./langs/french.ts";
-import german from "./langs/german.ts";
-import italian from "./langs/Italian.ts";
-import ukrainian from "./langs/ukrainian.ts";
-import armenian from "./langs/armenian.ts";
 import {settings} from "./settings.ts";
 
 type textList = {
@@ -128,27 +121,27 @@ export const lang: LangType = {
     en: {
         ...english
     },
-    ja: {
-        ...japanese
-    },
-    es: {
-        ...espanol
-    },
-    fr: {
-        ...french
-    },
-    de: {
-        ...german
-    },
-    it: {
-        ...italian
-    },
-    uk: {
-        ...ukrainian
-    },
-    hy: {
-        ...armenian
-    },
+    // ja: {
+    //     ...japanese
+    // },
+    // es: {
+    //     ...espanol
+    // },
+    // fr: {
+    //     ...french
+    // },
+    // de: {
+    //     ...german
+    // },
+    // it: {
+    //     ...italian
+    // },
+    // uk: {
+    //     ...ukrainian
+    // },
+    // hy: {
+    //     ...armenian
+    // },
 }
 
 

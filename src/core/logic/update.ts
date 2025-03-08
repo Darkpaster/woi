@@ -8,7 +8,11 @@ const updateRate: TimeDelay = new TimeDelay(25);
 export function update(): void {
     if (updateRate.timeIsUp()) {
         camera!.update(player!.updatePlayer(), player!.x, player!.y);
-        graphics.ctx!.font = 7 * settings.defaultTileScale + "px PixelFont";
+        if (graphics.debugMode) {
+            graphics.ctx!.font = "11px PixelFont";
+        }else {
+            graphics.ctx!.font = 7 * settings.defaultTileScale + "px PixelFont";
+        }
         // updateInGameUI();
         // for (const mob of Mob.mobList) {
         //     mob.update();

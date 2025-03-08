@@ -4,9 +4,24 @@ import {selector1} from "./static/sprites.ts";
 import {AnimatedEffect} from "./image.ts";
 import {FloatText} from "./floatText.ts";
 import {tileList} from "./tilesGenerator.ts";
-import {logf} from "../../utils/debug.ts";
+import {render} from "sass";
+import {length} from "axios";
 
 export class Graphics {
+    get debugMode(): boolean {
+        return this._debugMode;
+    }
+
+    set debugMode(value: boolean) {
+        this._debugMode = value;
+    }
+    get canvas(): HTMLCanvasElement | null {
+        return this._canvas;
+    }
+
+    set canvas(value: HTMLCanvasElement | null) {
+        this._canvas = value;
+    }
     get ctx(): CanvasRenderingContext2D | null | undefined {
         return this._ctx;
     }
@@ -26,9 +41,21 @@ export class Graphics {
     private readonly _floatTextList: Array<FloatText> = [];
     private readonly _effectList: Array<AnimatedEffect> = [];
     private _ctx: CanvasRenderingContext2D | null | undefined;
+    private _canvas: HTMLCanvasElement | null = null;
+    // private chunkCanvas: OffscreenCanvas = new OffscreenCanvas(32 * scaledTileSize(), 32 * scaledTileSize());
+    // private chunkCtx: OffscreenCanvasRenderingContext2D | null = this.chunkCanvas.getContext("2d");
+
+    // private cachedChunks: Map<string, CanvasImageSource> = new Map();
+
+    private renderAfterList: { (): void; } [] = [];
+
+    private _debugMode: boolean = false;
 
     constructor(canvas: HTMLCanvasElement) {
         this.ctx = canvas.getContext("2d");
+        this.ctx!.imageSmoothingEnabled = false;
+        this.ctx!.textAlign = "center"
+        this._canvas = canvas;
     }
 
     public render(): void {
@@ -37,7 +64,15 @@ export class Graphics {
             this.renderActors();
             this.renderEffects();
             this.renderText();
+            // if (this._debugMode) {
+                this.debugRender();
+            // }
         }
+    }
+
+    private debugRender() {
+        this.ctx!.strokeRect(player!.x, player!.y, player!.image!.currentAnimation.widthSize, player!.image!.currentAnimation.heightSize);
+        // this.ctx!.fillText(`x:${player!.posX},y:${player!.posY}`, player!.x + player!.image!.currentAnimation.widthSize / 2, player!.y + 40);
     }
 
     private renderActors(): void {
@@ -48,10 +83,19 @@ export class Graphics {
         //     mob.image!.render(mob.renderState, ctx, mob.x, mob.y, mob.direction);
         //     ctx.fillText(mob.name, mob.x, mob.y);
         // }
+
+
+        if (this.renderAfterList.length !== 0) {
+                for (const render of this.renderAfterList) {
+                    render();
+                }
+        }
+        this.renderAfterList = [];
+
         if (player!.target) {
             ctx.drawImage(selector1.tile, player!.target.x || 0, player!.target.y || 0, scaledTileSize(), scaledTileSize());
-        }//12288 1788
-        ctx.fillText(player!.name, player!.x, player!.y);
+        }
+        ctx.fillText(player!.name, player!.x + player.image.currentAnimation.widthSize / 2, player!.y);
     }
 
     private renderEffects(): void {
@@ -85,14 +129,28 @@ export class Graphics {
                 const offsetY = chunk.startY;
                 for (let i: number = 0; i < chunkData.length; i++) {
                     for (let j: number = 0; j < chunkData[i].length; j++) {
-                        const tile: number = chunkData[i][j];
-                        if (!tileList[tile]) {
+                        const tileIndex: number = chunkData[i][j];
+                        const tile = tileList[tileIndex];
+                        if (!tile) {
                             continue
                         }
-                        // this.ctx!.fillRect((j + offsetX) * scaledTileSize(), (i + offsetY) * scaledTileSize(),
-                        //     scaledTileSize(), scaledTileSize());
-                        this.ctx!.drawImage(tileList[tile].image.tile, (j + offsetX) * scaledTileSize(), (i + offsetY) * scaledTileSize(),
-                            scaledTileSize(), scaledTileSize());
+                        if (tile.props.renderAfter) {
+                            this.renderAfterList.push(() => {
+                                this.ctx!.drawImage(tile.image.tile, (j + offsetX) * scaledTileSize(), (i + offsetY) * scaledTileSize(),
+                                    scaledTileSize(), scaledTileSize());
+                                if (this._debugMode) {
+                                    this.ctx?.strokeRect((j + offsetX) * scaledTileSize(), (i + offsetY) * scaledTileSize(), scaledTileSize(), scaledTileSize())
+                                    this.ctx!.fillText(`x:${j + offsetX},y:${i + offsetY}`, (j + offsetX) * scaledTileSize(), (i + offsetY) * scaledTileSize());
+                                }
+                            })
+                        } else {
+                            this.ctx!.drawImage(tile.image.tile, (j + offsetX) * scaledTileSize(), (i + offsetY) * scaledTileSize(),
+                                scaledTileSize(), scaledTileSize());
+                            if (this._debugMode) {
+                                this.ctx?.strokeRect((j + offsetX) * scaledTileSize(), (i + offsetY) * scaledTileSize(), scaledTileSize(), scaledTileSize())
+                                this.ctx!.fillText(`x:${j + offsetX},y:${i + offsetY}`, (j + offsetX) * scaledTileSize(), (i + offsetY) * scaledTileSize());
+                            }
+                        }
                     }
                 }
             }

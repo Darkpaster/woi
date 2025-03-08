@@ -1,6 +1,6 @@
 import { AnimatedImageManager } from "../image.ts";
 import {
-    getBoarAnimations, getKnightAnimations, getRabbitAnimations, getWerewolfAnimations,
+    getBoarAnimations, getKnightAnimations, getRabbitAnimations, getWerewolfAnimations, getWerewolfHumanAnimations,
 } from "./animatedSprites.ts";
 
 
@@ -17,6 +17,10 @@ export function setKnightManager() {
 }
 export function setWerewolfManager() {
     return new AnimatedImageManager(getWerewolfAnimations());
+}
+
+export function setWerewolfHumanManager() {
+    return new AnimatedImageManager(getWerewolfHumanAnimations());
 }
 
 

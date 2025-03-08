@@ -1,4 +1,4 @@
-import {setKnightManager, setWerewolfManager} from "../../graphics/static/managers.ts";
+import {setKnightManager, setWerewolfHumanManager, setWerewolfManager} from "../../graphics/static/managers.ts";
 import {calcDistance, scaledTileSize} from "../../../utils/math.ts";
 import {smallPotionOfHealing} from "../items/consumable/potions/smallPotionOfHealing.ts";
 import {Slash} from "../skills/slash.ts";
@@ -51,7 +51,7 @@ export class Player extends Actor {
         this.criticalChance = 0.3;
         this.moveSpeed = 10;
         this.AA = true;
-        this.image = setWerewolfManager();
+        this.image = setWerewolfHumanManager();
         this.name = "Георгий";
         this.inventory = new Array(200);
         this.spellBook = [new Slash(this), null, null, null, null, null, null, null, null, null];
@@ -169,15 +169,14 @@ export class Player extends Actor {
             this.x += this.moveSpeed;
         }
 
-        // const collision = this.collision(Mob.mobList);
+        const collision = this.collision();
 
-        // if (collision.x) {
-        //     this.x = cameraDiff.x;
-        // }
-        //
-        // if (collision.y) {
-        //     this.y = cameraDiff.y;
-        // }
+        if (collision.x) {
+            this.x = cameraDiff.x;
+        }
+        if (collision.y) {
+            this.y = cameraDiff.y;
+        }
 
         this.offsetX = cameraDiff.x = cameraDiff.x - this.x;
         this.offsetY = cameraDiff.y = cameraDiff.y - this.y;

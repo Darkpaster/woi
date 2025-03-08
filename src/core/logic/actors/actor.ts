@@ -1,13 +1,14 @@
 import { FloatText } from "../../graphics/floatText.ts";
 import { AnimatedImageManager } from "../../graphics/image.ts";
-import { calcDistance, randomInt, scaledTileSize } from "../../../utils/math.ts";
+import {calcDistance, calcDistanceX, calcDistanceY, randomInt, scaledTileSize} from "../../../utils/math.ts";
 import { TimeDelay } from "../../../utils/time.ts";
-import {Mob} from "./mobs/mob.ts";
+// import {Mob} from "./mobs/mob.ts";
 import {Skill} from "../skills/skill.ts";
-import {graphics} from "../../main.ts";
+import {graphics, once, player, worldMap} from "../../main.ts";
 import {settings} from "../../config/settings.ts";
 
 import {v4 as uuidv4} from "uuid"
+import {tileList} from "../../graphics/tilesGenerator.ts";
 
 export interface EntityUIInfo {
 	id: string;
@@ -63,11 +64,11 @@ export class Actor implements EntityUIInfo {
 	public set x(value: number) {
 		this._x = value;
 	}
-	public get target(): Mob | undefined | any {
+	public get target(): Actor | undefined | any {
 		return this._target;
 	}
 
-	public set target(value: Mob | any) {
+	public set target(value: Actor | any) {
 		this._target = value;
 	}
 	public get direction(): string {
@@ -281,7 +282,7 @@ export class Actor implements EntityUIInfo {
 	private _renderState: string = "idle";
 	private _direction: string = "down";
 
-	private _target?: Mob | any;
+	private _target?: Actor | any;
 
 	private _spellBook: Array<Skill | null> = [];
 
@@ -346,19 +347,46 @@ export class Actor implements EntityUIInfo {
 
 		return false
 	}
+	// буферизация чанков для оптимизации и плавности, пофиксить сетку между тайлами,
+	// библиотека для отладки графики (визуализация границ, свойств и координат)
+	collision(): { x: boolean, y: boolean } {
 
-	// getPosTile(): any {
-	// 	return getActorTile(this);
-	// }
-
-	collision(mobs: Array<Actor>): { x: boolean, y: boolean } {
 		const stop: { x: boolean, y: boolean } = { x: false, y: false };
 
-		// if () {
-		// 	stop.x = stop.y = true;
-		// }
-		// if ()
+		const pos = { x: this.posX, y: this.posY}; //оптимизация
+		const chunk = worldMap.getChunk(pos.x, pos.y, "foreground");
+		const posInChunk = {x: 0, y: 0};
+
+		posInChunk.x = this.getPosInChunk(pos.x, chunk.startX, chunk.chunk.length);
+		posInChunk.y = this.getPosInChunk(pos.y, chunk.startY, chunk.chunk.length);
+
+		const positiveX = chunk.startX >= 0 ? 1 : -1;
+		const positiveY = chunk.startY >= 0 ? 1 : -1;
+
+		for (let i = Math.max(posInChunk.y - 1, 0); i < Math.min(posInChunk.y + 1, chunk.chunk.length - 1); i++) {
+			for (let j = Math.max(posInChunk.x - 1, 0); j < Math.min(posInChunk.x + 1, chunk.chunk.length - 1); j++) {
+					const tile = tileList[chunk.chunk[i][j]];
+					if (tile === undefined) {
+						continue
+					}
+					if (!tile.props.isWalkable) {
+						once(`${ pos.x },${pos.y}, ${(j * positiveX) + chunk.startX},${(positiveY * i) + chunk.startY}`);
+						const col = calcDistance({ x: pos.x, y: pos.y }, { x: (j * positiveX) + chunk.startX, y: (positiveY * i) + chunk.startY });//startX и startY могут быть отрицательными
+						if (col < 2) { //4191 4296
+							player!.name = `${chunk.chunk[i][j]}`
+							stop.x = stop.y = true;
+						}
+					}
+			}
+		}
 
 		return stop
 	}
+
+	private getPosInChunk(globalPos: number, chunkStart: number, chunkSize: number): number {
+		return ((globalPos - chunkStart) % chunkSize + chunkSize) % chunkSize;
+	}
+
+	// const tile = worldMap.getTile(this.posX, this.posY, "foreground");
+	// once(JSON.stringify(tile.props));
 }
