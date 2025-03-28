@@ -1,5 +1,5 @@
 import React from "react";
-import Button from "../components/Button.tsx";
+import {txtList} from "../../core/config/lang.ts";
 
 export type ClickHandlerError = () => void;
 
@@ -18,10 +18,10 @@ interface MenuProps {
 
 export const MainMenu: React.FC<MenuProps> = ({ onStartGame, onShortcuts, onSettings, onMainMenu, onResume }) => (
     <div className={"ui-div menu-div"}>
-        <Button onClick={onStartGame} styleType={"ui-div menu-button"}>start</Button>
-        {onResume && <Button onClick={onResume}>resume</Button>}
-        {onShortcuts && <Button onClick={onShortcuts}>shortcuts</Button>}
-        {onSettings && <Button onClick={onSettings}>settings</Button>}
-        {onMainMenu && <Button onClick={onMainMenu}>main menu</Button>}
+        <button onClick={onStartGame} className={"ui-div menu-button"}>{txtList().create}</button>
+        {onResume && <button onClick={onResume}>resume</button>}
+        {onShortcuts && <button onClick={onShortcuts}>shortcuts</button>}
+        {onSettings && <button onClick={onSettings}>settings</button>}
+        {onMainMenu && <button onClick={onMainMenu}>main menu</button>}
     </div>
 );

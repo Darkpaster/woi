@@ -1,5 +1,4 @@
 import {useEffect, useState, useRef, RefObject} from "react";
-import {Mob} from "../../core/logic/actors/mobs/mob.js";
 import {camera, player} from "../../core/main.ts";
 import {scaledTileSize} from "../../utils/math.js";
 
@@ -13,7 +12,7 @@ export const bindings = {
     fullscreen: "f11",
     zoomIn: "=",
     zoomOut: "-",
-    tab: "Tab",
+    selectNearest: "Tab",
     shift: "Shift",
     enter: "Enter",
     b1: "1",
@@ -68,7 +67,7 @@ export const actions = {
     shift: () => {
 
     },
-    enter: () => {
+    enter: (event: { preventDefault: () => void; }) => {
 
     },
     b1: () => {
@@ -123,8 +122,11 @@ export function useKeyboard(canvasRef: RefObject<HTMLCanvasElement | null>) {
                 case bindings.zoomOut:
                     actions.zoomOut();
                     break;
-                case bindings.tab:
+                case bindings.selectNearest:
                     actions.tab(event)
+                    break;
+                case bindings.shift:
+                    actions.shift();
                     break;
                 case bindings.b1:
                     actions.b1();
@@ -144,7 +146,7 @@ export function useKeyboard(canvasRef: RefObject<HTMLCanvasElement | null>) {
             }
         };
 
-        const handleKeyUp = (event: { key: unknown; }) => {
+        const handleKeyUp = (event: { key: unknown; preventDefault: () => void; }) => {
             setKeysPressed((prevKeys) => {
                 const newKeys = new Set(prevKeys);
                 newKeys.delete(event.key);
@@ -172,6 +174,9 @@ export function useKeyboard(canvasRef: RefObject<HTMLCanvasElement | null>) {
                     break;
                 case "e":
                     if (player) player.AA = !player.AA;
+                    break;
+                case bindings.enter:
+                    actions.enter(event);
                     break;
             }
         };

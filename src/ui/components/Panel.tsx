@@ -1,4 +1,3 @@
-import Button from "./Button.tsx";
 import React, {RefObject, useEffect, useRef, useState} from "react";
 import {player} from "../../core/main.ts";
 import {actions} from "../input/input.ts";
@@ -51,9 +50,9 @@ export const Panel = () => {
                     }
                 }
                 return (
-                    <Button
+                    <button
                         key={index}
-                        styleType="ui-div cell"
+                        className="ui-div cell"
                         onMouseEnter={(e) => {
                             if (skill) {
                                 const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
@@ -79,7 +78,7 @@ export const Panel = () => {
                         }}
                     >
                         {displayText}
-                    </Button>
+                    </button>
                 );
             })}
         </div>

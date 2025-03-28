@@ -110,9 +110,7 @@ type textList = {
     darknessDescription: string;
 }
 
-interface LangType {
-    [key: string]: textList
-}
+type LangType = Record<string, textList>;
 
 export const lang: LangType = {
     ru: {

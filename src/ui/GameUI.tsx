@@ -1,38 +1,37 @@
-import React, {useState, useEffect, useCallback, useRef} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {pauseMusic, playMusic, resumeMusic} from '../core/audio/music.ts';
 import {MainMenu} from "./layouts/MainMenu.tsx";
-import {SelfWidget} from "./components/SelfWidget.tsx";
-import {TargetWidget} from "./components/TargetWidget.tsx";
-import {Panel} from "./components/Panel.tsx";
-import {Chat} from "./components/Chat.tsx";
-import {Inventory} from "./components/Inventory.tsx";
-import {InfoWindow} from "./components/InfoWindow.tsx";
 import {init, pauseLoop, player, startLoop} from "../core/main.ts";
 import {Item} from "../core/logic/items/item.ts";
 import {Actor} from "../core/logic/actors/actor.ts";
 import {Skill} from "../core/logic/skills/skill.ts";
 import {actions, useKeyboard} from "./input/input.ts";
-import uiSlice, {toggleInventory, UIState} from "../utils/stateManagement/uiSlice.ts";
+import uiSlice, {setCanvasRef, toggleInventory, UIState} from "../utils/stateManagement/uiSlice.ts";
 import {useMyDispatch, useMySelector} from "../utils/stateManagement/store.ts";
 import Auth from "./layouts/Auth.tsx";
+import {InGame} from "./layouts/InGame.tsx";
+import {Loading} from "./layouts/Loading.tsx";
 
-export type ItemType<T extends Item | Actor | Skill> = T;
+export type EntityType = Item | Actor | Skill;
 
 let canvas: HTMLCanvasElement | null;
 
-let mounted = false;
+
+export function isMounted() {
+    let mounted = false;
+
+    return () => {
+        const now = mounted;
+        mounted = true;
+        return now;
+    }
+}
+
+const check = isMounted();
 
 
 export const GameUI: React.FC = () => {
-    const [gameState, setGameState] = useState<'auth' | 'mainMenu' | 'paused' | 'inGame'>('mainMenu');
-    const [health, setHealth] = useState(player!.HP);
-    const [maxHealth, setMaxHealth] = useState(player!.HT);
-    const [targetHealth, setTargetHealth] = useState(player!.target ? player!.target.HP : 0);
-    const [targetMaxHealth, setTargetMaxHealth] = useState(player!.target ? player!.target.HT : 100);
-
-    const infoEntity = useMySelector((state: { ui: UIState}) => state.ui.infoEntity);
-    const infoPosition = useMySelector((state: { ui: UIState}) => state.ui.infoPosition);
-    const isInventoryOpen = useMySelector((state: { ui: UIState}) => state.ui.isInventoryOpen);
+    const [gameState, setGameState] = useState<'auth' | 'mainMenu' | 'paused' | 'inGame' | 'loading'>(document.cookie ? 'mainMenu' : 'auth');
 
     const dispatch = useMyDispatch();
 
@@ -42,11 +41,12 @@ export const GameUI: React.FC = () => {
     // Инициализация canvas после монтирования компонента
     useEffect(() => {
 
-        if (!mounted) { //обход strictMode
+        if (!check()) { //обход strictMode
             canvas = canvasRef.current;
             if (canvas) {
                 canvas.height = window.innerHeight;
                 canvas.width = window.innerWidth;
+                dispatch(setCanvasRef(HTMLCanvasElement));
             }
 
             const initButton = document.getElementById('init');
@@ -57,26 +57,26 @@ export const GameUI: React.FC = () => {
                     canvas!.style.display = "block";
                     // playMusic("main");
                 });
-
                 init();
+            }
+            if (gameState !== 'auth') {
+                initButton?.click();
             }
 
             actions.inventory = () => {
                 dispatch(toggleInventory());
             }
+
+
+            if (gameState !== 'auth' && !document.cookie) {
+                // deleteAuthHeader();
+                setGameState('auth');
+                // alert("Access token is up!");
+            } else {
+                // alert(`cookie: ${document.cookie},`)
+            }
         }
 
-        mounted = true;
-
-        const interval = setInterval(() => {
-            setHealth(player!.HP);
-            setMaxHealth(player!.HT);
-            if (player!.target) {
-                setTargetHealth(player!.target.HP);
-                setTargetMaxHealth(player!.target.HT);
-            }
-        }, 100);
-        return () => clearInterval(interval);
 
     }, []);
 
@@ -117,6 +117,7 @@ export const GameUI: React.FC = () => {
                 The Aftermath Trail
             </header>
             <canvas id="canvas" ref={canvasRef}></canvas>
+
             <div id="welcome-div">
                 <span id="version" style={{display: gameState === 'inGame' ? 'none' : 'block', bottom: 0, right: 0, position: "absolute"}}>v1.0.0</span>
                 {gameState === 'auth' && (
@@ -125,24 +126,8 @@ export const GameUI: React.FC = () => {
                 {(gameState === 'mainMenu' || gameState === "paused") && (
                     <MainMenu onStartGame={handleNewGame}/>
                 )}
-                {gameState === 'inGame' && (
-                    <div id="interface-layer">
-                        <div id="static-interface">
-                            <SelfWidget value={health} max={maxHealth}/>
-                            {player!.target && (
-                                <TargetWidget value={targetHealth} max={targetMaxHealth}/>
-                            )}
-                            <Panel />
-                            <Chat/>
-                        </div>
-                        {isInventoryOpen && (
-                            <Inventory />
-                        )}
-                        {
-                            infoEntity && infoPosition && (<InfoWindow entity={infoEntity} position={infoPosition}/>)
-                        }
-                    </div>
-                )}
+                {gameState === 'inGame' && <InGame />}
+                {gameState === 'loading' && <Loading />}
             </div>
         </>
     );

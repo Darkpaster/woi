@@ -1,16 +1,18 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import useAuthAPI from "../../ui/service/authAPI.ts";
+import useAuthAPI from "../../ui/hooks/service/authAPI.ts";
 
 export interface AuthState {
     user: { password: string, email: string } | null,
     error: string | null,
     loading: boolean,
+    access_token: null|string,
 }
 
 const initialState: AuthState = {
     user: null,
     error: null,
     loading: false,
+    access_token: null,
 };
 
 const authSlice = createSlice({
@@ -18,9 +20,6 @@ const authSlice = createSlice({
     initialState,
     reducers: {
         loginUser(state, action: PayloadAction<{ password: string, email: string } | null>) {
-            if (!state.user) {
-                state.error = "Nu such user!";
-            }
 
         },
         registerUser(state, action: PayloadAction<{ password: string, email: string } | null>) {

@@ -13,18 +13,18 @@ interface FloatTextProps {
 export class FloatText {
     private readonly x: number;
     private y: number;
-    private text: string | number;
-    private lifeTime: TimeDelay;
+    private readonly text: string | number;
+    private readonly lifeTime: TimeDelay;
     private readonly fillStyle: string;
     private readonly crit: boolean;
 
     constructor({ text, x, y, color, crit }: FloatTextProps) {
         if (crit) {
             this.x = randomInt(x - scaledTileSize() * 1, x + scaledTileSize() * 1);
-            this.y = randomInt(y - scaledTileSize() * 3, y);
+            this.y = randomInt(y - (y + scaledTileSize() * 2), y);
         } else {
-            this.x = randomInt(x, x + scaledTileSize());
-            this.y = randomInt(y - scaledTileSize(), y);
+            this.x = randomInt(x - scaledTileSize() * 1, x + scaledTileSize() * 1);
+            this.y = randomInt(y - (y + scaledTileSize()), y);
         }
         this.text = text;
         this.lifeTime = new TimeDelay(1500);

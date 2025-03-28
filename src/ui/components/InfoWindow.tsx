@@ -1,19 +1,12 @@
-import {ItemType} from "../GameUI.tsx";
 import React, {
     useEffect,
     useRef
 } from "react";
-import {Item} from "../../core/logic/items/item.ts";
-import {Actor} from "../../core/logic/actors/actor.ts";
 import {Skill} from "../../core/logic/skills/skill.ts";
-
-// export const InfoWindow: ForwardRefExoticComponent<InfoWindowProps> = forwardRef<HTMLDivElement, InfoWindowProps>(
-//     function InfoWindow({entity, position}: InfoWindowProps, ref: ForwardedRef<HTMLDivElement>) {
-
-//interface InfoWindowProps extends React.RefAttributes<HTMLDivElement>{
+import {EntityType} from "../GameUI.tsx";
 
 interface InfoWindowProps {
-    entity: ItemType<Item | Actor | Skill>;
+    entity: EntityType;
     position: { left: number; top: number };
 }
 

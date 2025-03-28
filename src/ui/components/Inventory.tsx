@@ -1,19 +1,9 @@
-// Компонент инвентаря
-import Button from "./Button.tsx";
 import React, {useEffect, useState} from "react";
 import {Item} from "../../core/logic/items/item.ts";
-import {ItemType} from "../GameUI.tsx";
 import {player} from "../../core/main.ts";
 import {setInfoEntity, setInfoPosition} from "../../utils/stateManagement/uiSlice.ts";
 import {useMyDispatch} from "../../utils/stateManagement/store.ts";
 
-
-// interface InventoryProps {
-//     onShowInfo: (item: ItemType<Item>, rect: DOMRect) => void;
-//     onHideInfo: () => void;
-// }
-
-// Вспомогательная функция для определения цвета редкости
 const getRarityColor = (rarity: string): string => {
     switch (rarity) {
         case 'common':
@@ -35,16 +25,16 @@ export const Inventory = () => {
     useEffect(() => {
         const interval = setInterval(() => {
             setInventory([...player!.inventory]);
-        }, 100);
+        }, 200);
         return () => clearInterval(interval);
     }, []);
 
     return (
         <div className="inventory-div ui-div cell-type">
             {inventory.map((item : Item, index) => (
-                <Button
+                <button
                     key={index}
-                    styleType="ui-div cell"
+                    className={"ui-div cell"}
                     onClick={() => {
                         if (item) {
                             item.onUse();
@@ -63,13 +53,13 @@ export const Inventory = () => {
                         dispatch(setInfoPosition(null));
                     }}
                     style={{
-                        backgroundImage: item ? `url(${item.icon})` : undefined,
+                        backgroundImage: item ? `url(${item.icon})` : "",
                         borderColor: item ? getRarityColor(item.rarity) : 'black',
                         cursor: item ? 'pointer' : 'default',
                     }}
                 >
                     {index}
-                </Button>
+                </button>
             ))}
         </div>
     );

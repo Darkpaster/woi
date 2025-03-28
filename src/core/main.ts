@@ -9,6 +9,7 @@ import {EntityManager} from "./logic/entitiesManager.ts";
 
 export const once = logOnce();
 
+
 export let player: Player | null = null,
     camera: Camera | null = null,
     graphics: Graphics,
@@ -46,3 +47,5 @@ export function pauseLoop(): void {
         clearInterval(mainLoop);
     }
 }
+
+

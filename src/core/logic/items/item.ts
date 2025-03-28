@@ -1,19 +1,15 @@
 import {EntityUIInfo} from "../actors/actor.ts";
 import {AnimatedImageManager} from "../../graphics/image.ts";
-import * as console from "node:console";
-import * as console from "node:console";
-import * as console from "node:console";
-import {v4 as uuidv4} from "uuid";
-import * as console from "node:console";
+// import {v4 as uuidv4} from "uuid";
 
 export class Item implements EntityUIInfo {
-    get id(): string {
-        return this._id;
-    }
-
-    set id(value: string) {
-        this._id = value;
-    }
+    // get id(): string {
+    //     return this._id;
+    // }
+    //
+    // set id(value: string) {
+    //     this._id = value;
+    // }
     get x(): number {
         return this._x;
     }
@@ -88,7 +84,7 @@ export class Item implements EntityUIInfo {
     private _actions: any[];
 
     private _name: string = "Item";
-    private _id: string = uuidv4();
+    // private _id: string = uuidv4();
     private _image?: null | AnimatedImageManager;
     private _sprite?: null | string;
     private _description: string = "No description";

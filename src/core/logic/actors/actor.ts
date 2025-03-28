@@ -2,16 +2,16 @@ import { FloatText } from "../../graphics/floatText.ts";
 import { AnimatedImageManager } from "../../graphics/image.ts";
 import {calcDistance, calcDistanceX, calcDistanceY, randomInt, scaledTileSize} from "../../../utils/math.ts";
 import { TimeDelay } from "../../../utils/time.ts";
-// import {Mob} from "./mobs/mob.ts";
 import {Skill} from "../skills/skill.ts";
 import {graphics, once, player, worldMap} from "../../main.ts";
 import {settings} from "../../config/settings.ts";
 
-import {v4 as uuidv4} from "uuid"
+// import {v4 as uuidv4} from "uuid"
 import {tileList} from "../../graphics/tilesGenerator.ts";
+import {Player} from "./player.ts";
 
 export interface EntityUIInfo {
-	id: string;
+	// id: string;
 	name: string;
 	image?: AnimatedImageManager | null;
 	icon?: string | null;
@@ -20,14 +20,21 @@ export interface EntityUIInfo {
 	rarity: "common" | "uncommon" | "rare" | "epic" | "legendary" | "godlike";
 }
 
-export class Actor implements EntityUIInfo {
-	get id(): string {
-		return this._id;
+export abstract class Actor implements EntityUIInfo {
+	get fearFactor(): number {
+		return this._fearFactor;
 	}
 
-	set id(value: string) {
-		this._id = value;
+	set fearFactor(value: number) {
+		this._fearFactor = value;
 	}
+	// get id(): string {
+	// 	return this._id;
+	// }
+	//
+	// set id(value: string) {
+	// 	this._id = value;
+	// }
 	get icon(): string | null | undefined {
 		return this._sprite;
 	}
@@ -250,7 +257,7 @@ export class Actor implements EntityUIInfo {
 	}
 
 	private _name: string = "???";
-	private _id: string = uuidv4();
+	// private _id: string = uuidv4();
 	private _image?: AnimatedImageManager | null;
 	private _sprite?: string | null;
 	private _description: string = "Unknown creature";
@@ -281,6 +288,8 @@ export class Actor implements EntityUIInfo {
 	private _attackRange: number = 1;
 	private _renderState: string = "idle";
 	private _direction: string = "down";
+
+	private _fearFactor: number = 0;
 
 	private _target?: Actor | any;
 
@@ -318,7 +327,7 @@ export class Actor implements EntityUIInfo {
 		}
 
 		this._HP -= realDamage;
-		graphics?.floatTextList.push(new FloatText({text: realDamage, x: this._x, y: this._y, color: this instanceof Mob ? "orange" : "red", crit: crit}));
+		graphics?.floatTextList.push(new FloatText({text: realDamage, x: this._x, y: this._y, color: this instanceof Player ? "red" : "orange", crit: crit}));
 	}
 
 	learn<T extends Skill>(spell: T): void {
@@ -349,6 +358,7 @@ export class Actor implements EntityUIInfo {
 	}
 	// буферизация чанков для оптимизации и плавности, пофиксить сетку между тайлами,
 	// библиотека для отладки графики (визуализация границ, свойств и координат)
+	// всё ещё криво работает коллизия
 	collision(): { x: boolean, y: boolean } {
 
 		const stop: { x: boolean, y: boolean } = { x: false, y: false };

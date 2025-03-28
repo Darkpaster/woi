@@ -1,8 +1,11 @@
-import {calcDistance, calcDistanceX, calcDistanceY, randomInt, scaledTileSize} from "../../../../utils/math.ts";
+import {calcDistance, randomInt, scaledTileSize} from "../../../../utils/math.ts";
 import {TimeDelay} from "../../../../utils/time.ts";
-import {player} from "../../../main.ts";
 
 import {Actor} from "../actor.ts";
+
+
+import {player} from "../../../main.ts";
+
 
 export class Mob extends Actor {
     static states: { [key: string]: string } = {
@@ -22,6 +25,7 @@ export class Mob extends Actor {
         this.timer = new TimeDelay(1000);
         this.idle = true;
         this._agroRadius = 5;
+        this.fearFactor = 10;
         // this.spawn();
     }
 
@@ -86,10 +90,15 @@ export class Mob extends Actor {
     }
 
     setState(): void {
-        if (this.state !== Mob.states.CHASING && calcDistance(player, this) < this.agroRadius) {
-            this.state = Mob.states.CHASING;
-            this.renderState = "walk";
-            this.target = player;
+        if (this.state !== Mob.states.CHASING && this.state !== Mob.states.FLEEING && calcDistance(player, this) < this.agroRadius) {
+            if (player?.fearFactor > this.fearFactor) {
+                this.state = Mob.states.FLEEING;
+                this.renderState = "walk";
+            } else {
+                this.state = Mob.states.CHASING;
+                this.renderState = "walk";
+                this.target = player;
+            }
         } else {
             if (this.state === Mob.states.WANDERING) {
                 return

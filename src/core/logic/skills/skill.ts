@@ -3,21 +3,18 @@ import { calcDistance, randomInt, scaledTileSize } from "../../../utils/math.ts"
 import { CallbackTimer } from "../../../utils/time.ts";
 import { Mob } from "../actors/mobs/mob.ts";
 import { Player } from "../actors/player.ts";
-import { log } from "../logs.ts";
 import {EntityUIInfo} from "../actors/actor.ts";
 import {AnimatedEffect, AnimatedImageManager} from "../../graphics/image.ts";
-import {formatString} from "../../../utils/string.ts";
-import {txtList} from "../../config/lang.ts";
-import {v4 as uuidv4} from "uuid";
+// import {v4 as uuidv4} from "uuid";
 
 export class Skill implements EntityUIInfo {
-    get id(): string {
-        return this._id;
-    }
-
-    set id(value: string) {
-        this._id = value;
-    }
+    // get id(): string {
+    //     return this._id;
+    // }
+    //
+    // set id(value: string) {
+    //     this._id = value;
+    // }
     get icon(): string | null | undefined {
         return this._sprite;
     }
@@ -68,14 +65,13 @@ export class Skill implements EntityUIInfo {
     }
 
     private _name: string = "Item";
-    private _id: string = uuidv4();
+    // private _id: string = uuidv4();
     private _image?: AnimatedImageManager | null;
     private _sprite?: string | null;
     private _description: string = "No description";
     private _note?: string;
     private _rarity: "common" | "uncommon" | "rare" | "epic" | "legendary" | "godlike" = "common";
 
-    private bind: any | null;
     public animation: AnimatedEffect | null;
     public minDamage: number;
     public maxDamage: number;
@@ -88,7 +84,6 @@ export class Skill implements EntityUIInfo {
     public process: CallbackTimer;
 
     constructor(owner: Mob | Player) {
-        this.bind = null;
         this.name = "Unknown skill";
         this.icon = defaultSkill;
         this.animation = null;
@@ -118,12 +113,12 @@ export class Skill implements EntityUIInfo {
         
         if (this.range < calcDistance(this.owner, this.owner.target!) / scaledTileSize()) {
             this.stop();
-            log("system", formatString(txtList().tooFarMessage, this.owner.target.name), "red");
+            // log("system", formatString(txtList().tooFarMessage, this.owner.target.name), "red");
             return false;
         }
         
         if (this.process.cooldown!.getLeftTime() > 0) {
-            log("system", formatString(txtList().cooldownMessage, this.name), "red");
+            // log("system", formatString(txtList().cooldownMessage, this.name), "red");
         } else {
             this.animation!.create(this.owner.target!.x, this.owner.target!.y);
         }
