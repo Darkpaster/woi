@@ -1,4 +1,3 @@
-import {settings} from "./config/settings.js";
 import {update} from "./logic/update.js";
 import {Player} from "./logic/actors/player.ts";
 import {Camera} from "./logic/camera.ts";
@@ -6,6 +5,9 @@ import {MapManager} from "./logic/world/mapManager.ts";
 import {Graphics} from "./graphics/graphics.ts";
 import {logf, logOnce} from "../utils/debug.ts";
 import {EntityManager} from "./logic/entitiesManager.ts";
+import {GameRTC} from "../ui/service/gameRTC.ts";
+import {randomInt} from "../utils/math.ts";
+import {settings} from "./config/settings.ts";
 
 export const once = logOnce();
 
@@ -16,7 +18,11 @@ export let player: Player | null = null,
     worldMap: MapManager,
     entityManager: EntityManager;
 
+export let gameRTC: GameRTC;
+
 player = new Player();
+
+player.id = randomInt(1, 100000);
 
 export function init(): void {
     worldMap = new MapManager();
@@ -25,27 +31,65 @@ export function init(): void {
     graphics = new Graphics(document.getElementById("canvas") as HTMLCanvasElement);
     camera = new Camera({x: player.x, y: player.y});
     // player.learn(new Slash(player));
-
-    // for (let index: number = 0; index < 60; index++) {
-    //     new Rabbit();
-    // }
-
-    // logf(Mob.mobList.length)
 }
 
-let mainLoop: NodeJS.Timeout | null = null;
+export function initWS() {
+    gameRTC = new GameRTC();
+    gameRTC.createRoom("public");
+    gameRTC.joinRoom("public", (player as Player));
+    gameRTC.initUsers((player as Player));
+}
+
+let mainLoop = false;
 
 export function startLoop(): void {
-    mainLoop = setInterval(() => {
+    mainLoop = true;
+    requestAnimationFrame(loop);
+}
+
+let lastFrameTime = performance.now();
+let frameCount = 0;
+let fps = 0;
+let lastUpdateTime = 0;
+const fixedUpdateInterval = 25;
+let accumulator = 0;
+
+function loop(timestamp: number) {
+    if (!mainLoop) {
+        return;
+    }
+
+    // Расчет прошедшего времени с последнего кадра
+    const deltaTime = timestamp - lastFrameTime;
+
+    // Обновление логики игры с фиксированным шагом
+    const elapsedSinceUpdate = timestamp - lastUpdateTime;
+    accumulator += elapsedSinceUpdate;
+    lastUpdateTime = timestamp;
+
+    // Выполняем update с фиксированным шагом времени
+    while (accumulator >= fixedUpdateInterval) {
         update();
+        accumulator -= fixedUpdateInterval;
+    }
+
+    // Рендеринг с заданным FPS из настроек
+    if (deltaTime >= settings.delay() * 0.9) {
+        lastFrameTime = timestamp;
+
+        frameCount++;
+        if (frameCount >= settings.fps) {
+            frameCount = 0;
+            fps = Math.round(1000 / deltaTime);
+        }
+
         graphics!.render();
-    }, settings.delay());
+        graphics.drawFPS(fps);
+    }
+
+    requestAnimationFrame(loop);
 }
 
 export function pauseLoop(): void {
-    if (mainLoop) {
-        clearInterval(mainLoop);
-    }
+    mainLoop = false;
 }
-
-

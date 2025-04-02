@@ -1,27 +1,62 @@
-import React from "react";
+import React, {useState} from "react";
 import {txtList} from "../../core/config/lang.ts";
-
-export type ClickHandlerError = () => void;
-
-export const clickHandlerError: ClickHandlerError = () => {
-    alert("Undefined onClick handler.");
-};
+import {CharacterMenu} from "./CharacterMenu.tsx";
+import {ShortcutsWindow} from "../components/menu/ShortcutsWindow.tsx";
+import {SettingsWindow} from "../components/menu/SettingsWindow.tsx";
 
 
 interface MenuProps {
     onStartGame?: () => void;
-    onShortcuts?: () => void;
-    onSettings?: () => void;
     onResume?: () => void;
     onMainMenu?: () => void;
 }
 
-export const MainMenu: React.FC<MenuProps> = ({ onStartGame, onShortcuts, onSettings, onMainMenu, onResume }) => (
-    <div className={"ui-div menu-div"}>
-        <button onClick={onStartGame} className={"ui-div menu-button"}>{txtList().create}</button>
-        {onResume && <button onClick={onResume}>resume</button>}
-        {onShortcuts && <button onClick={onShortcuts}>shortcuts</button>}
-        {onSettings && <button onClick={onSettings}>settings</button>}
-        {onMainMenu && <button onClick={onMainMenu}>main menu</button>}
-    </div>
-);
+export const MainMenu: React.FC<MenuProps> = ({onStartGame, onMainMenu, onResume}) => {
+    const fuckGoBack = () => onMainMenu ? 'pause' : 'main';
+
+    const [tab, setTab] = useState<'main' | 'pause' | 'settings' | 'shortcuts' | 'select'>(fuckGoBack());
+
+    function renderSwitch(param: typeof tab) {
+        switch(param) {
+            case 'main':
+            case 'pause':
+                return (<div className={"ui-div menu-div"}>
+                    {tab === "main" &&
+                        <button onClick={() => setTab('select')} className={"ui-div menu-button"}>{txtList().create}</button>}
+                    {tab === "pause" && <button className={"ui-div menu-button"} onClick={onResume}>{txtList().ok}</button>}
+                    <button className={"ui-div menu-button"} onClick={() => setTab("shortcuts")}>{txtList().shortcuts}</button>
+                    <button className={"ui-div menu-button"} onClick={() => setTab("settings")}>{txtList().settings}</button>
+                    {tab === 'pause' &&
+                        <button onClick={() => {
+                            onMainMenu();
+                            setTab('main');
+                            onResume();
+                        }} className={"ui-div menu-button"}>{txtList().menu}</button>}
+                </div>)
+            case "select":
+                return (
+                    <>
+                        <button className={"ui-div menu-button"} onClick={() => setTab(fuckGoBack())}>{txtList().ok}</button>
+                        <CharacterMenu onEnter={onStartGame}></CharacterMenu>
+                    </>
+                )
+            case "shortcuts":
+                return (
+                    <>
+                        <button className={"ui-div menu-button"} onClick={() => setTab(fuckGoBack())}>{txtList().ok}</button>
+                        <ShortcutsWindow></ShortcutsWindow>
+                    </>
+                )
+            case "settings":
+                return (
+                <>
+                    <button className={"ui-div menu-button"} onClick={() => setTab(fuckGoBack())}>{txtList().ok}</button>
+                    <SettingsWindow></SettingsWindow>
+                </>
+                )
+        }
+    }
+
+
+    return renderSwitch(tab)
+}

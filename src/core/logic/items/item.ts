@@ -3,13 +3,14 @@ import {AnimatedImageManager} from "../../graphics/image.ts";
 // import {v4 as uuidv4} from "uuid";
 
 export class Item implements EntityUIInfo {
-    // get id(): string {
-    //     return this._id;
-    // }
-    //
-    // set id(value: string) {
-    //     this._id = value;
-    // }
+    get id(): number {
+        return this._id;
+    }
+
+    set id(value: number) {
+        this._id = value;
+    }
+
     get x(): number {
         return this._x;
     }
@@ -84,7 +85,7 @@ export class Item implements EntityUIInfo {
     private _actions: any[];
 
     private _name: string = "Item";
-    // private _id: string = uuidv4();
+    private _id: number = 0;
     private _image?: null | AnimatedImageManager;
     private _sprite?: null | string;
     private _description: string = "No description";

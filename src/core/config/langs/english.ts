@@ -40,7 +40,7 @@ export default {
     zoomOut: "Zoom Out",
     zoomIn: "Zoom In",
     selectNearestTarget: "Select Nearest Target",
-    openInventory: "Open Inventory",
+    openInventory: "Open InventoryWindow",
     openCharacterWindow: "Open Character Window",
     turnOnViewMode: "Turn On View Mode",
     pickUpItem: "Pick Up Item",

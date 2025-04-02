@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useCookies} from "react-cookie";
-import UseAuthAPI from "../hooks/service/authAPI.ts";
+import UseAuthAPI from "../service/hooks/authAPI.ts";
 
 type props = {
     onLogin: () => void;

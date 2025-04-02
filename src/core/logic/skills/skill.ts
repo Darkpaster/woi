@@ -8,13 +8,6 @@ import {AnimatedEffect, AnimatedImageManager} from "../../graphics/image.ts";
 // import {v4 as uuidv4} from "uuid";
 
 export class Skill implements EntityUIInfo {
-    // get id(): string {
-    //     return this._id;
-    // }
-    //
-    // set id(value: string) {
-    //     this._id = value;
-    // }
     get icon(): string | null | undefined {
         return this._sprite;
     }

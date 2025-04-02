@@ -1,13 +1,17 @@
-import {SelfWidget} from "../components/SelfWidget.tsx";
-import {player} from "../../core/main.ts";
-import {TargetWidget} from "../components/TargetWidget.tsx";
-import {Panel} from "../components/Panel.tsx";
-import {Chat} from "../components/Chat.tsx";
-import {Inventory} from "../components/Inventory.tsx";
-import {InfoWindow} from "../components/InfoWindow.tsx";
-import {useEffect, useState} from "react";
+import {CharWidget} from "../components/game/static/CharWidget.tsx";
+import {gameRTC, initWS, player} from "../../core/main.ts";
+import {Panel} from "../components/game/static/Panel.tsx";
+import {ChatWindow} from "../components/game/static/ChatWindow.tsx";
+import {InventoryWindow} from "../components/game/dynamic/InventoryWindow.tsx";
+import {InfoWindow} from "../components/game/dynamic/InfoWindow.tsx";
+import {memo, useEffect, useState} from "react";
 import {useMySelector} from "../../utils/stateManagement/store.ts";
 import {UIState} from "../../utils/stateManagement/uiSlice.ts";
+import {isMounted} from "../GameUI.tsx";
+import {LoadingScreen} from "../components/game/dynamic/LoadingScreen.tsx";
+import {randomInt} from "../../utils/math.ts";
+
+const check = isMounted();
 
 export const InGame = () => {
     const [health, setHealth] = useState(player!.HP);
@@ -15,11 +19,20 @@ export const InGame = () => {
     const [targetHealth, setTargetHealth] = useState(player!.target ? player!.target.HP : 0);
     const [targetMaxHealth, setTargetMaxHealth] = useState(player!.target ? player!.target.HT : 100);
 
-    const infoEntity = useMySelector((state: { ui: UIState}) => state.ui.infoEntity);
-    const infoPosition = useMySelector((state: { ui: UIState}) => state.ui.infoPosition);
-    const isInventoryOpen = useMySelector((state: { ui: UIState}) => state.ui.isInventoryOpen);
+    const [loading, setLoading] = useState(true);
+
+    const infoEntity = useMySelector((state: { ui: UIState }) => state.ui.infoEntity);
+    const infoPosition = useMySelector((state: { ui: UIState }) => state.ui.infoPosition);
+    const isInventoryOpen = useMySelector((state: { ui: UIState }) => state.ui.isInventoryOpen);
+
 
     useEffect(() => {
+        // if (check()) {
+        //     return
+        // }
+
+        const memoize = {x: player.x, y: player.y}
+
         const interval = setInterval(() => {
             setHealth(player!.HP);
             setMaxHealth(player!.HT);
@@ -27,24 +40,34 @@ export const InGame = () => {
                 setTargetHealth(player!.target.HP);
                 setTargetMaxHealth(player!.target.HT);
             }
-        }, 100);
-        return () => clearInterval(interval);
+            if (player.x !== memoize.x || player.y !== memoize.y) {
+                // console.log(`x: ${player.x}, y: ${player.y}`)
+                gameRTC.sendPlayerPosition(player.id, player?.x, player?.y);
+                [memoize.x, memoize.y] = [player.x, player.y];
+            }
+        }, 50);
+
+        setTimeout(() => setLoading(false), randomInt(500, 700));
+
+        return () => {
+            clearInterval(interval)
+        };
     }, []);
 
     return (
-        <div id="interface-layer">
+        !loading ? (<div id="interface-layer">
             <div id="static-interface">
-                <SelfWidget value={health} max={maxHealth}/>
+                <CharWidget value={health} max={maxHealth} className={"stat-bar"}/>
                 {player!.target && (
-                    <TargetWidget value={targetHealth} max={targetMaxHealth}/>
+                    <CharWidget value={targetHealth} max={targetMaxHealth} className={"stat-bar-enemy"}/>
                 )}
-                <Panel />
-                <Chat/>
+                <Panel/>
+                <ChatWindow/>
             </div>
-            {isInventoryOpen && <Inventory />}
+            {isInventoryOpen && <InventoryWindow/>}
             {
                 infoEntity && infoPosition && (<InfoWindow entity={infoEntity} position={infoPosition}/>)
             }
-        </div>
+        </div>) : (<LoadingScreen></LoadingScreen>)
     )
 }

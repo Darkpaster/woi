@@ -1,24 +1,22 @@
-import { settings } from "../config/settings.ts";
-import { randomInt, scaledTileSize } from "../../utils/math.ts";
-import { TimeDelay } from "../../utils/time.ts";
-import {camera, graphics, player} from "../main.ts";
-
-const updateRate: TimeDelay = new TimeDelay(25);
+import {settings} from "../config/settings.ts";
+import {randomInt, scaledTileSize} from "../../utils/math.ts";
+import {camera, entityManager, graphics, player} from "../main.ts";
 
 export function update(): void {
-    if (updateRate.timeIsUp()) {
-        camera!.update(player!.updatePlayer(), player!.x, player!.y);
-        if (graphics.debugMode) {
-            graphics.ctx!.font = "11px PixelFont";
-        }else {
-            graphics.ctx!.font = 7 * settings.defaultTileScale + "px PixelFont";
-        }
-        // updateInGameUI();
-        // for (const mob of Mob.mobList) {
-        //     mob.update();
-        // }
-        // Actor.actorList = Actor.actorList.filter((actor) => actor.isAlive());
+    camera!.update(player!.updatePlayer(), player!.x, player!.y);
+    entityManager.findPlayerAt(player.x, player.y).forEach((player, index) => {
+        entityManager.updatePlayer(player);
+    })
+    if (graphics.debugMode) {
+        graphics.ctx!.font = "11px PixelFont";
+    } else {
+        graphics.ctx!.font = 7 * settings.defaultTileScale + "px PixelFont";
     }
+    // updateInGameUI();
+    // for (const mob of Mob.mobList) {
+    //     mob.update();
+    // }
+    // Actor.actorList = Actor.actorList.filter((actor) => actor.isAlive());
     // if (canvas!.id !== document.activeElement!.id) {
     //     canvas!.focus();
     // }

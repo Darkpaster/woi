@@ -155,7 +155,7 @@ export function useKeyboard(canvasRef: RefObject<HTMLCanvasElement | null>) {
 
             switch (event.key) {
                 case bindings.pause:
-                    // clickAt("resume");
+                    actions.pause();
                     break;
                 case bindings.inventory:
                     actions.inventory();
@@ -192,11 +192,19 @@ export function useKeyboard(canvasRef: RefObject<HTMLCanvasElement | null>) {
         const handleContextMenu = (event: MouseEvent) => event.preventDefault();
 
         const canvasEl = canvasRef.current;
+
+        const preventFocus = (event: MouseEvent)=> {
+            if (!(event.target instanceof HTMLInputElement)) {
+                canvasEl.focus();
+            }
+        }
+
         if (canvasEl) {
             canvasEl.addEventListener("keydown", handleKeyDown);
             canvasEl.addEventListener("keyup", handleKeyUp);
             canvasEl.addEventListener("click", handleClick);
             canvasEl.addEventListener("contextmenu", handleContextMenu);
+            document.addEventListener("click", preventFocus);
         }
 
 
@@ -206,6 +214,7 @@ export function useKeyboard(canvasRef: RefObject<HTMLCanvasElement | null>) {
                 canvasEl.removeEventListener("keyup", handleKeyUp);
                 canvasEl.removeEventListener("click", handleClick);
                 canvasEl.removeEventListener("contextmenu", handleContextMenu);
+                document.removeEventListener("click", preventFocus);
             }
         };
 

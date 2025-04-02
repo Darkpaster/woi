@@ -21,6 +21,13 @@ export interface EntityUIInfo {
 }
 
 export abstract class Actor implements EntityUIInfo {
+	get id(): number {
+		return this._id;
+	}
+
+	set id(value: number) {
+		this._id = value;
+	}
 	get fearFactor(): number {
 		return this._fearFactor;
 	}
@@ -258,6 +265,9 @@ export abstract class Actor implements EntityUIInfo {
 
 	private _name: string = "???";
 	// private _id: string = uuidv4();
+
+	private _id: number = 0;
+
 	private _image?: AnimatedImageManager | null;
 	private _sprite?: string | null;
 	private _description: string = "Unknown creature";
@@ -380,7 +390,7 @@ export abstract class Actor implements EntityUIInfo {
 						continue
 					}
 					if (!tile.props.isWalkable) {
-						once(`${ pos.x },${pos.y}, ${(j * positiveX) + chunk.startX},${(positiveY * i) + chunk.startY}`);
+						// once(`${ pos.x },${pos.y}, ${(j * positiveX) + chunk.startX},${(positiveY * i) + chunk.startY}`);
 						const col = calcDistance({ x: pos.x, y: pos.y }, { x: (j * positiveX) + chunk.startX, y: (positiveY * i) + chunk.startY });//startX и startY могут быть отрицательными
 						if (col < 2) { //4191 4296
 							player!.name = `${chunk.chunk[i][j]}`

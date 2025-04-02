@@ -4,6 +4,7 @@ import {smallPotionOfHealing} from "../items/consumable/potions/smallPotionOfHea
 import {Slash} from "../skills/slash.ts";
 import {Actor} from "./actor.ts";
 import {Item} from "../items/item.ts";
+import {Stats} from "mocha";
 
 interface Equipment {
     head: any;
@@ -18,7 +19,24 @@ interface Equipment {
     ring2: any;
 }
 
+interface Stats {
+    strength: number;
+    dexterity: number;
+    intelligence: number;
+    wisdom: number;
+    constitution: number;
+    charisma: number;
+    luck: number;
+}
+
 export class Player extends Actor {
+    get stats(): Stats {
+        return this._stats;
+    }
+
+    set stats(value: Stats) {
+        this._stats = value;
+    }
     get AA(): boolean {
         return this._AA;
     }
@@ -68,71 +86,17 @@ export class Player extends Actor {
     set experience(value: number) {
         this._experience = value;
     }
-    get luck(): number {
-        return this._luck;
-    }
-
-    set luck(value: number) {
-        this._luck = value;
-    }
-    get charisma(): number {
-        return this._charisma;
-    }
-
-    set charisma(value: number) {
-        this._charisma = value;
-    }
-    get constitution(): number {
-        return this._constitution;
-    }
-
-    set constitution(value: number) {
-        this._constitution = value;
-    }
-    get wisdom(): number {
-        return this._wisdom;
-    }
-
-    set wisdom(value: number) {
-        this._wisdom = value;
-    }
-    get intelligence(): number {
-        return this._intelligence;
-    }
-
-    set intelligence(value: number) {
-        this._intelligence = value;
-    }
-    get dexterity(): number {
-        return this._dexterity;
-    }
-
-    set dexterity(value: number) {
-        this._dexterity = value;
-    }
-    get strength(): number {
-        return this._strength;
-    }
-
-    set strength(value: number) {
-        this._strength = value;
-    }
 
     private _AA: boolean;
     private _inventory: Array<Item>;
     readonly equipment: Equipment;
-    private _strength: number;
-    private _dexterity: number;
-    private _intelligence: number;
-    private _wisdom: number;
-    private _constitution: number;
-    private _charisma: number;
-    private _luck: number;
     private _experience: number;
     private _level: number;
     private _gold: number;
     private _inventorySize: number;
     private _skillPoints: number;
+
+    private _stats: Stats;
 
     public pressDown: boolean = false;
     public pressUp: boolean = false;
@@ -148,13 +112,23 @@ export class Player extends Actor {
         this.minDamage = 15;
         this.maxDamage = 35;
         this.criticalChance = 0.3;
-        this.moveSpeed = 10;
+        this.moveSpeed = 1;
         this._AA = true;
         this.image = setWerewolfHumanManager();
         this.name = "Георгий";
         this._inventorySize = 20
         this._inventory = new Array(this._inventorySize);
         this.spellBook = [new Slash(this), null, null, null, null, null, null, null, null, null];
+
+        this._stats = {
+            strength: 10,
+            dexterity: 10,
+            intelligence: 10,
+            wisdom: 10,
+            constitution: 10,
+            charisma: 10,
+            luck: 10,
+        }
 
         this.fearFactor = 10;
 
@@ -175,13 +149,7 @@ export class Player extends Actor {
             ring2: null
         };
 
-        this._strength = 10
-        this._dexterity = 10
-        this._intelligence = 10
-        this._wisdom = 10
-        this._constitution = 10
-        this._charisma = 10
-        this._luck = 10
+
         this._experience = 0
         this._level = 1
         this._gold = 0

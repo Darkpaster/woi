@@ -1,31 +1,45 @@
-import {useState} from "react";
+import React, {useEffect, useState} from "react";
+import {Player} from "../../core/logic/actors/player.ts";
 
-export const CharacterMenu = () => {
-    const [mode, setMode] = useState<"select" | "create">()
+export const CharacterMenu = ( {onEnter}: {onEnter: () => void}) => {
+    const [mode, setMode] = useState<"select" | "create">("select")
 
-    const handleEnterGame = () => {
-        alert("enter!")
-    }
+    const [characters, setCharacters] = useState<null|Player[]>(null)
 
-    const handleCreateChar = () => {
-        alert("enter!")
-    }
+    const [selected, setSelected] = useState()
+
+    useEffect(() => {
+        //fetch за списком персонажей по access_token
+    }, []);
 
     return (
-        <div className={"ui-div menu-div"}>
-            mode === {"select"} ?
-            (
-            <div className={"charlist-div"}>
+        <>
+            <div className={"ui-div menu-div"}>
+
+                {mode === "select" ? (
+                    <>
+                        <div className={"char-list-div"}>
+                            {characters?.map(character => (
+                                <div onClick={() => setCharacters(character)}>{character.name}</div>
+                            ))}
+                        </div>
+                        <button className={"ui-div"} onClick={onEnter}>Войти</button>
+                        <button className={"ui-div"} onClick={() => setMode('create')} disabled={false}>
+                            Создать персонажа
+                        </button>
+                    </>
+                ) : (
+                    <>
+                        <button className={"ui-div"} onClick={() => setMode('select')}>{"<--"}</button>
+                        <div className={"char-div"}>
+                            <button className={"ui-div"}>{"сюда"}</button>
+                            <button className={"ui-div"}>{"туда"}</button>
+                        </div>
+                        <button className={"ui-div"} onClick={onEnter}>создать</button>
+                    </>
+                ) }
 
             </div>
-            <button className={"ui-div"} onClick={handleEnterGame}>Войти</button>
-            ) :
-            (
-            <div className={"char-div"}>
-
-            </div>
-            <button className={"ui-div"} onClick={handleCreateChar}>создать</button>
-            )
-        </div>
+        </>
     )
 }

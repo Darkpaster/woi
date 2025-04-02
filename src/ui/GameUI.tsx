@@ -6,11 +6,11 @@ import {Item} from "../core/logic/items/item.ts";
 import {Actor} from "../core/logic/actors/actor.ts";
 import {Skill} from "../core/logic/skills/skill.ts";
 import {actions, useKeyboard} from "./input/input.ts";
-import uiSlice, {setCanvasRef, toggleInventory, UIState} from "../utils/stateManagement/uiSlice.ts";
+import uiSlice, {toggleInventory} from "../utils/stateManagement/uiSlice.ts";
 import {useMyDispatch, useMySelector} from "../utils/stateManagement/store.ts";
 import Auth from "./layouts/Auth.tsx";
 import {InGame} from "./layouts/InGame.tsx";
-import {Loading} from "./layouts/Loading.tsx";
+import {LoadingScreen} from "./components/game/dynamic/LoadingScreen.tsx";
 
 export type EntityType = Item | Actor | Skill;
 
@@ -31,7 +31,8 @@ const check = isMounted();
 
 
 export const GameUI: React.FC = () => {
-    const [gameState, setGameState] = useState<'auth' | 'mainMenu' | 'paused' | 'inGame' | 'loading'>(document.cookie ? 'mainMenu' : 'auth');
+    const [gameState, setGameState] = useState<'auth' | 'mainMenu' | 'inGame'>(document.cookie ? 'mainMenu' : 'mainMenu');
+    const [onPause, setOnPause] = useState(false);
 
     const dispatch = useMyDispatch();
 
@@ -46,7 +47,7 @@ export const GameUI: React.FC = () => {
             if (canvas) {
                 canvas.height = window.innerHeight;
                 canvas.width = window.innerWidth;
-                dispatch(setCanvasRef(HTMLCanvasElement));
+                // dispatch(setCanvasRef(HTMLCanvasElement));
             }
 
             const initButton = document.getElementById('init');
@@ -67,10 +68,14 @@ export const GameUI: React.FC = () => {
                 dispatch(toggleInventory());
             }
 
+            actions.pause = () => {
+                setOnPause(prev => !prev);
+            }
+
 
             if (gameState !== 'auth' && !document.cookie) {
                 // deleteAuthHeader();
-                setGameState('auth');
+                // setGameState('auth');
                 // alert("Access token is up!");
             } else {
                 // alert(`cookie: ${document.cookie},`)
@@ -123,11 +128,14 @@ export const GameUI: React.FC = () => {
                 {gameState === 'auth' && (
                     <Auth onLogin={() => setGameState("mainMenu")} />
                 )}
-                {(gameState === 'mainMenu' || gameState === "paused") && (
-                    <MainMenu onStartGame={handleNewGame}/>
+                {(gameState === 'mainMenu' || onPause) && (
+                    <MainMenu
+                        onStartGame={handleNewGame}
+                        onMainMenu={onPause ? handleMainMenu : undefined}
+                        onResume={() => setOnPause(false)}
+                    />
                 )}
                 {gameState === 'inGame' && <InGame />}
-                {gameState === 'loading' && <Loading />}
             </div>
         </>
     );

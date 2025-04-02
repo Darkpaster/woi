@@ -3,25 +3,23 @@ const _fps: symbol = Symbol('fps');
 export const settings: {
     fullScreen: boolean;
     language: string;
-    difficulty: string;
-    graphics: string;
     soundVolume: number;
     musicVolume: number;
     defaultTileScale: number;
-    tileSize: number;
+    readonly tileSize: number;
     [key: symbol]: any; // to allow dynamic properties
     fps: number;
+    showFPS: boolean;
     particles: boolean;
     delay(): number;
 } = {
     fullScreen: false,
     language: "ru",
-    difficulty: "normal",
-    graphics: "high",
     soundVolume: 100,
     musicVolume: 100,
     defaultTileScale: 4,
     tileSize: 16,
+    showFPS: false,
 
     [_fps]: 30,
     
@@ -45,20 +43,3 @@ export const settings: {
         }
     }
 }
-
-    // "state": "playing"
-    //state: 'over'
-    //state: 'ready'
-    //state: 'pause'
-    //state: 'win'
-    //state: 'lose'
-    //state: 'menu'
-    //state: 'settings'
-    //state: 'credits'
-    //state: 'about'
-    //state: 'help'
-    //state: 'intro'
-    //state: 'outro'
-    //state: 'loading'
-    //state: 'transition'
-    //state: 'gameover'

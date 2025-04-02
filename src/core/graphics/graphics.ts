@@ -1,11 +1,10 @@
 import {scaledTileSize} from "../../utils/math.ts";
-import {once, player, worldMap} from "../main.ts";
+import {entityManager, once, player, worldMap} from "../main.ts";
 import {selector1} from "./static/sprites.ts";
 import {AnimatedEffect} from "./image.ts";
 import {FloatText} from "./floatText.ts";
 import {tileList} from "./tilesGenerator.ts";
-import {render} from "sass";
-import {length} from "axios";
+import {settings} from "../config/settings.ts";
 
 export class Graphics {
     get debugMode(): boolean {
@@ -75,15 +74,21 @@ export class Graphics {
         // this.ctx!.fillText(`x:${player!.posX},y:${player!.posY}`, player!.x + player!.image!.currentAnimation.widthSize / 2, player!.y + 40);
     }
 
+    public drawFPS(fps: number) {
+        if (!settings.showFPS) {
+            return
+        }
+        this.ctx?.fillText(`fps: ${fps}`, player.x + window.innerWidth / 2 - scaledTileSize(), player.y + window.innerHeight / 2);
+    }
+
     private renderActors(): void {
         const ctx = <CanvasRenderingContext2D>this.ctx;
         ctx.fillStyle = "blue";
         player!.image!.render(player!.renderState, ctx, player!.x, player!.y, player!.direction);
-        // for (const mob of Mob.mobList) {
-        //     mob.image!.render(mob.renderState, ctx, mob.x, mob.y, mob.direction);
-        //     ctx.fillText(mob.name, mob.x, mob.y);
-        // }
 
+        entityManager.findPlayerAt(player.x, player.y).forEach((player, index) => {
+            player.image!.render(player.renderState, ctx, player.x, player.y, player.direction);
+        })
 
         if (this.renderAfterList.length !== 0) {
                 for (const render of this.renderAfterList) {
