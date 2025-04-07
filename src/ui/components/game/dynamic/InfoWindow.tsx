@@ -13,6 +13,17 @@ interface InfoWindowProps {
 export const InfoWindow: React.FC<InfoWindowProps> = ({entity, position}: InfoWindowProps) => {
     const divRef = useRef<HTMLDivElement>(null);
 
+    const getColor = (rarity: string) => {
+        switch (rarity) {
+            case "common": return "grey"
+            case "uncommon": return "green"
+            case "rare": return "blue"
+            case "elite": return "blueviolet"
+            case "legendary": return "orange"
+            case "godlike": return "red"
+        }
+    }
+
     useEffect(() => {
         const window = divRef.current as HTMLDivElement;
 
@@ -24,7 +35,7 @@ export const InfoWindow: React.FC<InfoWindowProps> = ({entity, position}: InfoWi
     return (
         <div ref={divRef} className={`ui-div info-div`}>
             <big style={
-                entity instanceof Skill ? {color: "gold"} : {color: entity!.rarity}}>{entity!.name}</big>
+                entity instanceof Skill ? {color: "gold"} : {color: getColor(entity!.rarity), borderColor: getColor(entity!.rarity)}}>{entity!.name}</big>
             <br/>
             <br/>
             {entity!.description}

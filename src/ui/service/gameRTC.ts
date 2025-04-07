@@ -1,9 +1,13 @@
 import { io, Socket } from "socket.io-client";
-import {Player} from "../../core/logic/actors/player.ts";
+import Player from "../../core/logic/actors/player.ts";
 import {entityManager, player} from "../../core/main.ts";
 
-type CharacterDTO = {
-    name: string, id: number, x: number, y: number, bubble: string, renderState: string,
+export type CharacterInit = {
+    nickname: string, characterId: number, roomId: string, characterType: "wanderer"|"samurai"|"knight"|"werewolf"|"mage"
+}
+
+type Position = {
+    entityId: number, x: number, y: number, renderState: string
 }
 
 export class GameRTC {
@@ -23,7 +27,7 @@ export class GameRTC {
     private dataChannel: RTCDataChannel | null;
 
     constructor() {
-        this._socket = io('http://localhost:8050/ws-chat', {
+        this._socket = io('http://localhost:8050/ws-general', {
             withCredentials: true,
             transports: ['websocket'],
             reconnection: true,
@@ -38,12 +42,10 @@ export class GameRTC {
         this.initSocketListeners();
     }
 
-    private createPlayer(character: CharacterDTO) {
+    private createPlayer(character: CharacterInit) {
         const newPlayer = new Player();
-        newPlayer.name = character.name;
-        newPlayer.id = character.id;
-        newPlayer.x = character.x;
-        newPlayer.y = character.y;
+        newPlayer.name = character.nickname;
+        newPlayer.id = character.characterId;
         return newPlayer;
     }
 
@@ -53,8 +55,8 @@ export class GameRTC {
             console.log('Room created:', roomId);
         });
 
-        this.socket.on('userConnected', (character: CharacterDTO) => {
-            console.log("player connected: "+character.id);
+        this.socket.on('userConnected', (character: CharacterInit) => {
+            console.log("player connected: "+character.characterId);
 
             this.initNewPlayer(this.createPlayer(character));
 
@@ -70,17 +72,17 @@ export class GameRTC {
             console.error('Connection error:', error);
         });
 
-        this.socket.on("receivePosition", (character: CharacterDTO) => {
-            if (entityManager.hasPlayer(character.id)) {
-                const pl = entityManager.getPlayer(character.id);
-                pl!.x = character.x;
-                pl!.y = character.y
+        this.socket.on("receivePlayerPosition", (position: Position) => {
+            if (entityManager.hasPlayer(position.entityId)) {
+                const pl = entityManager.getPlayer(position.entityId);
+                pl!.x = position.x;
+                pl!.y = position.y
             }
         })
 
-        this.socket.on("allUsersConnected", (characters: CharacterDTO[] ) => {
+        this.socket.on("allUsersConnected", (characters: CharacterInit[] ) => {
             for (const character of characters) {
-                console.log(`allUsersConnected: ${character.id}`)
+                console.log(`allUsersConnected: ${character.characterId}`)
                 this.initNewPlayer(this.createPlayer(character));
             }
         })
@@ -88,7 +90,7 @@ export class GameRTC {
         this.socket.on("sendToInitUser", (requestId: number) => {
             console.log(`sendToInitUser: ${requestId}`)
             this.socket.emit("initUserResponse",{ requestId: requestId, characterData:
-                    { name: player.name, id: player.id, x: player.x, y: player.y, bubble: "", renderState: "idle", roomID: this.roomId } });
+                    { nickname: player.name, characterId: player.id, characterType: "wanderer", roomId: this.roomId } });
         })
 
 
@@ -115,7 +117,7 @@ export class GameRTC {
             if (player?.id !== char.id) {
                 entityManager.addPlayer(char);
             } else {
-                console.log("it's me")
+                console.log("init myself")
             }
         } else {
             alert("player duplicate: "+char.id)
@@ -129,7 +131,7 @@ export class GameRTC {
     public joinRoom(roomId: string, player: Player): void {
         this.roomId = roomId;
         // alert(`player.id: ${player.id}`)
-        this._socket.timeout(1000).emit("joinRoom", { name: player.name, id: player.id, x: player.x, y: player.y, bubble: "", renderState: "idle", roomID: roomId }, (err: any): void => {
+        this._socket.timeout(1000).emit("joinRoom", { nickname: player.name, characterId: player.id, characterType: "wanderer", roomId: roomId }, (err: any): void => {
             if (err) {
                 alert("Ошибка подключения ("+err.toString()+")")
             }
@@ -137,7 +139,7 @@ export class GameRTC {
     }
 
     public initUsers(player: Player) {
-        this._socket.timeout(3000).emit("initUsers", { name: player.name, id: player.id, x: player.x, y: player.y, bubble: "", renderState: "idle", roomID: this.roomId }, (err: any): void => {
+        this._socket.timeout(3000).emit("initUsers", { nickname: player.name, characterId: player.id, characterType: "wanderer", roomId: this.roomId }, (err: any): void => {
             if (err) {
                 alert("Ошибка инициализации игроков ("+err.toString()+")")
             }
@@ -222,10 +224,8 @@ export class GameRTC {
         }
     }
 
-    public sendPlayerPosition(id: number, x: number, y: number): void {
-        // console.log(`sent position: ${x}, ${y}`)
-
-        this.socket.emit('sendPosition', { id: id, x: x, y: y });
+    public sendPlayerPosition(entityId: number, x: number, y: number): void {
+        this.socket.emit('sendPlayerPosition', { entityId: entityId, x: x, y: y, renderState: "idle" });
 
         // if(this.dataChannel && 	this.dataChannel.readyState === 'open') {
         //     const positionData = JSON.stringify({ type:'position', x,y });

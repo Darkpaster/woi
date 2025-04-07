@@ -4,9 +4,37 @@ import axios from 'axios';
 const axiosAuth = axios.create({
     baseURL: '/auth',
     timeout: 10000,
-    withCredentials: true
+    withCredentials: true,
 });
 
+// Функция для получения значения cookie
+function getCookieValue(name: string) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+// Функция для инициализации CSRF
+async function initCSRF() {
+    try {
+        // Этот запрос установит XSRF-TOKEN cookie
+        await axios.get('/csrf', { withCredentials: true });
+    } catch (error) {
+        console.error('Failed to get CSRF token', error);
+    }
+}
+
+// Вызовите эту функцию при загрузке приложения
+// initCSRF();
+
+// После этого добавляйте токен в заголовки запросов
+// axiosAuth.interceptors.request.use(config => {
+//     const token = getCookieValue('XSRF-TOKEN');
+//     if (token) {
+//         config.headers['X-XSRF-TOKEN'] = token;
+//     }
+//     return config;
+// });
 
 type apiProps = {
     url?: string,
@@ -49,7 +77,7 @@ const UseAuthAPI = ({url, method = 'GET', body = null, onLoad = () => alert("def
                     withCredentials: true
                 });
 
-                const resData = JSON.stringify(response.data);
+                const resData = JSON.parse(response.data);
                 setData(resData);
                 resolve(resData);
             } catch (err) {
@@ -71,7 +99,11 @@ const UseAuthAPI = ({url, method = 'GET', body = null, onLoad = () => alert("def
         });
     }, [...deps]);
 
-    return { data, error, loading };
+    const clear = () => {
+        setError("");
+    }
+
+    return { data, error, loading, clear };
 };
 
 

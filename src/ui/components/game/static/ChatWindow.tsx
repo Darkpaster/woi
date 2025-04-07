@@ -6,7 +6,7 @@ import {actions} from "../../../input/input.ts";
 import {MessageBubble} from "../dynamic/MessageBubble.tsx";
 
 export type messageType = {
-    playerID: number,
+    senderId: number,
     sender: string,
     content: string,
     type: 'DEFAULT' | 'ADMIN',
@@ -54,9 +54,10 @@ export const ChatWindow: React.FC = () => {
         setWs(gameRTC.socket);
 
         gameRTC.socket.on("receiveMessage", (msg: messageType) => {
+            alert(JSON.stringify(msg));
             setMessages(prev => [...prev, msg]);
-            setBubbles(prev => prev.set(msg.playerID, msg.content))
-            setTimeout(() => setBubbles(prev => prev.set(msg.playerID, "")), Math.sqrt(msg.content.length) * 500 + 1500);
+            setBubbles(prev => prev.set(msg.senderId, msg.content))
+            setTimeout(() => setBubbles(prev => prev.set(msg.senderId, "")), Math.sqrt(msg.content.length) * 500 + 1500);
         })
 
         return () => {
@@ -70,7 +71,7 @@ export const ChatWindow: React.FC = () => {
     const sendMessage = () => {
         if (ws && messageInput) {
             const chatMessage: messageType = {
-                playerID: player?.id,
+                senderId: player?.id,
                 sender: username,
                 content: messageInput,
                 type: 'DEFAULT',
@@ -109,7 +110,7 @@ export const ChatWindow: React.FC = () => {
                 <button style={{display: "none"}} onClick={sendMessage} ref={enter}></button>
             </div>
 
-            { Array.from(bubbles).map(([key, value]) => value && (<MessageBubble key={`bubble${key}`} msg={value} playerID={key}></MessageBubble>) )}
+            { Array.from(bubbles).map(([key, value]) => value && (<MessageBubble key={`bubble${key}`} msg={value} playerId={key}></MessageBubble>) )}
         </>
 
     );

@@ -5,7 +5,7 @@ export const SettingsWindow = () => {
     return (
         <div className={"ui-div settings-div"}>
             <div>
-                <label htmlFor={"show-fps"}>показать фпс: </label>
+                <label htmlFor={"show-fps"}>показывать фпс: </label>
                 <input id={"show-fps"} type={"checkbox"} className={"ui-div"} defaultChecked={false} onChange={(event) =>
                     settings.showFPS = event.target.checked}/>
             </div>

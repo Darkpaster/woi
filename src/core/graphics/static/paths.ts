@@ -12,8 +12,24 @@ export const attackEffect: string = "src/assets/effects/magic/3_2.png";
 export const madBoarIdleSheet: string = "src/assets/actors/mobs/Boar/Boar_Idle.png";
 export const madBoarWalkSheet: string = "src/assets/actors/mobs/Boar/Boar_Walk.png";
 
+export const blueSlimeWalkSheet: string = "src/assets/actors/mobs/Blue_Slime/walk.png";
+export const blueSlimeIdleSheet: string = "src/assets/actors/mobs/Blue_Slime/Idle.png";
+export const blueSlimeAttack1Sheet: string = "src/assets/actors/mobs/Blue_Slime/Attack_1.png";
+export const blueSlimeAttack2Sheet: string = "src/assets/actors/mobs/Blue_Slime/Attack_2.png";
+export const blueSlimeAttack3Sheet: string = "src/assets/actors/mobs/Blue_Slime/Attack_3.png";
+export const blueSlimeDeathSheet: string = "src/assets/actors/mobs/Blue_Slime/Dead.png";
+export const blueSlimeHurtSheet: string = "src/assets/actors/mobs/Blue_Slime/Hurt.png";
+export const blueSlimeJumpSheet: string = "src/assets/actors/mobs/Blue_Slime/Jump.png";
+export const blueSlimeRunPlusAttackSheet: string = "src/assets/actors/mobs/Blue_Slime/Run+Attack.png";
+export const blueSlimeRunSheet: string = "src/assets/actors/mobs/Blue_Slime/Run.png";
 
-export const runningWolfSheet: string = "src/assets/wolf-runing-cycle-skin.png";
+
+export const redPlantAttackSheet: string = "src/assets/actors/mobs/Plant1/Attack/Plant1_Attack_full.png";
+export const redPlantDeathSheet: string = "src/assets/actors/mobs/Plant1/Death/Plant1_Death_full.png";
+export const redPlantHurtSheet: string = "src/assets/actors/mobs/Plant1/Hurt/Plant1_Hurt_full.png";
+export const redPlantIdleSheet: string = "src/assets/actors/mobs/Plant1/Idle/Plant1_Idle_full.png";
+export const redPlantRunSheet: string = "src/assets/actors/mobs/Plant1/Run/Plant1_Run_full.png";
+export const redPlantWalkSheet: string = "src/assets/actors/mobs/Plant1/Walk/Plant1_Walk_full.png";
 
 
 

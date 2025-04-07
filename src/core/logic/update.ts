@@ -1,5 +1,5 @@
 import {settings} from "../config/settings.ts";
-import {randomInt, scaledTileSize} from "../../utils/math.ts";
+import {scaledTileSize} from "../../utils/math.ts";
 import {camera, entityManager, graphics, player} from "../main.ts";
 
 export function update(): void {

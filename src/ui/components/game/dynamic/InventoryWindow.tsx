@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Item} from "../../../../core/logic/items/item.ts";
+import Item from "../../../../core/logic/items/item.ts";
 import {player} from "../../../../core/main.ts";
 import {setInfoEntity, setInfoPosition} from "../../../../utils/stateManagement/uiSlice.ts";
 import {useMyDispatch} from "../../../../utils/stateManagement/store.ts";

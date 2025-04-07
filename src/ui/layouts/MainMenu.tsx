@@ -26,31 +26,33 @@ export const MainMenu: React.FC<MenuProps> = ({onStartGame, onMainMenu, onResume
                     {tab === "pause" && <button className={"ui-div menu-button"} onClick={onResume}>{txtList().ok}</button>}
                     <button className={"ui-div menu-button"} onClick={() => setTab("shortcuts")}>{txtList().shortcuts}</button>
                     <button className={"ui-div menu-button"} onClick={() => setTab("settings")}>{txtList().settings}</button>
-                    {tab === 'pause' &&
+                    {tab === 'pause'
+                        ?
                         <button onClick={() => {
                             onMainMenu();
                             setTab('main');
                             onResume();
-                        }} className={"ui-div menu-button"}>{txtList().menu}</button>}
+                        }} className={"ui-div menu-button"}>{txtList().menu}</button>
+                        :
+                        <button>выйти из аккаунта</button>}
                 </div>)
             case "select":
                 return (
                     <>
-                        <button className={"ui-div menu-button"} onClick={() => setTab(fuckGoBack())}>{txtList().ok}</button>
-                        <CharacterMenu onEnter={onStartGame}></CharacterMenu>
+                        <CharacterMenu onBack={() => setTab(fuckGoBack())} onEnter={onStartGame}></CharacterMenu>
                     </>
                 )
             case "shortcuts":
                 return (
                     <>
-                        <button className={"ui-div menu-button"} onClick={() => setTab(fuckGoBack())}>{txtList().ok}</button>
+                        <button className={"ui-div"} onClick={() => setTab(fuckGoBack())}>{"<—"}</button>
                         <ShortcutsWindow></ShortcutsWindow>
                     </>
                 )
             case "settings":
                 return (
                 <>
-                    <button className={"ui-div menu-button"} onClick={() => setTab(fuckGoBack())}>{txtList().ok}</button>
+                    <button className={"ui-div"} onClick={() => setTab(fuckGoBack())}>{"<—"}</button>
                     <SettingsWindow></SettingsWindow>
                 </>
                 )

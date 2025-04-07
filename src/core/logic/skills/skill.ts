@@ -1,8 +1,8 @@
 import { defaultSkill } from "../../graphics/static/paths.ts";
 import { calcDistance, randomInt, scaledTileSize } from "../../../utils/math.ts";
 import { CallbackTimer } from "../../../utils/time.ts";
-import { Mob } from "../actors/mobs/mob.ts";
-import { Player } from "../actors/player.ts";
+import Mob from "../actors/mobs/mob.ts";
+import Player from "../actors/player.ts";
 import {EntityUIInfo} from "../actors/actor.ts";
 import {AnimatedEffect, AnimatedImageManager} from "../../graphics/image.ts";
 // import {v4 as uuidv4} from "uuid";

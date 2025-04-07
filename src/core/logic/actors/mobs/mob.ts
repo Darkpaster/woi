@@ -5,13 +5,33 @@ import {Actor} from "../actor.ts";
 
 
 import {player} from "../../../main.ts";
+import Rabbit from "./neutral/rabbit.ts";
+import MadBoar from "./enemies/madBoar.ts";
 
 
-export class Mob extends Actor {
+export default class Mob extends Actor {
     static states: { [key: string]: string } = {
         WANDERING: "wandering",
         CHASING: "chasing",
         FLEEING: "fleeing"
+    }
+
+    static mobTypes: { [key: string]: string } = {
+        RABBIT: "rabbit",
+        MAD_BOAR: "mad_boar",
+        SLIME: "slime",
+        PLANT: "plant",
+        FAIRY: "fairy",
+        GOLEM: "golem",
+    }
+
+    static getMobByType(type: string) {
+       switch (type) {
+           case this.mobTypes.RABBIT:
+               return new Rabbit();
+           case this.mobTypes.MAD_BOAR:
+               return new MadBoar();
+       }
     }
 
     state: string;

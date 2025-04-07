@@ -204,15 +204,16 @@ export class StaticImage extends Image {
 }
 
 
-export class tileImage {
+export class TileImage {
 
     private _tile: ImageBitmap | null = null;
 
-    constructor(src: string, tileX: number, tileY: number, _tileSize = settings.tileSize) {
+    constructor(src: string, tileX: number, tileY: number, resolver: (value: (() => void) | PromiseLike<() => void>) => void, _tileSize = settings.tileSize) {
         const image: HTMLImageElement = new Image();
         image.src = src;
         image.onload = () => createImageBitmap(image, tileX * _tileSize, tileY * _tileSize, _tileSize, _tileSize).then(bitmap => {
             this.tile = bitmap;
+            resolver("da");
         }).catch((error) => {
             console.error("Error creating ImageBitmap:", error);
         });

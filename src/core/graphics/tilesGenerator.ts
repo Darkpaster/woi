@@ -1,6 +1,4 @@
-
-import {tileImage} from "./image.ts";
-import {logf} from "../../utils/debug.ts";
+import {TileImage} from "./image.ts";
 
 interface TileProps {
     isWalkable: boolean,
@@ -13,13 +11,11 @@ export interface Tile {
     [key: number]: {
         name: string;
         props: TileProps;
-        image: tileImage;
+        image: TileImage;
     }
 }
 
-export const tileList: Tile = {
-
-};
+export const tileList: Tile = {};
 
 interface Tileset {
     name: string;
@@ -53,6 +49,10 @@ type Property = {
 
 export async function generateTiles(map: any) {
 
+    return new Promise(resolve => {
+
+        const imageList: Promise<() => void>[] = [];
+
         const tilesets: Tileset[] = map.tilesets;
 
         for (const tileset of tilesets) {
@@ -80,6 +80,15 @@ export async function generateTiles(map: any) {
                 const col = localId % columns;
                 const row = Math.floor(localId / columns);
 
+                let onResolve: (value: (() => void) | PromiseLike<() => void>) => void;
+                imageList.push(new Promise((resolve) => {
+                    onResolve = resolve;
+                }));
+
+
+                const tileImage = new TileImage(tilesetImagePath, col, row, onResolve);
+
+
                 tileList[globalId] = {
                     name: name.toString(),
                     props: {
@@ -88,7 +97,7 @@ export async function generateTiles(map: any) {
                         damage: 0,
                         animated: false,
                     },
-                    image: new tileImage(tilesetImagePath, col, row),
+                    image: tileImage,
                 }
 
                 if (hasTileData && tileData.properties !== undefined) {
@@ -103,5 +112,13 @@ export async function generateTiles(map: any) {
             }
 
         }
+
+        resolve("result")
+        // Promise.all(imageList).then(() => {
+        //     resolve("result")
+        // }, () => alert("yaaaaaaaaaaaaaaa("))
+
+    })
+
 
 }

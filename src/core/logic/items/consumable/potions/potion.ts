@@ -1,5 +1,5 @@
 import { greyPotion } from "../../../../graphics/static/paths.ts";
-import { Item } from "../../item.ts";
+import Item from "../../item.ts";
 
 export class Potion extends Item {
     get minPower(): number {

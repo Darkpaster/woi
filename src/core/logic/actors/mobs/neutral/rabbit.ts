@@ -1,8 +1,8 @@
-import { Mob } from "../mob.ts";
+import Mob from "../mob.ts";
 import {txtList} from "../../../../config/lang.ts";
 import {setRabbitManager} from "../../../../graphics/static/managers.ts";
 
-export class Rabbit extends Mob {
+export default class Rabbit extends Mob {
     constructor() {
         super();
         this.name = txtList().say;

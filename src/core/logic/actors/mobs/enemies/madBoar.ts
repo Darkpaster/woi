@@ -1,8 +1,8 @@
-import { Mob } from "../mob.ts";
+import Mob from "../mob.ts";
 import {txtList} from "../../../../config/lang.ts";
 import {setMadBoarManager} from "../../../../graphics/static/managers.ts";
 
-export class MadBoar extends Mob {
+export default class MadBoar extends Mob {
     constructor() {
         super();
         this.name = txtList().madBoar;

@@ -97,9 +97,9 @@ export class Graphics {
         }
         this.renderAfterList = [];
 
-        if (player!.target) {
-            ctx.drawImage(selector1.tile, player!.target.x || 0, player!.target.y || 0, scaledTileSize(), scaledTileSize());
-        }
+        // if (player!.target) {
+        //     ctx.drawImage(selector1.tile, player!.target.x || 0, player!.target.y || 0, scaledTileSize(), scaledTileSize());
+        // }
         ctx.fillText(player!.name, player!.x + player.image.currentAnimation.widthSize / 2, player!.y);
     }
 

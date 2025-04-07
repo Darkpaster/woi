@@ -18,6 +18,9 @@ const Auth: React.FC<props> = ({onLogin}: props) => {
 
     const [lever, setLever] = useState(false); //триггер
 
+    const [successful, setSuccessful] = useState("");
+
+
     function requestType(): { url: string, method: 'POST' | 'GET', body: {username: string, email?: string, password: string} } {
         if (mode === 'login') {
             return {
@@ -43,7 +46,7 @@ const Auth: React.FC<props> = ({onLogin}: props) => {
 
     const [cookies, setCookie] = useCookies(['session_active'])
 
-    const {data, error, loading} = UseAuthAPI({
+    const {data, error, loading, clear} = UseAuthAPI({
         ...requestType(),
         onLoad: (response) => {
             if (response) {
@@ -51,23 +54,27 @@ const Auth: React.FC<props> = ({onLogin}: props) => {
                     const expires = new Date();
                     expires.setTime(expires.getTime() + (60 * 60 * 1000)); //1h
                     setCookie('session_active', true, {path: '/', expires});
-                    // alert(`access_token: ${JSON.stringify(response)}`);
                     // setAuthHeader(`Bearer ${response}`)
-                    // alert(`header: ${hasAuthHeader()}`)
                     onLogin();
                 } else {
-                    alert("registered!");
+                    setUsername("");
+                    setPassword("");
+                    setEmail("");
+                    setSuccessful("Аккаунт зарегистрирован");
                 }
-            } else {
-                alert("чел ты клоун у тебя не успевает ответ от сервера прийти.")
             }
         },
         deps: [lever],
     });
 
+    const handleSwitchMode = (mode: 'login'|'register')=> {
+        setMode(mode);
+        clear();
+        setSuccessful("");
+    }
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        // if (!email || !password) return alert("Заполните все поля.");
         setLever(!lever);
     };
 
@@ -114,20 +121,20 @@ const Auth: React.FC<props> = ({onLogin}: props) => {
                 </button>
                 {error && <p style={{color: "red"}}>Ошибка: {error.toString()}</p>}
                 {loading && <p style={{color: "yellow"}}>Загрузка...</p>}
-
+                {successful && <p style={{color: "green"}}>{successful}</p>}
             </form>
             <div style={{marginTop: '1rem'}}>
                 {mode === 'login' ? (
                     <p>
-                        Нет аккаунта?{' '}
-                        <button className={"ui-div"} onClick={() => setMode('register')} disabled={false}>
+                        Нет аккаунта?
+                        <button className={"ui-div"} onClick={() => handleSwitchMode('register')} disabled={false}>
                             {"Зарегистрироваться"}
                         </button>
                     </p>
                 ) : (
                     <p>
-                        Уже есть аккаунт?{' '}
-                        <button className={"ui-div"} onClick={() => setMode('login')} disabled={false}>
+                        Уже есть аккаунт?
+                        <button className={"ui-div"} onClick={() => handleSwitchMode('login')} disabled={false}>
                             Войти
                         </button>
                     </p>

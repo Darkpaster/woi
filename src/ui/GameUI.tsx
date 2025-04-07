@@ -2,7 +2,7 @@ import React, {useState, useEffect, useRef} from 'react';
 import {pauseMusic, playMusic, resumeMusic} from '../core/audio/music.ts';
 import {MainMenu} from "./layouts/MainMenu.tsx";
 import {init, pauseLoop, player, startLoop} from "../core/main.ts";
-import {Item} from "../core/logic/items/item.ts";
+import Item from "../core/logic/items/item.ts";
 import {Actor} from "../core/logic/actors/actor.ts";
 import {Skill} from "../core/logic/skills/skill.ts";
 import {actions, useKeyboard} from "./input/input.ts";
@@ -31,7 +31,7 @@ const check = isMounted();
 
 
 export const GameUI: React.FC = () => {
-    const [gameState, setGameState] = useState<'auth' | 'mainMenu' | 'inGame'>(document.cookie ? 'mainMenu' : 'mainMenu');
+    const [gameState, setGameState] = useState<'auth' | 'mainMenu' | 'inGame'>(document.cookie.includes("session_active") ? 'mainMenu' : 'auth');
     const [onPause, setOnPause] = useState(false);
 
     const dispatch = useMyDispatch();
@@ -58,7 +58,6 @@ export const GameUI: React.FC = () => {
                     canvas!.style.display = "block";
                     // playMusic("main");
                 });
-                init();
             }
             if (gameState !== 'auth') {
                 initButton?.click();
@@ -72,14 +71,6 @@ export const GameUI: React.FC = () => {
                 setOnPause(prev => !prev);
             }
 
-
-            if (gameState !== 'auth' && !document.cookie) {
-                // deleteAuthHeader();
-                // setGameState('auth');
-                // alert("Access token is up!");
-            } else {
-                // alert(`cookie: ${document.cookie},`)
-            }
         }
 
 

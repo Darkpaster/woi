@@ -19,7 +19,7 @@ export const InGame = () => {
     const [targetHealth, setTargetHealth] = useState(player!.target ? player!.target.HP : 0);
     const [targetMaxHealth, setTargetMaxHealth] = useState(player!.target ? player!.target.HT : 100);
 
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     const infoEntity = useMySelector((state: { ui: UIState }) => state.ui.infoEntity);
     const infoPosition = useMySelector((state: { ui: UIState }) => state.ui.infoPosition);
@@ -47,7 +47,7 @@ export const InGame = () => {
             }
         }, 50);
 
-        setTimeout(() => setLoading(false), randomInt(500, 700));
+        // setTimeout(() => setLoading(false), randomInt(500, 700));
 
         return () => {
             clearInterval(interval)

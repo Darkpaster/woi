@@ -1,10 +1,10 @@
 import {setKnightManager, setWerewolfHumanManager, setWerewolfManager} from "../../graphics/static/managers.ts";
 import {calcDistance, scaledTileSize} from "../../../utils/math.ts";
-import {smallPotionOfHealing} from "../items/consumable/potions/smallPotionOfHealing.ts";
+import {SmallPotionOfHealing} from "../items/consumable/potions/smallPotionOfHealing.ts";
 import {Slash} from "../skills/slash.ts";
 import {Actor} from "./actor.ts";
-import {Item} from "../items/item.ts";
-import {Stats} from "mocha";
+import Item from "../items/item.ts";
+// import Wanderer from "./characters/wanderer.ts";
 
 interface Equipment {
     head: any;
@@ -29,7 +29,7 @@ interface Stats {
     luck: number;
 }
 
-export class Player extends Actor {
+export default class Player extends Actor {
     get stats(): Stats {
         return this._stats;
     }
@@ -87,6 +87,17 @@ export class Player extends Actor {
         this._experience = value;
     }
 
+    static characterType: { [key: string]: string } = {
+        WANDERER: "wanderer"
+    }
+
+    // static getCharacterByType(type: string) {
+    //     switch (type) {
+    //         case this.characterType.WANDERER:
+    //             return new Wanderer();
+    //     }
+    // }
+
     private _AA: boolean;
     private _inventory: Array<Item>;
     readonly equipment: Equipment;
@@ -133,7 +144,7 @@ export class Player extends Actor {
         this.fearFactor = 10;
 
         for (let i = 0; i < this._inventory.length / 10; i++) {
-            this._inventory[i] = new smallPotionOfHealing();
+            this._inventory[i] = new SmallPotionOfHealing();
         }
 
         this.equipment = {

@@ -48,36 +48,42 @@ export class MapManager {
         return [tilesX, tilesY]
     })
 
-    public static readonly chunkSize: 32 = 32;
+    public static readonly CHUNK_SIZE: 32 = 32;
 
     public getWorldMap() {
         return { backgroundChunks: this.backgroundChunks, foregroundChunks: this.foregroundChunks, animatedChunks: this.animatedChunks };
     }
 
     public async initWorld() {
-        try {
-            const data: Response = await fetch("http://localhost:5173/public/world.json");
+        return new Promise((resolve, reject) => {
+            try {
+                const data = fetch("http://localhost:5173/public/world.json");
 
-            data.json().then((json) => {
-                generateTiles(json);
+                data.then((data) => {
+                    data.json().then(json => {
+                        generateTiles(json).then(res => {
+                            const parsedData: { layers: Layer[] } = json;
 
-                const parsedData: { layers: Layer[] } = json
-
-                const parsedChunks: ParsedChunks = this.parseLayers(parsedData);
-                this.backgroundChunks = parsedChunks.backgroundChunks;
-                this.foregroundChunks = parsedChunks.foregroundChunks;
-                this.animatedChunks = parsedChunks.animatedChunks;
-            })
-
-        } catch (err) {
-            console.error("Error while parsing map:", err);
-        }
+                            const parsedChunks: ParsedChunks = this.parseLayers(parsedData);
+                            this.backgroundChunks = parsedChunks.backgroundChunks;
+                            this.foregroundChunks = parsedChunks.foregroundChunks;
+                            this.animatedChunks = parsedChunks.animatedChunks;
+                        });
+                    }).then(() => {
+                        resolve("result");
+                    })
+                    })
+            } catch (err) {
+                console.error("Error while parsing map:", err);
+                reject("Error while parsing map");
+            }
+        })
     }
 
 
     private getTilePosKey(xPos: number, yPos: number): string { //тайлы в тайлы без остатка
-        const col = xPos - (xPos % MapManager.chunkSize);
-        const row = yPos - (yPos % MapManager.chunkSize);
+        const col = xPos - (xPos % MapManager.CHUNK_SIZE);
+        const row = yPos - (yPos % MapManager.CHUNK_SIZE);
         return `${col},${row}`;
     }
 
@@ -142,13 +148,13 @@ export class MapManager {
 
     public getTile(posX: number, posY: number, layer: string = "background") {
         const chunk = this.getChunk(posX, posY, layer);
-        return tileList[chunk.chunk[Math.abs(posY % MapManager.chunkSize)][Math.abs(posX % MapManager.chunkSize)]];
+        return tileList[chunk.chunk[Math.abs(posY % MapManager.CHUNK_SIZE)][Math.abs(posX % MapManager.CHUNK_SIZE)]];
     }
 
     private convertToMatrix(chunk: ChunkData): number[][] {
         const matrix: number[][] = [];
-        for (let y = 0; y < MapManager.chunkSize; y++) {
-            matrix.push(chunk.data.slice(y * MapManager.chunkSize, (y + 1) * MapManager.chunkSize));
+        for (let y = 0; y < MapManager.CHUNK_SIZE; y++) {
+            matrix.push(chunk.data.slice(y * MapManager.CHUNK_SIZE, (y + 1) * MapManager.CHUNK_SIZE));
         }
         return matrix;
     }

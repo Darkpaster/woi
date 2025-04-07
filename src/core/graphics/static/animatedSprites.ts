@@ -1,17 +1,57 @@
 import { AnimatedEffect, AnimatedImage } from "../image.ts";
 import {
-    attackEffect, human_form_idle,
+    attackEffect,
+    blueSlimeAttack1Sheet,
+    blueSlimeAttack2Sheet,
+    blueSlimeAttack3Sheet, blueSlimeDeathSheet, blueSlimeHurtSheet,
+    blueSlimeIdleSheet, blueSlimeJumpSheet, blueSlimeRunPlusAttackSheet, blueSlimeRunSheet, blueSlimeWalkSheet,
+    human_form_idle,
     knightIdleSheet,
-    knightRunSheet, madBoarIdleSheet,
+    knightRunSheet,
+    madBoarIdleSheet,
     madBoarWalkSheet,
     rabbitIdleSheet,
     rabbitRunSheet,
-    werewolfIdleSheet, werewolfRunSheet
+    werewolfIdleSheet,
+    werewolfRunSheet
 } from "./paths.ts";
 
 export interface AnimationList { //кадры, скорость, размер
-    idle: AnimatedImage;
-    walk: AnimatedImage;
+    [key: string]: AnimatedImage;
+}
+
+export const animationTypes = {
+    IDLE: "idle",
+    WALK: "walk",
+    RUN: "run",
+    JUMP: "jump",
+    HURT: "hurt",
+    DEATH: "death",
+    ATTACK1: "attack1",
+    ATTACK2: "attack2",
+    ATTACK3: "attack3",
+}
+
+export function getBlueSlimeAnimations(): AnimationList {
+    return {
+        idle: new AnimatedImage("idle", blueSlimeIdleSheet, 8),
+        walk: new AnimatedImage("walk", blueSlimeWalkSheet, 8),
+        run: new AnimatedImage("run", blueSlimeRunSheet, 7),
+        jump: new AnimatedImage("jump", blueSlimeJumpSheet, 13),
+        hurt: new AnimatedImage("hurt", blueSlimeHurtSheet, 6),
+        death: new AnimatedImage("death", blueSlimeDeathSheet, 3),
+        attack1: new AnimatedImage("attack1", blueSlimeAttack1Sheet, 4),
+        attack2: new AnimatedImage("attack2", blueSlimeAttack2Sheet, 4),
+        attack3: new AnimatedImage("attack3", blueSlimeAttack3Sheet, 4),
+        runPlusAttack: new AnimatedImage("runPlusAttack", blueSlimeRunPlusAttackSheet, 10),
+    }
+}
+
+export function getRedPlantAnimations(): AnimationList {
+    return {
+        idle: new AnimatedImage("idle", madBoarIdleSheet, 8),
+        walk: new AnimatedImage("walk", madBoarWalkSheet, 8),
+    }
 }
 
 export function getBoarAnimations(): AnimationList {

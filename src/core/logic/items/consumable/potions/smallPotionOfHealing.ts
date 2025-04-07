@@ -5,7 +5,7 @@ import { Potion } from "./potion.ts";
 import {txtList} from "../../../../config/lang.ts";
 import {formatString} from "../../../../../utils/string.ts";
 
-export class smallPotionOfHealing extends Potion {
+export class SmallPotionOfHealing extends Potion {
 
     constructor() {
         super();

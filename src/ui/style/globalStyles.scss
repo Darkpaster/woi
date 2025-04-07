@@ -1,31 +1,31 @@
-$mainInterfaceBackgroundColor: rgba(48, 48, 48, 0.9);
-$mainNonActiveInterfaceColor: #2F4F2F;
-$mainActiveInterfaceColor: #D4A017;
-$mainHUDColor: #8B4513;
-$secondaryInterfaceColor: #4F6D7A;
-$mainInterfaceFontColor: #E6D8AC;
+$colors: (
+        background: rgba(48, 48, 48, 0.9),
+        non-active: #2F4F2F,
+        active: #D4A017,
+        hud: #8B4513,
+        secondary: #4F6D7A,
+        font: #E6D8AC,
+        primary: #00b34d,
+        secondary-alt: #00ff1a,
+        black: black
+);
 
-$primary-color: #00b34d;
-$secondary-color: #00ff1a;
+$rarities: (
+        godlike: red,
+        legendary: orange,
+        elite: blueviolet,
+        rare: blue,
+        uncommon: green,
+        common: grey
+);
 
-$godlikeColor: red;
-$legendaryColor: orange;
-$eliteColor: blueviolet;
-$rareColor: blue;
-$uncommonColor: green;
-$commonColor: grey;
-
-// Миксины
-@mixin flex-center {
+@mixin flex($direction: row, $justify: center, $align: center) {
   display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-@mixin flex-column {
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
+  justify-content: $justify;
+  align-items: $align;
+  @if $direction != row {
+    flex-direction: $direction;
+  }
 }
 
 @mixin grid-center {
@@ -33,120 +33,106 @@ $commonColor: grey;
   place-items: center;
 }
 
-@mixin transition($property, $duration) {
+@mixin transition($property: all, $duration: 0.2s) {
   transition: $property $duration ease-in-out;
 }
 
+@mixin ui-element {
+  background-color: map-get($colors, background);
+  color: map-get($colors, font);
+  border: 1px solid map-get($colors, font);
+  border-radius: 0.5em;
+  z-index: 10;
+}
+
+// Font
+@font-face {
+  font-family: "PixelFont";
+  src: url("../../assets/fonts/Planes_ValMore.ttf");
+}
+
+// Root styles
 :root {
   overflow: hidden;
-  background-color: black;
+  background-color: map-get($colors, black);
 }
 
 body {
   margin: 0;
 }
 
+* {
+  font-family: "PixelFont";
+}
+
+html {
+  color: map-get($colors, font);
+}
+
+// Utility classes
+.hidden {
+  display: none;
+}
+
+// Main layout
 #root {
   width: 100vw;
   height: 100vh;
   margin: 0;
   padding: 0;
   display: none;
-  @include flex-column();
-  background-image: url("../../../src/assets/backgrounds/menu/449522-Pixel-Cat-fantasy-art-digital-art-river-castle-844731993.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
+  @include flex(column);
+  background: url("../../../src/assets/backgrounds/menu/menu3.gif") no-repeat center/cover;
 }
 
 #welcome-div {
-  display: flex;
-  @include flex-column();
-}
-
-p {
-  display: block;
-}
-
-.hidden {
-  display: none;
-}
-
-.godlike {
-  color: $godlikeColor;
-}
-
-.legendary {
-  color: $legendaryColor;
-}
-
-.elite {
-  color: $eliteColor
-}
-
-.rare {
-  color: $rareColor;
-}
-
-.uncommon {
-  color: $uncommonColor;
-}
-
-.common {
-  color: $commonColor;
-}
-
-@font-face {
-  font-family: "PixelFont";
-  src: url("../../assets/fonts/Planes_ValMore.ttf");
-}
-
-$mainFont: 'PixelFont';
-
-html {
-  color: $mainInterfaceFontColor;
-}
-
-* {
-  font-family: $mainFont;
-}
-
-.cell:hover {
-  background-color: $mainActiveInterfaceColor;
+  @include flex(column);
 }
 
 #loading-div {
   position: absolute;
-  display: flex;
-  @include flex-column();
+  @include flex(column);
   width: 100%;
   height: 100%;
-  background-color: black;
-  background-image: url("src/assets/loading_wolf.gif");
+  background: map-get($colors, black) url("src/assets/loading_wolf.gif") no-repeat center;
   background-size: 112px 64px;
-  background-repeat: no-repeat;
-  background-position: center;
   z-index: 100;
 }
 
-.ui-div {
-  background-color: $mainInterfaceBackgroundColor;
-  color: $mainInterfaceFontColor;
-  border: 1px solid $mainInterfaceFontColor;
-  border-radius: 0.5em;
-  z-index: 10;
-
+#title {
+  font-size: 70px;
+  z-index: 7;
+  pointer-events: none; user-select: none;
+  color: #6464e6;
+  top: 10vh;
+  position: absolute;
 }
 
+#canvas {
+  top: 0;
+  position: absolute;
+  display: none;
+}
+
+// UI Elements
+.ui-div {
+  @include ui-element;
+}
+
+// Buttons
 button {
   cursor: pointer;
   font-size: 1em;
-
   padding: 0.6em 0.8em;
-
-  @include transition(all, 0.3s);
+  @include transition;
 
   &:hover {
-    background-color: darken($mainActiveInterfaceColor, 10%);
+    background-color: adjust-color(map-get($colors, active), $lightness: -10%)
+
+  }
+
+  &:disabled {
+    opacity: 0.5;
   }
 }
 
@@ -154,33 +140,36 @@ button {
   width: 60%;
   height: 50px;
   font-size: large;
+
+  &:active {
+    background-color: map-get($colors, font);
+  }
+
+  &:disabled {
+    background-color: map-get($colors, non-active);
+  }
 }
 
-.menu-button:active {
-  background-color: $mainInterfaceFontColor;
-}
-
-.menu-button:disabled {
-  background-color: $mainNonActiveInterfaceColor;
-}
-
+// Grid cells
 .cell {
   width: 3vw;
   height: 3vw;
   background-size: cover;
   background-position: center;
+
+  &:hover {
+    background-color: map-get($colors, active);
+  }
 }
 
+// Layout specific elements
 .auth-div {
   width: 20vw;
   height: 100%;
-
   text-align: center;
 
   div {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    @include flex(column);
     margin-top: 1.5vh;
   }
 
@@ -196,22 +185,23 @@ button {
     height: 2em;
     width: 50%;
   }
-
 }
 
-.menu-div {
+%full-height-panel {
   width: 20vw;
   height: 60vh;
   display: flex;
+}
+
+.menu-div {
+  @extend %full-height-panel;
   flex-direction: column;
   justify-content: space-evenly;
   align-items: center;
 }
 
 .settings-div {
-  width: 20vw;
-  height: 60vh;
-  display: flex;
+  @extend %full-height-panel;
   justify-content: space-evenly;
   flex-direction: column;
 
@@ -219,11 +209,10 @@ button {
     display: flex;
     justify-content: space-evenly;
     align-items: center;
-    padding-top: 1em;
-    padding-bottom: 1em;
+    padding: 1em 0;
     width: 100%;
     height: 100%;
-    border-bottom: 1px $mainInterfaceFontColor solid;
+    border-bottom: 1px map-get($colors, font) solid;
   }
 
   label {
@@ -231,7 +220,41 @@ button {
   }
 }
 
+.char-menu-div {
+  width: 20vw;
+  height: 70vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  padding: 0 1em;
 
+  button {
+    bottom: 0;
+    display: block;
+    align-self: center;
+    justify-self: flex-end;
+  }
+}
+
+.char-list-div {
+  width: 100%;
+  height: 50vh;
+  border-bottom: 1px map-get($colors, font) solid;
+
+  div {
+    border: 1px map-get($colors, font) solid;
+  }
+}
+
+.char-div {
+  background: url("../../../src/assets/actors/player/Fire vizard/present.gif") no-repeat center;
+  background-size: 100% 100%;
+  width: 100%;
+  height: 20vh;
+  display: inherit;
+  justify-content: space-between;
+  border-bottom: 1px map-get($colors, font) solid;
+}
 
 .cell-type {
   width: 30vw;
@@ -250,6 +273,21 @@ button {
   right: 0;
   overflow-y: scroll;
   overflow-x: hidden;
+
+  &::-webkit-scrollbar {
+    background-color: rgba(106, 104, 159, 0.7);
+
+    &-thumb {
+      background-color: map-get($colors, hud);
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    &-track {
+      background-color: rgba(48, 45, 131, 0.7);
+      border-radius: 10px;
+    }
+  }
 }
 
 .panel-div {
@@ -271,7 +309,6 @@ button {
   height: 25vh;
   margin: 30px;
   width: 25vw;
-
   left: 0;
   bottom: 0;
 
@@ -291,50 +328,19 @@ button {
   bottom: 0;
   left: 0;
   width: 25vw;
-  /* height: 10%; */
   height: 20px;
   align-self: flex-end;
   position: fixed;
 }
 
-#title {
-  font-size: 70px;
-  z-index: 7;
-  cursor: default;
-  user-select: none;
-  color: #6464e6;
-  top: 10vh;
-  position: absolute;
-  //animation: titleAnimation 2s infinite alternate;
-}
-
-
-//@keyframes titleAnimation {
-//  from {
-//    text-shadow: 0 0 10px #000000;
-//  }
-//  to {
-//    text-shadow: 0 0 30px gold;
-//  }
-//}
-
-#canvas {
-  top: 0;
-  position: absolute;
-  display: none;
-}
-
-
-.stat-bar, .stat-bar-enemy {
+%stat-bar-base {
   width: 15vw;
   height: 3vh;
   position: fixed;
-
   margin: 30px;
   left: 0;
   top: 0;
   z-index: 10;
-
 
   progress {
     border-radius: 10px;
@@ -343,6 +349,7 @@ button {
     accent-color: green;
     background-color: grey;
   }
+
   span {
     left: 0;
     position: absolute;
@@ -350,26 +357,15 @@ button {
     line-height: 3.5vh;
     text-align: center;
     font-size: large;
-    cursor: default;
-    user-select: none;
+    pointer-events: none; user-select: none;
   }
 }
 
+.stat-bar {
+  @extend %stat-bar-base;
+}
+
 .stat-bar-enemy {
+  @extend %stat-bar-base;
   left: 20%;
-}
-
-.inventory-div::-webkit-scrollbar-thumb {
-  background-color: $mainHUDColor;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-.inventory-div::-webkit-scrollbar-track {
-  background-color: rgba(48, 45, 131, 0.7);
-  border-radius: 10px;
-}
-
-.inventory-div::-webkit-scrollbar {
-  background-color: rgba(106, 104, 159, 0.7);
 }

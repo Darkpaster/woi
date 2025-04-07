@@ -1,18 +1,18 @@
 import {update} from "./logic/update.js";
-import {Player} from "./logic/actors/player.ts";
+import Player from "./logic/actors/player.ts";
 import {Camera} from "./logic/camera.ts";
 import {MapManager} from "./logic/world/mapManager.ts";
 import {Graphics} from "./graphics/graphics.ts";
 import {logf, logOnce} from "../utils/debug.ts";
 import {EntityManager} from "./logic/entitiesManager.ts";
 import {GameRTC} from "../ui/service/gameRTC.ts";
-import {randomInt} from "../utils/math.ts";
 import {settings} from "./config/settings.ts";
+import Wanderer from "./logic/actors/characters/wanderer.ts";
 
 export const once = logOnce();
 
 
-export let player: Player | null = null,
+export let player: Wanderer | Player | null = null,
     camera: Camera | null = null,
     graphics: Graphics,
     worldMap: MapManager,
@@ -20,17 +20,18 @@ export let player: Player | null = null,
 
 export let gameRTC: GameRTC;
 
-player = new Player();
-
-player.id = randomInt(1, 100000);
-
-export function init(): void {
-    worldMap = new MapManager();
-    worldMap.initWorld();
-    entityManager = new EntityManager();
-    graphics = new Graphics(document.getElementById("canvas") as HTMLCanvasElement);
-    camera = new Camera({x: player.x, y: player.y});
-    // player.learn(new Slash(player));
+export async function init(pl: Player|Wanderer) {
+    return new Promise((resolve) => {
+        player = pl;
+        worldMap = new MapManager();
+        worldMap.initWorld().then((result) => {
+            graphics = new Graphics(document.getElementById("canvas") as HTMLCanvasElement);
+            entityManager = new EntityManager();
+            camera = new Camera({x: player.x, y: player.y});
+        }).then(() => {
+            resolve("result");
+        });
+    })
 }
 
 export function initWS() {

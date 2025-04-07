@@ -8,7 +8,7 @@ import {settings} from "../../config/settings.ts";
 
 // import {v4 as uuidv4} from "uuid"
 import {tileList} from "../../graphics/tilesGenerator.ts";
-import {Player} from "./player.ts";
+import Player from "./player.ts";
 
 export interface EntityUIInfo {
 	// id: string;

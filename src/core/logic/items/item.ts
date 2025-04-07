@@ -1,8 +1,7 @@
 import {EntityUIInfo} from "../actors/actor.ts";
 import {AnimatedImageManager} from "../../graphics/image.ts";
-// import {v4 as uuidv4} from "uuid";
 
-export class Item implements EntityUIInfo {
+export default class Item implements EntityUIInfo {
     get id(): number {
         return this._id;
     }

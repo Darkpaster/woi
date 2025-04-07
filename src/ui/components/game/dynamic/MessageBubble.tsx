@@ -1,8 +1,8 @@
 import {useEffect, useState} from "react";
 import {entityManager, player} from "../../../../core/main.ts";
 
-export const MessageBubble = ( { msg, playerID }: { msg: string, playerID: number } ) => {
-    const target = playerID === player.id ? player : entityManager.getPlayer(playerID);
+export const MessageBubble = ( { msg, playerId }: { msg: string, playerId: number } ) => {
+    const target = playerId === player.id ? player : entityManager.getPlayer(playerId);
 
     const yOffset = target?.image?.currentAnimation.heightSize
 
