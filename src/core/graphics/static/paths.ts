@@ -1,3 +1,5 @@
+import {TileImage} from "../image.ts";
+
 export const greyPotion: string = "src/assets/items/potions/potion_1.png";
 export const redPotion2: string = "src/assets/icons/magic-potions/Transperent/Icon33.png";
 export const redPotion: string = "src/assets/icons/paint-pixel-art/Transperent/Icon1.png"
@@ -30,6 +32,8 @@ export const redPlantHurtSheet: string = "src/assets/actors/mobs/Plant1/Hurt/Pla
 export const redPlantIdleSheet: string = "src/assets/actors/mobs/Plant1/Idle/Plant1_Idle_full.png";
 export const redPlantRunSheet: string = "src/assets/actors/mobs/Plant1/Run/Plant1_Run_full.png";
 export const redPlantWalkSheet: string = "src/assets/actors/mobs/Plant1/Walk/Plant1_Walk_full.png";
+
+export const selectorSheet = "src/assets/tileMap/BoxSelector.png";
 
 
 

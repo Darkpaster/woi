@@ -34,7 +34,10 @@ export const MainMenu: React.FC<MenuProps> = ({onStartGame, onMainMenu, onResume
                             onResume();
                         }} className={"ui-div menu-button"}>{txtList().menu}</button>
                         :
-                        <button>выйти из аккаунта</button>}
+                        <button className={"ui-div menu-button"} onClick={() => {
+                            document.cookie.replace(document.cookie, "");
+                            window.location.reload();
+                        }}>выйти из аккаунта</button>}
                 </div>)
             case "select":
                 return (

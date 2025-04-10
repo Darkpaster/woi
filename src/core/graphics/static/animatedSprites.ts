@@ -34,16 +34,16 @@ export const animationTypes = {
 
 export function getBlueSlimeAnimations(): AnimationList {
     return {
-        idle: new AnimatedImage("idle", blueSlimeIdleSheet, 8),
-        walk: new AnimatedImage("walk", blueSlimeWalkSheet, 8),
-        run: new AnimatedImage("run", blueSlimeRunSheet, 7),
-        jump: new AnimatedImage("jump", blueSlimeJumpSheet, 13),
-        hurt: new AnimatedImage("hurt", blueSlimeHurtSheet, 6),
-        death: new AnimatedImage("death", blueSlimeDeathSheet, 3),
-        attack1: new AnimatedImage("attack1", blueSlimeAttack1Sheet, 4),
-        attack2: new AnimatedImage("attack2", blueSlimeAttack2Sheet, 4),
-        attack3: new AnimatedImage("attack3", blueSlimeAttack3Sheet, 4),
-        runPlusAttack: new AnimatedImage("runPlusAttack", blueSlimeRunPlusAttackSheet, 10),
+        idle: new AnimatedImage("idle", blueSlimeIdleSheet, 8, 1, 64),
+        walk: new AnimatedImage("walk", blueSlimeWalkSheet, 8, 1, 64),
+        run: new AnimatedImage("run", blueSlimeRunSheet, 7, 1, 64),
+        jump: new AnimatedImage("jump", blueSlimeJumpSheet, 13, 1, 64),
+        hurt: new AnimatedImage("hurt", blueSlimeHurtSheet, 6, 1, 64),
+        death: new AnimatedImage("death", blueSlimeDeathSheet, 3, 1, 64),
+        attack1: new AnimatedImage("attack1", blueSlimeAttack1Sheet, 4, 1, 64),
+        attack2: new AnimatedImage("attack2", blueSlimeAttack2Sheet, 4, 1, 64),
+        attack3: new AnimatedImage("attack3", blueSlimeAttack3Sheet, 4, 1, 64),
+        runPlusAttack: new AnimatedImage("runPlusAttack", blueSlimeRunPlusAttackSheet, 10, 1, 64),
     }
 }
 

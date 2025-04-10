@@ -4,7 +4,7 @@ import {SmallPotionOfHealing} from "../items/consumable/potions/smallPotionOfHea
 import {Slash} from "../skills/slash.ts";
 import {Actor} from "./actor.ts";
 import Item from "../items/item.ts";
-// import Wanderer from "./characters/wanderer.ts";
+import {player} from "../../main.ts";
 
 interface Equipment {
     head: any;
@@ -227,62 +227,90 @@ export default class Player extends Actor {
         }
     }
 
+
+    // Также исправим updatePlayer для более надежной работы в отрицательных координатах
     updatePlayer(): { x: number, y: number } {
         if (this._AA) {
             this.attackEvents();
         }
 
+        // Сохраняем предыдущие координаты
+        const previousX = this.x;
+        const previousY = this.y;
         const cameraDiff = {x: this.x, y: this.y};
 
+        // Применяем движение по обеим осям сразу
+        let newX = this.x;
+        let newY = this.y;
+
         if (this.pressUp) {
-            this.y -= this.moveSpeed;
+            newY -= this.moveSpeed;
         } else if (this.pressDown) {
-            this.y += this.moveSpeed;
+            newY += this.moveSpeed;
         }
+
         if (this.pressLeft) {
             this.direction = "left";
-            this.x -= this.moveSpeed;
+            newX -= this.moveSpeed;
         } else if (this.pressRight) {
             this.direction = "right";
-            this.x += this.moveSpeed;
+            newX += this.moveSpeed;
         }
+
+        // Обновляем положение и проверяем коллизию
+        this.x = newX;
+        this.y = newY;
 
         const collision = this.collision();
 
+        // Откатываем координаты при коллизии
         if (collision.x) {
-            this.x = cameraDiff.x;
+            this.x = previousX;
         }
+
         if (collision.y) {
-            this.y = cameraDiff.y;
+            this.y = previousY;
         }
 
-        this.offsetX = cameraDiff.x = cameraDiff.x - this.x;
-        this.offsetY = cameraDiff.y = cameraDiff.y - this.y;
+        // Рассчитываем смещение камеры
+        this.offsetX = cameraDiff.x - this.x;
+        this.offsetY = cameraDiff.y - this.y;
 
+        // Обновляем состояние анимации
         if (this.offsetX === 0 && this.offsetY === 0) {
             this.renderState = "idle";
         } else {
             this.renderState = "walk";
         }
 
-
-        return cameraDiff;
+        return {
+            x: this.offsetX,
+            y: this.offsetY
+        };
     }
 
-    selectNearestTarget(): void {
-        // let nearest: Mob | Player = this.target || Mob.mobList[0];
-        // const prevTarget: Mob | Player = nearest;
-        // for (const mob of Mob.mobList) {
-        //     const dist: number = calcDistance(mob, this);
-        //     if (dist < 430) {
-        //         if (dist < calcDistance(nearest, this)) {
-        //             nearest = mob;
-        //         }
-        //     }
-        // }
-        // if (prevTarget === nearest) {
-        //     return;
-        // }
-        // this.target = nearest;
+    selectNearestTarget<T extends {x: number, y: number}, U extends {x: number, y: number}>(players: T[], mobs: U[]): void {
+        let nearest: T|U = this.target || mobs[0] || players[0];
+        const prevTarget: T|U = nearest;
+        for (const mob of mobs) {
+            const dist: number = calcDistance(mob, {x: player.x, y: player.y});
+            if (dist < 430) {
+                if (dist < calcDistance(nearest, {x: player.x, y: player.y})) {
+                    nearest = mob;
+                }
+            }
+        }
+        for (const char of players) {
+            const dist: number = calcDistance(char, {x: player.x, y: player.y});
+            if (dist < 430) {
+                if (dist < calcDistance(nearest, {x: player.x, y: player.y})) {
+                    nearest = char;
+                }
+            }
+        }
+        if (prevTarget === nearest) {
+            return;
+        }
+        this.target = nearest;
     }
 }

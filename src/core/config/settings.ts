@@ -21,7 +21,7 @@ export const settings: {
     tileSize: 16,
     showFPS: false,
 
-    [_fps]: 30,
+    [_fps]: 20,
     
     particles: true,
 

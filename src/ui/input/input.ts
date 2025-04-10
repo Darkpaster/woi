@@ -1,5 +1,5 @@
 import {useEffect, useState, useRef, RefObject} from "react";
-import {camera, player} from "../../core/main.ts";
+import {camera, entityManager, player} from "../../core/main.ts";
 import {scaledTileSize} from "../../utils/math.js";
 
 export const bindings = {
@@ -15,6 +15,8 @@ export const bindings = {
     selectNearest: "Tab",
     shift: "Shift",
     enter: "Enter",
+    char: "c",
+    particle: "t",
     b1: "1",
     b2: "2",
     b3: "3",
@@ -52,17 +54,19 @@ export const actions = {
     fullscreen: () => {
 
     },
+    charWindow: () => {
+
+    },
     zoomIn: () => {
         if (camera!.zoom < 4) camera!.zoom += 1;
 
     },
     zoomOut: () => {
-        if (camera!.zoom > 2) camera!.zoom -= 1;
-
+        if (camera!.zoom > 1) camera!.zoom -= 1;
     },
     tab: (event: { preventDefault: () => void; }) => {
         event.preventDefault();
-        player?.selectNearestTarget?.();
+        player?.selectNearestTarget(Array.from(entityManager.players.values()), Array.from(entityManager.mobs.values()));
     },
     shift: () => {
 
@@ -85,6 +89,18 @@ export const actions = {
     b5: () => {
 
     },
+    b6: () => {
+
+    },
+    b7: () => {
+
+    },
+    b8: () => {
+
+    },
+    particles: () => {
+
+    }
 }
 
 function clickOffsetX() {
@@ -177,6 +193,9 @@ export function useKeyboard(canvasRef: RefObject<HTMLCanvasElement | null>) {
                     break;
                 case bindings.enter:
                     actions.enter(event);
+                    break;
+                case bindings.particle:
+                    actions.particles();
                     break;
             }
         };

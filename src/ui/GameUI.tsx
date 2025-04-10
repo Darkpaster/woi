@@ -11,6 +11,7 @@ import {useMyDispatch, useMySelector} from "../utils/stateManagement/store.ts";
 import Auth from "./layouts/Auth.tsx";
 import {InGame} from "./layouts/InGame.tsx";
 import {LoadingScreen} from "./components/game/dynamic/LoadingScreen.tsx";
+import {ParticleSimulationWindow} from "./components/game/dynamic/education/ParticleSimulationWindow.tsx";
 
 export type EntityType = Item | Actor | Skill;
 
@@ -33,6 +34,8 @@ const check = isMounted();
 export const GameUI: React.FC = () => {
     const [gameState, setGameState] = useState<'auth' | 'mainMenu' | 'inGame'>(document.cookie.includes("session_active") ? 'mainMenu' : 'auth');
     const [onPause, setOnPause] = useState(false);
+
+    const [particle, setParticle] = useState(false);
 
     const dispatch = useMyDispatch();
 
@@ -69,6 +72,10 @@ export const GameUI: React.FC = () => {
 
             actions.pause = () => {
                 setOnPause(prev => !prev);
+            }
+
+            actions.particles = () => {
+                setParticle(prev => !prev);
             }
 
         }
@@ -127,6 +134,7 @@ export const GameUI: React.FC = () => {
                     />
                 )}
                 {gameState === 'inGame' && <InGame />}
+                {particle && <ParticleSimulationWindow></ParticleSimulationWindow>}
             </div>
         </>
     );

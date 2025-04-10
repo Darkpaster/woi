@@ -5,13 +5,19 @@ import Player from "./actors/player.ts";
 import {MapManager} from "./world/mapManager.ts";
 
 export class EntityManager {
+    get items(): Map<number, Item> {
+        return this._items;
+    }
+    get mobs(): Map<number, Mob> {
+        return this._mobs;
+    }
     get players(): Map<number, Player> {
         return this._players;
     }
 
     private _players = new Map<number, Player>();
-    private mobs = new Map<number, Mob>();
-    private items = new Map<number, Item>();
+    private _mobs = new Map<number, Mob>();
+    private _items = new Map<number, Item>();
     private playerStorage = new Map<string, Set<number>>();
     private mobStorage = new Map<string, Set<number>>();
     private itemStorage = new Map<string, Set<number>>();
@@ -28,6 +34,10 @@ export class EntityManager {
 
     public getPlayer(id: number) {
         return this._players.get(id);
+    }
+
+    public getMob(id: number) {
+        return this.mobs.get(id);
     }
 
     public addPlayer<P extends Player>(player: P) {
@@ -49,7 +59,7 @@ export class EntityManager {
     }
 
     public addItem<I extends Item>(item: I) {
-        this.items.set(item.id, item);
+        this._items.set(item.id, item);
         const key = this.getChunkPosKey(item.x, item.y);
         if (!this.itemStorage.has(key)) {
             this.itemStorage.set(key, new Set());
@@ -58,16 +68,16 @@ export class EntityManager {
     }
 
     public removeItem(itemId: number) {
-        const item = this.items.get(itemId);
+        const item = this._items.get(itemId);
         if (item) {
             const key = this.getChunkPosKey(item.x, item.y);
             this.itemStorage.get(key)?.delete(itemId);
-            this.items.delete(itemId);
+            this._items.delete(itemId);
         }
     }
 
     public addMob<M extends Mob>(mob: M) {
-        this.mobs.set(mob.id, mob);
+        this._mobs.set(mob.id, mob);
         const key = this.getChunkPosKey(mob.x, mob.y);
         if (!this.mobStorage.has(key)) {
             this.mobStorage.set(key, new Set());
@@ -76,11 +86,11 @@ export class EntityManager {
     }
 
     public removeMob(mobId: number) {
-        const mob = this._players.get(mobId);
+        const mob = this.mobs.get(mobId);
         if (mob) {
             const key = this.getChunkPosKey(mob.x, mob.y);
-            this.playerStorage.get(key)?.delete(mobId);
-            this._players.delete(mobId);
+            this.mobStorage.get(key)?.delete(mobId);
+            this.mobs.delete(mobId);
         }
     }
 
@@ -101,6 +111,23 @@ export class EntityManager {
         this._players.set(player.id, player);
     }
 
+    public updateMob<M extends Mob>(mob: M) {
+        const oldEntity = this.mobs.get(mob.id);
+        if (!oldEntity) {
+            return
+        }
+        const oldKey = this.getChunkPosKey(oldEntity.x, oldEntity.y);
+        const newKey = this.getChunkPosKey(mob.x, mob.y);
+        if (oldKey !== newKey) {
+            this.mobStorage.get(oldKey)?.delete(mob.id);
+            if (!this.mobStorage.has(newKey)) {
+                this.mobStorage.set(newKey, new Set());
+            }
+            this.mobStorage.get(newKey)!.add(mob.id);
+        }
+        this.mobs.set(mob.id, mob);
+    }
+
     // updateAllEntities() {
     //     this.entities.forEach((entity, key) => {
     //         const newKey = this.getChunkPosKey(entity.x, entity.y);
@@ -115,6 +142,19 @@ export class EntityManager {
     //     })
     // }
 
+    private getNearestKeys(x: number, y: number): string[] {
+        const unit = Math.round(window.innerHeight / 2);
+        const result: string[] = [];
+        const angles = [[x - unit, y - unit], [x - unit, y + unit], [x + unit, y - unit], [x + unit, y + unit]];
+        for (const coor of angles) {
+            const key = this.getChunkPosKey(coor[0], coor[1]);
+            if (!result.includes(key)) {
+                result.push(key);
+            }
+        }
+        return result;
+    }
+
     public findPlayerAt(x: number, y: number): Player[] {
         const key = this.getChunkPosKey(x, y);
         const ids = this.playerStorage.get(key);
@@ -123,16 +163,22 @@ export class EntityManager {
     }
 
     public findMobsAt(x: number, y: number): Mob[] {
-        const key = this.getChunkPosKey(x, y);
-        const ids = this.mobStorage.get(key);
-        if (!ids) return [];
-        return Array.from(ids).map(id => this.mobs.get(id)!).filter(Boolean);
+        const keys = this.getNearestKeys(x, y);
+        const result: Mob[] = [];
+        for (const key of keys) {
+            const ids = this.mobStorage.get(key);
+            if (!ids){
+             continue
+            }
+            result.push(...Array.from(ids).map(id => this._mobs.get(id)!).filter(Boolean));
+        }
+        return result
     }
 
     public findItemsAt(x: number, y: number): Item[] {
         const key = this.getChunkPosKey(x, y);
         const ids = this.itemStorage.get(key);
         if (!ids) return [];
-        return Array.from(ids).map(id => this.items.get(id)!).filter(Boolean);
+        return Array.from(ids).map(id => this._items.get(id)!).filter(Boolean);
     }
 }

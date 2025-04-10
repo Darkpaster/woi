@@ -4,9 +4,7 @@ import {TimeDelay} from "../../../../utils/time.ts";
 import {Actor} from "../actor.ts";
 
 
-import {player} from "../../../main.ts";
-import Rabbit from "./neutral/rabbit.ts";
-import MadBoar from "./enemies/madBoar.ts";
+import {entityManager, player} from "../../../main.ts";
 
 
 export default class Mob extends Actor {
@@ -24,15 +22,15 @@ export default class Mob extends Actor {
         FAIRY: "fairy",
         GOLEM: "golem",
     }
-
-    static getMobByType(type: string) {
-       switch (type) {
-           case this.mobTypes.RABBIT:
-               return new Rabbit();
-           case this.mobTypes.MAD_BOAR:
-               return new MadBoar();
-       }
-    }
+    //
+    // static getMobByType(type: string) {
+    //    switch (type) {
+    //        case this.mobTypes.RABBIT:
+    //            return new Rabbit();
+    //        case this.mobTypes.MAD_BOAR:
+    //            return new MadBoar();
+    //    }
+    // }
 
     state: string;
     timer: TimeDelay;
@@ -82,12 +80,7 @@ export default class Mob extends Actor {
         return result
     }
 
-    update(): { x: number; y: number } | null {
-
-        const diff = {x: this.x, y: this.y};
-
-        this.setState();
-
+    public update() {
         // Assuming events is a method that exists in the context.
         // If it's not defined yet, the type should be adjusted accordingly.
         // The following line may need to be updated based on the actual implementation.
@@ -102,11 +95,6 @@ export default class Mob extends Actor {
         // if (collision.y) {
         //     this.y = diff.y;
         // }
-
-        this.offsetX = diff.x = diff.x - this.x;
-        this.offsetY = diff.y = diff.y - this.y;
-
-        return diff;
     }
 
     setState(): void {
@@ -135,15 +123,7 @@ export default class Mob extends Actor {
     // }
 
     events(): void {
-        if (this.state === Mob.states.CHASING) {
-            if (!this.attackEvents()) {
-                this.chase();
-            }
-        } else if (this.state === Mob.states.WANDERING) {
-            this.wander();
-        } else if (this.state === Mob.states.FLEEING) {
-            this.flee();
-        }
+        this.attackEvents();
     }
 
     chase(): void {
@@ -237,16 +217,10 @@ export default class Mob extends Actor {
     //    return success;
     // }
 
-    dealDamage(damage: number, source: any = null): void {
+    public dealDamage(damage: number, source: any = null): void {
         super.dealDamage(damage, source);
-        if (this.HP <= 0) {
-            this.die();
-            player!.target = null;
-        }
+
     }
 
 
-    die(): void {
-        // Mob.mobList.splice(Mob.mobList.indexOf(this), 1);
-    }
 }

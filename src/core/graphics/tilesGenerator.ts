@@ -116,7 +116,7 @@ export async function generateTiles(map: any) {
         resolve("result")
         // Promise.all(imageList).then(() => {
         //     resolve("result")
-        // }, () => alert("yaaaaaaaaaaaaaaa("))
+        // }, () => alert("s("))
 
     })
 

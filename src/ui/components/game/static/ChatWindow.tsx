@@ -54,7 +54,6 @@ export const ChatWindow: React.FC = () => {
         setWs(gameRTC.socket);
 
         gameRTC.socket.on("receiveMessage", (msg: messageType) => {
-            alert(JSON.stringify(msg));
             setMessages(prev => [...prev, msg]);
             setBubbles(prev => prev.set(msg.senderId, msg.content))
             setTimeout(() => setBubbles(prev => prev.set(msg.senderId, "")), Math.sqrt(msg.content.length) * 500 + 1500);

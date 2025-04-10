@@ -1,10 +1,12 @@
 import {scaledTileSize} from "../../utils/math.ts";
 import {entityManager, once, player, worldMap} from "../main.ts";
 import {selector1} from "./static/sprites.ts";
-import {AnimatedEffect} from "./image.ts";
+import {AnimatedEffect, TileImage} from "./image.ts";
 import {FloatText} from "./floatText.ts";
 import {tileList} from "./tilesGenerator.ts";
 import {settings} from "../config/settings.ts";
+import Mob from "../logic/actors/mobs/mob.ts";
+import {selectorSheet} from "./static/paths.ts";
 
 export class Graphics {
     get debugMode(): boolean {
@@ -41,6 +43,7 @@ export class Graphics {
     private readonly _effectList: Array<AnimatedEffect> = [];
     private _ctx: CanvasRenderingContext2D | null | undefined;
     private _canvas: HTMLCanvasElement | null = null;
+    private selector1: TileImage = new TileImage(selectorSheet, 0, 0);
     // private chunkCanvas: OffscreenCanvas = new OffscreenCanvas(32 * scaledTileSize(), 32 * scaledTileSize());
     // private chunkCtx: OffscreenCanvasRenderingContext2D | null = this.chunkCanvas.getContext("2d");
 
@@ -84,11 +87,30 @@ export class Graphics {
     private renderActors(): void {
         const ctx = <CanvasRenderingContext2D>this.ctx;
         ctx.fillStyle = "blue";
-        player!.image!.render(player!.renderState, ctx, player!.x, player!.y, player!.direction);
+
+        const mobsAfter: Mob[] = [];
+        entityManager.findMobsAt(player.x, player.y).forEach(mob => {
+            if (mob.y > player.y + 32 * settings.defaultTileScale) {
+                mobsAfter.push(mob);
+            } else {
+                mob.image?.render(mob.renderState, ctx, mob.x, mob.y - (64 * settings.defaultTileScale), mob.direction);
+                ctx.fillText(mob.name, mob!.x + mob.image.currentAnimation.widthSize / 2, mob!.y);
+            }
+        })
+
+        player!.image!.render(player!.renderState, ctx, player!.x - player?.image?.currentAnimation.widthSize / 2, player!.y - player?.image?.currentAnimation.heightSize / 2, player!.direction);
+
+        for (const mob of mobsAfter) {
+            mob.image?.render(mob.renderState, ctx, mob.x, mob.y - (64 * settings.defaultTileScale), mob.direction);
+            ctx.fillText(mob.name, mob!.x + mob.image.currentAnimation.widthSize / 2, mob!.y);
+        }
 
         entityManager.findPlayerAt(player.x, player.y).forEach((player, index) => {
             player.image!.render(player.renderState, ctx, player.x, player.y, player.direction);
         })
+
+
+
 
         if (this.renderAfterList.length !== 0) {
                 for (const render of this.renderAfterList) {
@@ -97,10 +119,13 @@ export class Graphics {
         }
         this.renderAfterList = [];
 
-        // if (player!.target) {
-        //     ctx.drawImage(selector1.tile, player!.target.x || 0, player!.target.y || 0, scaledTileSize(), scaledTileSize());
-        // }
+        if (player!.target) {
+            ctx.drawImage(this.selector1.tile, player!.target.x || 0, player!.target.y || 0, scaledTileSize(), scaledTileSize());
+        }
         ctx.fillText(player!.name, player!.x + player.image.currentAnimation.widthSize / 2, player!.y);
+        ctx.fillText(`total mobs: ${entityManager.mobs.size}`, player!.x + player.image.currentAnimation.widthSize / 2 + 300, player!.y);
+        ctx.fillText(`mobs in chunk: ${entityManager.findMobsAt(player.x, player.y).length}`, player!.x + player.image.currentAnimation.widthSize / 2 + 300, player!.y + 200);
+        // ctx.fillText(`x:${player.x}, y:${player.y}`, player!.x + player.image.currentAnimation.widthSize / 2, player!.y);
     }
 
     private renderEffects(): void {

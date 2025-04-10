@@ -37,9 +37,8 @@ const UseInitAPI = ({url, method = 'GET', body = null, onLoad = () => alert("def
                     withCredentials: true
                 });
 
-                const resData = JSON.parse(response.data);
-                setData(resData);
-                resolve(resData);
+                setData(response.data);
+                resolve(response.data);
             } catch (err) {
                 if (err.response && err.response.data) {
                     setError(JSON.stringify(err.response.data.message));

@@ -4,8 +4,9 @@ import {camera, entityManager, graphics, player} from "../main.ts";
 
 export function update(): void {
     camera!.update(player!.updatePlayer(), player!.x, player!.y);
-    entityManager.findPlayerAt(player.x, player.y).forEach((player, index) => {
-        entityManager.updatePlayer(player);
+    entityManager.findMobsAt(player.x, player.y).forEach((mob, index) => {
+        mob.update();
+        entityManager.updateMob(mob);
     })
     if (graphics.debugMode) {
         graphics.ctx!.font = "11px PixelFont";

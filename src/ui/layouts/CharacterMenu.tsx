@@ -4,7 +4,7 @@ import {entityManager, init} from "../../core/main.ts";
 import {LoadingScreen} from "../components/game/dynamic/LoadingScreen.tsx";
 import UseInitAPI from "../service/hooks/initAPI.ts";
 import Wanderer from "../../core/logic/actors/characters/wanderer.ts";
-import {request} from "axios";
+import axios from "axios";
 import {SmallPotionOfHealing} from "../../core/logic/items/consumable/potions/smallPotionOfHealing.ts";
 import BlueSlime from "../../core/logic/actors/mobs/enemies/blueSlime.ts";
 
@@ -16,28 +16,26 @@ export type ItemPosition = {
 
 export const CharacterMenu = ({onEnter, onBack}: { onEnter: () => void, onBack: () => void }) => {
     const [mode, setMode] = useState<"select" | "create">("select");
-
     const [characters, setCharacters] = useState<Player[]>([]);
-
     const [screenLoading, setScreenLoading] = useState(false);
-
     const [charType, setCharType] = useState<'wanderer' | 'knight'>('wanderer');
-
     const [selected, setSelected] = useState<null | number>(null);
-
     const [name, setName] = useState("");
-
     const [lever, setLever] = useState(false);
 
-    function requestType(): { url: string, method: 'POST' | 'GET', body?: {nickname: string, characterType: string} } {
+    function requestType(): {
+        url: string,
+        method: 'POST' | 'GET',
+        body?: { nickname: string, characterType: string }
+    } {
         return mode === "create" ? {
-            url: "/createChar",
-            method: "POST",
-            body: {
-                nickname: name,
-                characterType: charType,
-            },
-        } :
+                url: "/createChar",
+                method: "POST",
+                body: {
+                    nickname: name,
+                    characterType: charType,
+                },
+            } :
             {
                 url: "/getCharList",
                 method: "GET",
@@ -49,7 +47,6 @@ export const CharacterMenu = ({onEnter, onBack}: { onEnter: () => void, onBack: 
         onLoad: (response) => {
             if (response) {
                 if (mode === "select") {
-                    // const data = JSON.parse(response);
                     setCharacters([]);
                     try {
                         for (const char of response) {
@@ -91,26 +88,25 @@ export const CharacterMenu = ({onEnter, onBack}: { onEnter: () => void, onBack: 
             init(target).then(answer => {
                 console.log(answer)
                 setTimeout(async () => {
-                    const itemList = await request({url: "/item/init", method: "get"});
-                    const mobList = await request({url: "/mob/init", method: "get"});
-                    for (const item of JSON.parse(itemList.data)) {
+                    const itemList = await axios.request({url: "/item/init", method: "get"});
+                    // const inventory = await axios.request({url: "/item/initInventory", method: "get"});
+                    // const stats = await axios.request({url: "/player/initStats", method: "get"});
+                    const mobList = await axios.request({url: "/mob/init", method: "get"});
+                    // alert(JSON.stringify(mobList.data))
+                    for (const item of itemList.data) {
                         const newItem = new SmallPotionOfHealing();
                         newItem.x = item.x;
                         newItem.y = item.y;
                         newItem.id = item.itemId;
                         entityManager.addItem(item);
                     }
-                    for (const mob of JSON.parse(mobList.data)) {
+                    for (const mob of mobList.data) {
                         const newMob = new BlueSlime();
                         newMob.x = mob.x;
                         newMob.y = mob.y;
                         newMob.id = mob.id;
                         newMob.HP = mob.health;
-                        if (mob.isAlive) {
-                            entityManager.addMob(newMob);
-                        } else {
-                            console.log("dead "+mob.id);
-                        }
+                        entityManager.addMob(newMob);
                     }
                     onEnter()
                 }, 1000);
@@ -128,11 +124,6 @@ export const CharacterMenu = ({onEnter, onBack}: { onEnter: () => void, onBack: 
                         <div className={"char-list-div"}>
                             {characters.length > 0 ? characters?.map((character) => (
                                 <div style={{
-                                    width: "auto",
-                                    padding: "0.5em",
-                                    textAlign: "center",
-                                    cursor: "pointer",
-                                    transition: "0.2s",
                                     backgroundColor: `${character.id === selected ? "#D4A017FF" : ""}`
                                 }} key={`select${character.id}`}
                                      onClick={() => {
@@ -141,7 +132,7 @@ export const CharacterMenu = ({onEnter, onBack}: { onEnter: () => void, onBack: 
                                     {`${character.level} уровень, Сокрытый Лес`}</div>
                             )) : (<p style={{textAlign: "center"}}>Список персонажей пуст</p>)}
                         </div>
-                        <button className={"ui-div"} onClick={handleEnter}>Войти</button>
+                        <button disabled={selected === null} className={"ui-div"} onClick={handleEnter}>Войти</button>
                         <button className={"ui-div"} onClick={() => setMode('create')} disabled={false}>
                             Создать персонажа
                         </button>
