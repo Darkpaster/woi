@@ -1,5 +1,3 @@
-import {TileImage} from "../image.ts";
-
 export const greyPotion: string = "src/assets/items/potions/potion_1.png";
 export const redPotion2: string = "src/assets/icons/magic-potions/Transperent/Icon33.png";
 export const redPotion: string = "src/assets/icons/paint-pixel-art/Transperent/Icon1.png"

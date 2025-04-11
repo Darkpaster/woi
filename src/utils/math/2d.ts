@@ -1,13 +1,62 @@
-export interface Vector2D {
-    x: number;
-    y: number;
+/**
+ * 2d.ts — набор утилитарных математических моделей для работы с объектами на плоскости.
+ */
+
+export class Vector2D {
+    public x: number;
+    public y: number;
+
+    constructor(x: number, y: number) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public add(other: Vector2D): Vector2D {
+        return new Vector2D(this.x + other.x, this.y + other.y);
+    }
+
+    public subtract(other: Vector2D): Vector2D {
+        return new Vector2D(this.x - other.x, this.y - other.y);
+    }
+
+    public multiply(scalar: number): Vector2D {
+        return new Vector2D(this.x * scalar, this.y * scalar);
+    }
+
+    public divide(scalar: number): Vector2D {
+        return new Vector2D(this.x / scalar, this.y / scalar);
+    }
+
+    public magnitude(): number {
+        return Math.sqrt(this.x * this.x + this.y * this.y);
+    }
+
+    public normalize(): Vector2D {
+        const mag = this.magnitude();
+        if (mag === 0) {
+            return new Vector2D(0, 0);
+        }
+        return this.divide(mag);
+    }
+
+    public rotate(angle: number): Vector2D {
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+        return new Vector2D(this.x * cos - this.y * sin, this.x * sin + this.y * cos);
+    }
+
+    public distance(other: Vector2D): number {
+        const dx = this.x - other.x;
+        const dy = this.y - other.y;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
 }
 
 export class Vector {
     /**
      * Сложение двух векторов
      */
-    static add(v1: Vector2D, v2: Vector2D): Vector2D {
+    static add(v1: Vector2D, v2: Vector2D) {
         return {
             x: v1.x + v2.x,
             y: v1.y + v2.y
@@ -17,7 +66,7 @@ export class Vector {
     /**
      * Вычитание векторов (v1 - v2)
      */
-    static subtract(v1: Vector2D, v2: Vector2D): Vector2D {
+    static subtract(v1: Vector2D, v2: Vector2D) {
         return {
             x: v1.x - v2.x,
             y: v1.y - v2.y
@@ -27,7 +76,7 @@ export class Vector {
     /**
      * Умножение вектора на скаляр
      */
-    static multiply(v: Vector2D, scalar: number): Vector2D {
+    static multiply(v: Vector2D, scalar: number) {
         return {
             x: v.x * scalar,
             y: v.y * scalar
@@ -37,7 +86,7 @@ export class Vector {
     /**
      * Деление вектора на скаляр
      */
-    static divide(v: Vector2D, scalar: number): Vector2D {
+    static divide(v: Vector2D, scalar: number) {
         if (scalar === 0) {
             throw new Error("Деление на ноль");
         }
@@ -57,7 +106,7 @@ export class Vector {
     /**
      * Нормализация вектора (получение единичного вектора)
      */
-    static normalize(v: Vector2D): Vector2D {
+    static normalize(v: Vector2D) {
         const mag = this.magnitude(v);
         if (mag === 0) {
             return { x: 0, y: 0 };
@@ -84,7 +133,7 @@ export class Vector {
     /**
      * Вращение вектора на заданный угол (в радианах)
      */
-    static rotate(v: Vector2D, angle: number): Vector2D {
+    static rotate(v: Vector2D, angle: number) {
         const cos = Math.cos(angle);
         const sin = Math.sin(angle);
         return {
@@ -117,7 +166,7 @@ export class Vector {
     /**
      * Ограничение максимальной длины вектора
      */
-    static limit(v: Vector2D, max: number): Vector2D {
+    static limit(v: Vector2D, max: number) {
         const mag = this.magnitude(v);
         if (mag > max) {
             return this.multiply(this.normalize(v), max);
@@ -128,7 +177,7 @@ export class Vector {
     /**
      * Отражение вектора относительно нормали поверхности
      */
-    static reflect(v: Vector2D, normal: Vector2D): Vector2D {
+    static reflect(v: Vector2D, normal: Vector2D) {
         const normalizedNormal = this.normalize(normal);
         const dot = this.dot(v, normalizedNormal);
         return this.subtract(v, this.multiply(normalizedNormal, 2 * dot));
@@ -137,7 +186,7 @@ export class Vector {
     /**
      * Линейная интерполяция между двумя векторами
      */
-    static lerp(v1: Vector2D, v2: Vector2D, t: number): Vector2D {
+    static lerp(v1: Vector2D, v2: Vector2D, t: number) {
         // Ограничение t в диапазоне [0, 1]
         const clampedT = Math.max(0, Math.min(1, t));
         return {
@@ -149,7 +198,7 @@ export class Vector {
     /**
      * Создание случайного вектора
      */
-    static random(magnitude: number = 1): Vector2D {
+    static random(magnitude: number = 1) {
         const angle = Math.random() * Math.PI * 2;
         return {
             x: Math.cos(angle) * magnitude,
@@ -160,7 +209,7 @@ export class Vector {
     /**
      * Создание случайного вектора в заданном диапазоне
      */
-    static randomRange(minX: number, maxX: number, minY: number, maxY: number): Vector2D {
+    static randomRange(minX: number, maxX: number, minY: number, maxY: number) {
         return {
             x: minX + Math.random() * (maxX - minX),
             y: minY + Math.random() * (maxY - minY)
@@ -177,10 +226,31 @@ export class Vector {
     /**
      * Получение перпендикулярного вектора (повернутого на 90 градусов)
      */
-    static perpendicular(v: Vector2D): Vector2D {
+    static perpendicular(v: Vector2D) {
         return {
             x: -v.y,
             y: v.x
         };
     }
 }
+
+
+/**
+ * Получение расстояния между двумя объектами на плоскости
+ */
+export function calcDistance<T extends { x: number, y: number }>(entity1: T, entity2: T): number {
+    return Math.sqrt(Math.pow(entity2!.x - entity1!.x, 2) + Math.pow(entity2!.y - entity1!.y, 2));
+}
+/**
+ * Получение расстояния между двумя объектами на плоскости по оси X
+ */
+export function calcDistanceX<T extends { x: number, y: number }>(entity1: T, entity2: T): number {
+    return Math.abs(entity1.x - entity2.x);
+}
+/**
+ * Получение расстояния между двумя объектами на плоскости по оси Y
+ */
+export function calcDistanceY<T extends { x: number, y: number }>(entity1: T, entity2: T): number {
+    return Math.abs(entity1.y - entity2.y);
+}
+

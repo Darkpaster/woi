@@ -1,6 +1,6 @@
 import {useEffect, useState, useRef, RefObject} from "react";
 import {camera, entityManager, player} from "../../core/main.ts";
-import {scaledTileSize} from "../../utils/math.js";
+import {scaledTileSize} from "../../utils/general/math.ts";
 
 export const bindings = {
     up: "w",

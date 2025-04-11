@@ -3,7 +3,7 @@ import Player from "./logic/actors/player.ts";
 import {Camera} from "./logic/camera.ts";
 import {MapManager} from "./logic/world/mapManager.ts";
 import {Graphics} from "./graphics/graphics.ts";
-import {logf, logOnce} from "../utils/debug.ts";
+import {logf, logOnce} from "../utils/general/debug.ts";
 import {EntityManager} from "./logic/entitiesManager.ts";
 import {GameRTC} from "../ui/service/gameRTC.ts";
 import {settings} from "./config/settings.ts";

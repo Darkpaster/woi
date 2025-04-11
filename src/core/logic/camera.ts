@@ -1,7 +1,7 @@
 import { settings } from "../config/settings.ts";
 import { updateZoom } from "./update.ts";
 // import { getCurrentLocation } from "./world/mapManager.ts";
-import { scaledTileSize } from "../../utils/math.ts";
+import { scaledTileSize } from "../../utils/general/math.ts";
 import {graphics} from "../main.ts";
 
 interface CameraConstructor {

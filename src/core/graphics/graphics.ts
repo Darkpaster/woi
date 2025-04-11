@@ -1,4 +1,4 @@
-import {scaledTileSize} from "../../utils/math.ts";
+import {scaledTileSize} from "../../utils/general/math.ts";
 import {entityManager, once, player, worldMap} from "../main.ts";
 import {selector1} from "./static/sprites.ts";
 import {AnimatedEffect, TileImage} from "./image.ts";

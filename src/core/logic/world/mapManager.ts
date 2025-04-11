@@ -1,6 +1,6 @@
 import {once, player} from "../../main.ts";
 import {generateTiles, tileList} from "../../graphics/tilesGenerator.ts";
-import {memoizeCalculation} from "../../../utils/general.ts";
+import {memoizeCalculation} from "../../../utils/general/general.ts";
 import {settings} from "../../config/settings.ts";
 
 interface ChunkData {

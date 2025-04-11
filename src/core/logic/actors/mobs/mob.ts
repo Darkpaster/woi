@@ -1,5 +1,5 @@
-import {calcDistance, randomInt, scaledTileSize} from "../../../../utils/math.ts";
-import {TimeDelay} from "../../../../utils/time.ts";
+import {calcDistance, randomInt, scaledTileSize} from "../../../../utils/general/math.ts";
+import {TimeDelay} from "../../../../utils/general/time.ts";
 
 import {Actor} from "../actor.ts";
 

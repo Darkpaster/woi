@@ -1,5 +1,5 @@
 import {setKnightManager, setWerewolfHumanManager, setWerewolfManager} from "../../graphics/static/managers.ts";
-import {calcDistance, scaledTileSize} from "../../../utils/math.ts";
+import {calcDistance, scaledTileSize} from "../../../utils/general/math.ts";
 import {SmallPotionOfHealing} from "../items/consumable/potions/smallPotionOfHealing.ts";
 import {Slash} from "../skills/slash.ts";
 import {Actor} from "./actor.ts";

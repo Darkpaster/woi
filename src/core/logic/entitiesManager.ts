@@ -1,4 +1,4 @@
-import {scaledTileSize} from "../../utils/math.ts";
+import {scaledTileSize} from "../../utils/general/math.ts";
 import Mob from "./actors/mobs/mob.ts";
 import Item from "./items/item.ts";
 import Player from "./actors/player.ts";

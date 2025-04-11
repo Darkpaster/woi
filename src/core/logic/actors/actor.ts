@@ -1,7 +1,7 @@
 import {FloatText} from "../../graphics/floatText.ts";
 import {AnimatedImageManager} from "../../graphics/image.ts";
-import {calcDistance, calcDistanceX, calcDistanceY, randomInt, scaledTileSize} from "../../../utils/math.ts";
-import {TimeDelay} from "../../../utils/time.ts";
+import {calcDistance, calcDistanceX, calcDistanceY, randomInt, scaledTileSize} from "../../../utils/general/math.ts";
+import {TimeDelay} from "../../../utils/general/time.ts";
 import {Skill} from "../skills/skill.ts";
 import {entityManager, gameRTC, graphics, once, player, worldMap} from "../../main.ts";
 import {settings} from "../../config/settings.ts";

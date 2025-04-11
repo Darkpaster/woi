@@ -3,7 +3,7 @@ import Player from "../actors/player.ts";
 import { Skill } from "./skill.ts";
 import {txtList} from "../../config/lang.ts";
 import {getSlashEffect} from "../../graphics/static/animatedSprites.ts";
-import {formatString} from "../../../utils/string.ts";
+import {formatString} from "../../../utils/general/string.ts";
 
 export class Slash extends Skill {
 
