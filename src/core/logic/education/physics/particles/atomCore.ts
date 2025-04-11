@@ -1,5 +1,5 @@
-import { Proton } from './proton';
-import { Neutron } from './neutron';
+import { Proton } from './hadrons/baryons/proton.ts';
+import { Neutron } from './hadrons/baryons/neutron.ts';
 import { Vector2D } from './utils';
 import {Particle} from "./particle.ts";
 

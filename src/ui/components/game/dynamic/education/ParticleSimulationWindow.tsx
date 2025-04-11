@@ -1,5 +1,5 @@
 import {useEffect} from "react";
-import {ParticleSimulation} from "../../../../../core/logic/education/physics/particles/particleSimulation.ts";
+import {ParticleSimulation} from "../../../../../core/logic/education/physics/visualization/particles/particleSimulation.ts";
 
 
 export const ParticleSimulationWindow = () => {

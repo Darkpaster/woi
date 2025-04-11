@@ -1,7 +1,7 @@
 import { AtomCore } from './atomCore';
-import { Electron } from './electron';
-import { Neutron } from './neutron';
-import { Proton } from './proton';
+import { Electron } from './leptons/electron.ts';
+import { Neutron } from './hadrons/baryons/neutron.ts';
+import { Proton } from './hadrons/baryons/proton.ts';
 import { Vector2D } from './utils';
 
 export class Atom {
