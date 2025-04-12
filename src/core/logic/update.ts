@@ -1,6 +1,6 @@
 import {settings} from "../config/settings.ts";
-import {scaledTileSize} from "../../utils/general/math.ts";
 import {camera, entityManager, graphics, player} from "../main.ts";
+import {scaledTileSize} from "../../utils/math/general.ts";
 
 export function update(): void {
     camera!.update(player!.updatePlayer(), player!.x, player!.y);

@@ -52,6 +52,42 @@ export class Vector2D {
     }
 }
 
+
+/**
+ * Координатная точка в 2D пространстве
+ */
+export class Point {
+    constructor(public x: number, public y: number) {}
+
+    distanceTo(other: Point): number {
+        return Math.sqrt(Math.pow(this.x - other.x, 2) + Math.pow(this.y - other.y, 2));
+    }
+
+    clone(): Point {
+        return new Point(this.x, this.y);
+    }
+
+    public add(other: Vector2D): Point {
+        return new Point(this.x + other.x, this.y + other.y);
+    }
+
+    public subtract(other: Vector2D): Point {
+        return new Point(this.x - other.x, this.y - other.y);
+    }
+
+    public multiply(scalar: number): Point {
+        return new Point(this.x * scalar, this.y * scalar);
+    }
+
+    public normalize(): Point {
+        const magnitude = Math.sqrt(this.x * this.x + this.y * this.y);
+        if (magnitude === 0) return new Point(0, 0);
+        return new Point(this.x / magnitude, this.y / magnitude);
+    }
+}
+
+
+
 export class Vector {
     /**
      * Сложение двух векторов

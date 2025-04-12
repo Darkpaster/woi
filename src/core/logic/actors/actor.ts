@@ -1,6 +1,5 @@
 import {FloatText} from "../../graphics/floatText.ts";
 import {AnimatedImageManager} from "../../graphics/image.ts";
-import {calcDistance, calcDistanceX, calcDistanceY, randomInt, scaledTileSize} from "../../../utils/general/math.ts";
 import {TimeDelay} from "../../../utils/general/time.ts";
 import {Skill} from "../skills/skill.ts";
 import {entityManager, gameRTC, graphics, once, player, worldMap} from "../../main.ts";
@@ -9,6 +8,9 @@ import {settings} from "../../config/settings.ts";
 import {tileList} from "../../graphics/tilesGenerator.ts";
 import Player from "./player.ts";
 import {MapManager} from "../world/mapManager.ts";
+import {calcDistance} from "../../../utils/math/2d.ts";
+import {randomInt} from "../../../utils/math/random.ts";
+import {scaledTileSize} from "../../../utils/math/general.ts";
 
 export interface EntityUIInfo {
     // id: string;

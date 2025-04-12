@@ -1,6 +1,6 @@
-import { Board } from '../board/Board';
-import { Color, SquareColor } from '../board/Square';
-import { AssetLoader } from './AssetLoader';
+import {Board} from "../board/board.ts";
+import {AssetLoader} from "./assetLoader.ts";
+import {Color} from "../board/square.ts";
 
 export interface RenderOptions {
     lightSquareColor: string;
@@ -22,10 +22,13 @@ export class ChessRenderer {
     private validMoves: string[];
     private lastMove: { from: string, to: string } | null;
 
-    constructor(canvas: HTMLCanvasElement, board: Board) {
+    constructor(canvasId: string, board: Board, size: number) {
+        const canvas = (document.getElementById(canvasId) as HTMLCanvasElement);
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d')!;
         this.board = board;
+        canvas.width = size;
+        canvas.height = size;
         this.squareSize = Math.floor(canvas.width / 8);
         this.selectedSquare = null;
         this.validMoves = [];

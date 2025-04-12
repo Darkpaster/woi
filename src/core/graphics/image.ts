@@ -1,8 +1,8 @@
 import { settings } from "../config/settings.ts";
-import { scaledTileSize } from "../../utils/general/math.ts";
 import {Delay, TimeDelay} from "../../utils/general/time.ts";
 import {graphics} from "../main.ts";
 import {AnimationList} from "./static/animatedSprites.ts";
+import {scaledTileSize} from "../../utils/math/general.ts";
 
 export class AnimatedImageManager {
     list: AnimationList;

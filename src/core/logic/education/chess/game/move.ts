@@ -1,4 +1,4 @@
-import { Piece } from '../pieces/Piece';
+import {Piece} from "../pieces/piece.ts";
 
 export class Move {
     public from: string;
@@ -56,7 +56,7 @@ export class Move {
         let notation = '';
 
         // Add piece symbol (except for pawns)
-        if (this.piece.getType() !== 'pawn') {
+        if (this.piece.type !== 'pawn') {
             notation += this.piece.getNotationSymbol().toUpperCase();
         }
 
@@ -65,7 +65,7 @@ export class Move {
 
         // Add capture symbol
         if (this.isCapture()) {
-            if (this.piece.getType() === 'pawn') {
+            if (this.piece.type === 'pawn') {
                 notation += this.from.charAt(0);
             }
             notation += 'x';

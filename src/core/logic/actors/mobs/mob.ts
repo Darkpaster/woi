@@ -1,10 +1,11 @@
-import {calcDistance, randomInt, scaledTileSize} from "../../../../utils/general/math.ts";
 import {TimeDelay} from "../../../../utils/general/time.ts";
 
 import {Actor} from "../actor.ts";
 
-
 import {entityManager, player} from "../../../main.ts";
+import {randomInt} from "../../../../utils/math/random.ts";
+import {calcDistance} from "../../../../utils/math/2d.ts";
+import {scaledTileSize} from "../../../../utils/math/general.ts";
 
 
 export default class Mob extends Actor {

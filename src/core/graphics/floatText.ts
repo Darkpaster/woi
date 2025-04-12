@@ -1,6 +1,7 @@
 import { settings } from "../config/settings.ts";
-import { randomInt, scaledTileSize } from "../../utils/general/math.ts";
 import { TimeDelay } from "../../utils/general/time.ts";
+import {scaledTileSize} from "../../utils/math/general.ts";
+import {randomInt} from "../../utils/math/random.ts";
 
 interface FloatTextProps {
     text: string | number;

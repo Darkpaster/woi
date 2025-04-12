@@ -1,10 +1,11 @@
 import {setKnightManager, setWerewolfHumanManager, setWerewolfManager} from "../../graphics/static/managers.ts";
-import {calcDistance, scaledTileSize} from "../../../utils/general/math.ts";
 import {SmallPotionOfHealing} from "../items/consumable/potions/smallPotionOfHealing.ts";
 import {Slash} from "../skills/slash.ts";
 import {Actor} from "./actor.ts";
 import Item from "../items/item.ts";
 import {player} from "../../main.ts";
+import {calcDistance} from "../../../utils/math/2d.ts";
+import {scaledTileSize} from "../../../utils/math/general.ts";
 
 interface Equipment {
     head: any;

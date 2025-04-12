@@ -65,6 +65,10 @@ body {
   font-family: "PixelFont";
 }
 
+h1 {
+  text-align: center;
+}
+
 html {
   color: map-get($colors, font);
 }

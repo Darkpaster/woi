@@ -1,6 +1,5 @@
-import { Board } from '../board/Board';
-import { Color } from '../board/Square';
-import { Move } from './Move';
+import {Board} from "../board/board.ts";
+import {Color} from "../board/square.ts";
 
 export interface MoveEvaluation {
     move: { from: string, to: string };

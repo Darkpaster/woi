@@ -1,6 +1,6 @@
-import { Piece } from './Piece';
-import { Color } from '../board/Square';
-import { Board } from '../board/Board';
+import {Piece} from "./piece.ts";
+import {Board} from "../board/board.ts";
+
 
 export class Bishop extends Piece {
     get type(): string {

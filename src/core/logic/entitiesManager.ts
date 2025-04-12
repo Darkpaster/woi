@@ -1,8 +1,8 @@
-import {scaledTileSize} from "../../utils/general/math.ts";
 import Mob from "./actors/mobs/mob.ts";
 import Item from "./items/item.ts";
 import Player from "./actors/player.ts";
 import {MapManager} from "./world/mapManager.ts";
+import {scaledTileSize} from "../../utils/math/general.ts";
 
 export class EntityManager {
     get items(): Map<number, Item> {

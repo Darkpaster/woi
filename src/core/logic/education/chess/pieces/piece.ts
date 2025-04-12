@@ -1,5 +1,5 @@
-import { Color } from '../board/Square';
-import { Board } from '../board/Board';
+import {Board} from "../board/board.ts";
+import {Color} from "../board/square.ts";
 
 export abstract class Piece {
     readonly color: Color;

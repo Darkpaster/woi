@@ -1,12 +1,11 @@
-import { Square } from './Square';
-import { Piece } from '../pieces/Piece';
-import { Pawn } from '../pieces/Pawn';
-import { Rook } from '../pieces/Rook';
-import { Knight } from '../pieces/Knight';
-import { Bishop } from '../pieces/Bishop';
-import { Queen } from '../pieces/Queen';
-import { King } from '../pieces/King';
-import { Color } from './Square';
+import {Color, Square} from "./square.ts";
+import {Piece} from "../pieces/piece.ts";
+import {Pawn} from "../pieces/pawn.ts";
+import {Rook} from "../pieces/rook.ts";
+import {Knight} from "../pieces/knight.ts";
+import {Bishop} from "../pieces/bishop.ts";
+import {Queen} from "../pieces/queen.ts";
+import {King} from "../pieces/king.ts";
 
 export class Board {
     squares: Square[][];

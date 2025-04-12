@@ -9,7 +9,6 @@ import {useMySelector} from "../../utils/stateManagement/store.ts";
 import {UIState} from "../../utils/stateManagement/uiSlice.ts";
 import {isMounted} from "../GameUI.tsx";
 import {LoadingScreen} from "../components/game/dynamic/LoadingScreen.tsx";
-import {randomInt} from "../../utils/general/math.ts";
 
 const check = isMounted();
 

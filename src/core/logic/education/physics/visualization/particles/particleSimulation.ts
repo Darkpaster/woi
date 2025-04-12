@@ -4,7 +4,6 @@ import { Electron } from '../../particles/leptons/electron.ts';
 import { Proton } from '../../particles/hadrons/baryons/proton.ts';
 import { Neutron } from '../../particles/hadrons/baryons/neutron.ts';
 import { Photon } from '../../particles/bosons/photon.ts';
-import {AntiDownQuark, AntiStrangeQuark, AntiUpQuark, DownQuark, Quark, StrangeQuark, UpQuark} from '../../particles/quarks/quark.ts';
 import { Lepton } from '../../particles/leptons/lepton.ts';
 import { Boson } from '../../particles/bosons/boson.ts';
 import { Gluon } from '../../particles/bosons/gluon.ts';
@@ -12,6 +11,13 @@ import { Hadron } from '../../particles/hadrons/hadron.ts';
 import { AtomCore } from '../../particles/atomCore.ts';
 import { Atom } from '../../particles/atom.ts';
 import { Molecule } from '../../particles/molecule.ts';
+import {UpQuark} from "../../particles/quarks/upQuark.ts";
+import {DownQuark} from "../../particles/quarks/downQuark.ts";
+import {Quark} from "../../particles/quarks/quark.ts";
+import {StrangeQuark} from "../../particles/quarks/strangeQuark.ts";
+import {AntiStrangeQuark} from "../../particles/quarks/antiStrangeQuark.ts";
+import {AntiDownQuark} from "../../particles/quarks/antiDownQuark.ts";
+import {AntiUpQuark} from "../../particles/quarks/antiUpQuark.ts";
 
 // Типы фундаментальных взаимодействий
 enum InteractionType {
@@ -1418,27 +1424,27 @@ export class ParticleSimulation {
 
         // Определяем, какой тип кварка распадается и во что
         const quarkType = quark.getQuarkType();
-        let newQuarkType = 'down';
+        // let newQuarkType = 'down';
 
         let newQuark;
         if (quarkType === 'up') {
             newQuark = new UpQuark(pos);
-            newQuarkType = 'down'; // u -> d + W+
+            // newQuarkType = 'down'; // u -> d + W+
         } else if (quarkType === 'down') {
             newQuark = new DownQuark(pos);
-            newQuarkType = 'up'; // d -> u + W-
+            // newQuarkType = 'up'; // d -> u + W-
         } else if (quarkType === 'strange') {
             newQuark = new StrangeQuark(pos);
-            newQuarkType = 'up'; // s -> u + W-
+            // newQuarkType = 'up'; // s -> u + W-
         } else if (quarkType === 'charm') {
             newQuark = new AntiStrangeQuark(pos);
-            newQuarkType = 'strange'; // c -> s + W+
+            // newQuarkType = 'strange'; // c -> s + W+
         } else if (quarkType === 'bottom') {
             newQuark = new AntiDownQuark(pos);
-            newQuarkType = 'charm'; // b -> c + W-
+            // newQuarkType = 'charm'; // b -> c + W-
         } else if (quarkType === 'top') {
             newQuark = new AntiUpQuark(pos);
-            newQuarkType = 'bottom'; // t -> b + W+
+            // newQuarkType = 'bottom'; // t -> b + W+
         }
 
         // Создаем новый кварк

@@ -1,9 +1,8 @@
-import { Game, GameStatus } from './Game';
-import { Board } from '../board/Board';
-import { ChessRenderer } from '../visualization/ChessRenderer';
-import { Color } from '../board/Square';
-import { PGNNotation } from '../notation/PGNNotation';
-import { EventEmitter } from '../utils/EventEmitter';
+import {Game, GameStatus} from "./game.ts";
+import {ChessRenderer} from "../visualization/chessRenderer.ts";
+import {EventEmitter} from "./eventEmitter.ts";
+import {Color} from "../board/square.ts";
+import {Board} from "../board/board.ts";
 
 export class ChessController {
     private game: Game;

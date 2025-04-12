@@ -12,6 +12,7 @@ import Auth from "./layouts/Auth.tsx";
 import {InGame} from "./layouts/InGame.tsx";
 import {LoadingScreen} from "./components/game/dynamic/LoadingScreen.tsx";
 import {ParticleSimulationWindow} from "./components/game/dynamic/education/ParticleSimulationWindow.tsx";
+import {ChessWindow} from "./components/game/dynamic/education/ChessWindow.tsx";
 
 export type EntityType = Item | Actor | Skill;
 
@@ -134,7 +135,7 @@ export const GameUI: React.FC = () => {
                     />
                 )}
                 {gameState === 'inGame' && <InGame />}
-                {particle && <ParticleSimulationWindow></ParticleSimulationWindow>}
+                {particle && <ChessWindow></ChessWindow>}
             </div>
         </>
     );

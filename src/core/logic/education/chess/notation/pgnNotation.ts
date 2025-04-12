@@ -1,5 +1,4 @@
-import { Move } from '../game/Move';
-import { Color } from '../board/Square';
+import {Move} from "../game/move.ts";
 
 export class PGNNotation {
     private tags: Map<string, string>;

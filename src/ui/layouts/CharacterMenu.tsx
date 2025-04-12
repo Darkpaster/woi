@@ -139,7 +139,7 @@ export const CharacterMenu = ({onEnter, onBack}: { onEnter: () => void, onBack: 
                     </>
                 ) : (
                     <>
-                        <h1 style={{textAlign: "center"}}>Странник</h1>
+                        <h1>Странник</h1>
                         <div className={"char-div"}>
                             <button className={"ui-div"}>{"<-"}</button>
                             <button className={"ui-div"}>{"->"}</button>

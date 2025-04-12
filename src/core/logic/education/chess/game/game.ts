@@ -1,10 +1,10 @@
-import { Board } from '../board/Board';
-import { Square, Color } from '../board/Square';
-import { Move } from './Move';
-import { Piece } from '../pieces/Piece';
-import { King } from '../pieces/King';
-import { PGNNotation } from '../notation/PGNNotation';
-import { FENNotation } from '../notation/FENNotation';
+import {PGNNotation} from "../notation/pgnNotation.ts";
+import {FENNotation} from "../notation/fenNotation.ts";
+import {Move} from "./move.ts";
+import {Piece} from "../pieces/piece.ts";
+import {Board} from "../board/board.ts";
+import {Color} from "../board/square.ts";
+
 
 export enum GameStatus {
     ACTIVE,
@@ -39,7 +39,7 @@ export class Game {
     }
 
     public reset(): void {
-        this.board.setupInitialPosition();
+        this.board.setupPieces();
         this.currentTurn = Color.WHITE;
         this.moveHistory = [];
         this.halfMoveClock = 0;
@@ -71,7 +71,7 @@ export class Game {
         const isCapture = capturedPiece !== null;
 
         // Check if pawn move for half-move clock
-        const isPawnMove = piece.getType() === 'pawn';
+        const isPawnMove = piece.type === 'pawn';
 
         // Execute the move
         const move = new Move(from, to, piece, capturedPiece);
@@ -226,7 +226,7 @@ export class Game {
 
     public promotePawn(square: string, pieceType: string): boolean {
         const piece = this.board.getPiece(square);
-        if (!piece || piece.getType() !== 'pawn') {
+        if (!piece || piece.type !== 'pawn') {
             return false;
         }
 
@@ -274,7 +274,7 @@ export class Game {
             for (let rank = 1; rank <= 8; rank++) {
                 const square = String.fromCharCode(file) + rank;
                 const piece = board.getPiece(square);
-                if (piece && piece.getType() === 'king' && piece.color === color) {
+                if (piece && piece.type === 'king' && piece.color === color) {
                     return square;
                 }
             }
@@ -328,7 +328,7 @@ export class Game {
         const piece = move.piece;
 
         // Castling
-        if (piece.getType() === 'king' && Math.abs(move.from.charCodeAt(0) - move.to.charCodeAt(0)) > 1) {
+        if (piece.type === 'king' && Math.abs(move.from.charCodeAt(0) - move.to.charCodeAt(0)) > 1) {
             // Determine if it's kingside or queenside castling
             const isKingside = move.to.charAt(0) === 'g';
             const rank = move.from.charAt(1);
@@ -349,7 +349,7 @@ export class Game {
         }
 
         // En passant
-        if (piece.getType() === 'pawn' &&
+        if (piece.type === 'pawn' &&
             move.from.charAt(0) !== move.to.charAt(0) &&
             !move.capturedPiece) {
             const rank = move.from.charAt(1);
@@ -415,7 +415,7 @@ export class Game {
         // K vs K+B or K vs K+N
         if ((whitePieces.length === 1 && blackPieces.length === 2) ||
             (whitePieces.length === 2 && blackPieces.length === 1)) {
-            const minorPieces = pieces.filter(p => p.getType() === 'bishop' || p.getType() === 'knight');
+            const minorPieces = pieces.filter(p => p.type === 'bishop' || p.type === 'knight');
             if (minorPieces.length === 1) {
                 return true;
             }
@@ -423,8 +423,8 @@ export class Game {
 
         // K+B vs K+B (same color bishops)
         if (whitePieces.length === 2 && blackPieces.length === 2) {
-            const whiteBishops = whitePieces.filter(p => p.getType() === 'bishop');
-            const blackBishops = blackPieces.filter(p => p.getType() === 'bishop');
+            const whiteBishops = whitePieces.filter(p => p.type === 'bishop');
+            const blackBishops = blackPieces.filter(p => p.type === 'bishop');
 
             if (whiteBishops.length === 1 && blackBishops.length === 1) {
                 // Check if bishops are on same colored squares
@@ -435,7 +435,7 @@ export class Game {
                     for (let rank = 1; rank <= 8; rank++) {
                         const square = String.fromCharCode(file) + rank;
                         const piece = this.board.getPiece(square);
-                        if (piece && piece.getType() === 'bishop') {
+                        if (piece && piece.type === 'bishop') {
                             if (piece.color === Color.WHITE) {
                                 whiteSquare = square;
                             } else {
@@ -494,7 +494,7 @@ export class Game {
         const kingSquare = color === Color.WHITE ? 'e1' : 'e8';
         const king = this.board.getPiece(kingSquare);
 
-        if (!king || king.getType() !== 'king' || king.hasMoved()) {
+        if (!king || king.type !== 'king' || king.hasMoved()) {
             return false;
         }
 
@@ -504,7 +504,7 @@ export class Game {
             : (color === Color.WHITE ? 'a1' : 'a8');
         const rook = this.board.getPiece(rookSquare);
 
-        if (!rook || rook.getType() !== 'rook' || rook.hasMoved()) {
+        if (!rook || rook.type !== 'rook' || rook.hasMoved()) {
             return false;
         }
 
@@ -520,7 +520,7 @@ export class Game {
         const piece = lastMove.piece;
 
         // Check if last move was a pawn moving two squares
-        if (piece.getType() === 'pawn' &&
+        if (piece.type === 'pawn' &&
             Math.abs(parseInt(lastMove.from.charAt(1)) - parseInt(lastMove.to.charAt(1))) === 2) {
             // Calculate the en passant target square
             const file = lastMove.to.charAt(0);

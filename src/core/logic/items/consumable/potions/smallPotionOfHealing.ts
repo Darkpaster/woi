@@ -1,9 +1,9 @@
 import { redPotion } from "../../../../graphics/static/paths.ts";
-import { randomInt } from "../../../../../utils/general/math.ts";
 import { player } from "../../../../main.ts";
 import { Potion } from "./potion.ts";
 import {txtList} from "../../../../config/lang.ts";
 import {formatString} from "../../../../../utils/general/string.ts";
+import {randomInt} from "../../../../../utils/math/random.ts";
 
 export class SmallPotionOfHealing extends Potion {
 

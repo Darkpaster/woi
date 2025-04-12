@@ -1,6 +1,6 @@
-import { Piece } from './Piece';
-import { Color } from '../board/Square';
-import { Board } from '../board/Board';
+import {Board} from "../board/board.ts";
+import {Color} from "../board/square.ts";
+import {Piece} from "./piece.ts";
 
 export class Pawn extends Piece {
     get type(): string {
