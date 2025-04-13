@@ -2,6 +2,7 @@ import {once, player} from "../../main.ts";
 import {generateTiles, tileList} from "../../graphics/tilesGenerator.ts";
 import {memoizeCalculation} from "../../../utils/general/general.ts";
 import {settings} from "../../config/settings.ts";
+import {scaledTileSize} from "../../../utils/math/general.ts";
 
 interface ChunkData {
     data: number[];   // одномерный массив тайлов
@@ -84,18 +85,18 @@ export class MapManager {
     private getTilePosKey(xPos: number, yPos: number): string { //тайлы в тайлы без остатка
         const col = xPos - (xPos % MapManager.CHUNK_SIZE);
         const row = yPos - (yPos % MapManager.CHUNK_SIZE);
-        return `${col},${row}`;
+        return `${Math.round(col)},${Math.round(row)}`;
     }
 
     public getIndexingChunks(): IndexingChunks {
         const [tilesX, tilesY] = this.updateCalculation(settings.defaultTileScale); // оптимизация
 
         const pos = { x: player!.posX, y: player!.posY};
-        const beforeY: number = pos.y - tilesY - 30;
-        const afterY: number = pos.y + tilesY;
+        const beforeY: number = pos.y - tilesY * 2;
+        const afterY: number = pos.y;
 
-        const beforeX: number = pos.x - tilesX - 30;
-        const afterX: number = pos.x + tilesX;
+        const beforeX: number = pos.x - tilesX * 2;
+        const afterX: number = pos.x;
 
         const { backgroundChunks, foregroundChunks, animatedChunks } = this.getWorldMap();
 

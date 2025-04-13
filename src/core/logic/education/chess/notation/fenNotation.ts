@@ -31,7 +31,7 @@ export class FENNotation {
         const board = new Board();
 
         // Clear the board first
-        board.clear();
+        board.reset();
 
         // Parse the position
         const ranks = position.split('/');
@@ -64,7 +64,8 @@ export class FENNotation {
                     // Create piece based on character
                     const piece = this.createPieceFromChar(char);
                     if (piece) {
-                        board.setPiece(square, piece);
+                        // board.addPiece(square, piece);
+                        board.addPiece(piece);
                     }
 
                     fileIndex++;
@@ -182,7 +183,7 @@ export class FENNotation {
     private getPieceChar(piece: Piece): string {
         let char = '';
 
-        switch (piece.getType()) {
+        switch (piece.type) {
             case 'pawn': char = 'p'; break;
             case 'rook': char = 'r'; break;
             case 'knight': char = 'n'; break;
@@ -205,38 +206,38 @@ export class FENNotation {
 
         // White king
         const whiteKing = board.getPiece('e1');
-        if (whiteKing && whiteKing.getType() === 'king') {
+        if (whiteKing && whiteKing.type === 'king') {
             // Set hasMoved flag based on castling rights
-            whiteKing.setHasMoved(!castling.includes('K') && !castling.includes('Q'));
+            whiteKing.hasMoved = (!castling.includes('K') && !castling.includes('Q'));
         }
 
         // Black king
         const blackKing = board.getPiece('e8');
-        if (blackKing && blackKing.getType() === 'king') {
+        if (blackKing && blackKing.type === 'king') {
             // Set hasMoved flag based on castling rights
-            blackKing.setHasMoved(!castling.includes('k') && !castling.includes('q'));
+            blackKing.hasMoved = (!castling.includes('k') && !castling.includes('q'));
         }
 
         // White rooks
         const whiteRookH = board.getPiece('h1');
-        if (whiteRookH && whiteRookH.getType() === 'rook') {
-            whiteRookH.setHasMoved(!castling.includes('K'));
+        if (whiteRookH && whiteRookH.type === 'rook') {
+            whiteRookH.hasMoved = (!castling.includes('K'));
         }
 
         const whiteRookA = board.getPiece('a1');
-        if (whiteRookA && whiteRookA.getType() === 'rook') {
-            whiteRookA.setHasMoved(!castling.includes('Q'));
+        if (whiteRookA && whiteRookA.type === 'rook') {
+            whiteRookA.hasMoved = (!castling.includes('Q'));
         }
 
         // Black rooks
         const blackRookH = board.getPiece('h8');
-        if (blackRookH && blackRookH.getType() === 'rook') {
-            blackRookH.setHasMoved(!castling.includes('k'));
+        if (blackRookH && blackRookH.type === 'rook') {
+            blackRookH.hasMoved = (!castling.includes('k'));
         }
 
         const blackRookA = board.getPiece('a8');
-        if (blackRookA && blackRookA.getType() === 'rook') {
-            blackRookA.setHasMoved(!castling.includes('q'));
+        if (blackRookA && blackRookA.type === 'rook') {
+            blackRookA.hasMoved = (!castling.includes('q'));
         }
     }
 

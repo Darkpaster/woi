@@ -1,5 +1,5 @@
 import { RNAStrand, RNAType } from '../molecularBiology/rnaStrand';
-import {SimulationObject} from "../simulation/simulation.ts";
+import {SimulationObject} from "../simulations/simulation.ts";
 import {Cell} from "./cell.ts";
 import {Ribosome} from "./ribosome.ts";
 import {GeneticEvent} from "../genetics/genetics.ts";

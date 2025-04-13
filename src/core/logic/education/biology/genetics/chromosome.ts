@@ -1,5 +1,5 @@
 import {Point} from "../../../../../utils/math/2d.ts";
-import {SimulationObject} from "../simulation/simulation.ts";
+import {SimulationObject} from "../simulations/simulation.ts";
 import {Gene} from "./gene.ts";
 import {DNAStrand} from "../molecularBiology/dnaStrand.ts";
 
@@ -61,7 +61,7 @@ export class Chromosome implements SimulationObject {
             // Condensed state behaviors
         }
 
-        // In a more complex simulation, we could model:
+        // In a more complex simulations, we could model:
         // - DNA replication
         // - Crossing over during meiosis
         // - Chromosome damage and repair

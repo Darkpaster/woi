@@ -137,6 +137,7 @@ export class GameRTC {
                     mob.HP = updatedMob.health;
                     mob.target = updatedMob.target;
                     mob.renderState = updatedMob.renderState;
+                    entityManager.updateMob(mob);
                 } else {
                     console.log("respawned: " + updatedMob.id);
                     const newMob = new BlueSlime();

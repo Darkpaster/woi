@@ -1,4 +1,4 @@
-import {SimulationObject} from "../simulation/simulation.ts";
+import {SimulationObject} from "../simulations/simulation.ts";
 import {RNAStrand, RNAType} from "../molecularBiology/rnaStrand.ts";
 import {Point} from "../../../../../utils/math/2d.ts";
 import {Protein} from "../molecularBiology/protein.ts";

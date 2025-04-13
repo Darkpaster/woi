@@ -1,12 +1,12 @@
 // Тахион (гипотетическая частица, движущаяся быстрее света)
-import {Vector2D} from "../utils.ts";
+import {Vector2D} from "../../../../../../utils/math/2d.ts";
 import {Particle} from "../particle.ts";
 
 export class Tachyon extends Particle {
     private phaseTrail: Vector2D[];
     private maxTrailLength: number;
 
-    constructor(position: Vector2D = { x: 0, y: 0 }) {
+    constructor(position: Vector2D = new Vector2D(0, 0)) {
         // Тахионы: частицы с мнимой массой, двигающиеся быстрее света
         super(position, -1, 0); // Отрицательный квадрат массы
         this.name = 'T';

@@ -1,5 +1,5 @@
 import { Boson } from './boson.ts';
-import { Vector2D } from '../utils.ts';
+import {Vector2D} from "../../../../../../utils/math/2d.ts";
 
 export class Photon extends Boson {
     private frequency: number;
@@ -18,10 +18,8 @@ export class Photon extends Boson {
         // Фотоны движутся со скоростью света (в нашей симуляции это будет просто быстро)
         const speed = 150;
         const angle = Math.random() * Math.PI * 2;
-        this.velocity = {
-            x: Math.cos(angle) * speed,
-            y: Math.sin(angle) * speed
-        };
+
+        this.velocity = new Vector2D(Math.cos(angle) * speed,Math.sin(angle) * speed)
 
         // Параметры волны фотона
         this.wavelength = wavelength;
@@ -125,6 +123,6 @@ export class Photon extends Boson {
 
     // Фотоны сами являются своими античастицами
     createAntiParticle(): Boson {
-        return new Photon({ ...this.position }, this.wavelength);
+        return new Photon(this.position, this.wavelength);
     }
 }

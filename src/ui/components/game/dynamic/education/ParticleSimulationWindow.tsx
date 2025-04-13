@@ -4,22 +4,21 @@ import {ParticleSimulation} from "../../../../../core/logic/education/physics/vi
 
 export const ParticleSimulationWindow = () => {
     useEffect(() => {
-        // HTML должен содержать: <canvas id="particleCanvas"></canvas>
-        // const simulation = new ParticleSimulation('particleCanvas');
-        const simulation = new ParticleSimulation("particleCanvas", 100);
+        const simulation = new ParticleSimulation("particle-canvas", { x: window.innerWidth - 100, y: window.innerHeight - 200}, 0);
         try {
-            // simulation.start();
             simulation.init();
             simulation.start();
 
-            // Добавляем кнопки управления (опционально)
-            const stopButton = document.getElementById('stopButton');
-            const startButton = document.getElementById('startButton');
+            const clearButton = document.getElementById('clear-button');
+            const stopButton = document.getElementById('stop-button');
+            const startButton = document.getElementById('start-button');
 
+            if (clearButton) {
+                clearButton.addEventListener('click', () => simulation.clear());
+            }
             if (stopButton) {
                 stopButton.addEventListener('click', () => simulation.stop());
             }
-
             if (startButton) {
                 startButton.addEventListener('click', () => simulation.start());
             }
@@ -34,10 +33,11 @@ export const ParticleSimulationWindow = () => {
     return (
         <div className={"ui-div"}>
             <h1>Симуляция элементарных частиц</h1>
-            <canvas id="particleCanvas"></canvas>
+            <canvas id="particle-canvas"></canvas>
             <div className="controls">
-                <button id="startButton">Запустить</button>
-                <button id="stopButton">Остановить</button>
+                <button id="clear-button" className={"ui-div"}>очистить</button>
+                <button id="stop-button" className={"ui-div"}>остановить</button>
+                <button id="start-button" className={"ui-div"}>запустить</button>
             </div>
         </div>
     )

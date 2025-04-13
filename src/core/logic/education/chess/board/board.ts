@@ -10,6 +10,7 @@ import {King} from "../pieces/king.ts";
 export class Board {
     squares: Square[][];
     pieces: Map<string, Piece>;
+    private enPassantTarget: string | null | undefined;
 
     constructor() {
         this.squares = this.createSquares();
@@ -111,6 +112,74 @@ export class Board {
         return this.squares[rankIndex][fileIndex];
     }
 
+    /**
+     * Sets the target square for en passant capture
+     * @param target The algebraic notation of the target square (e.g., 'e3') or null if no en passant is possible
+     */
+    public setEnPassantTarget(target: string | null): void {
+        this.enPassantTarget = target;
+    }
+
+    /**
+     * Converts the current board position to Forsyth-Edwards Notation (FEN)
+     * @returns The FEN string representing the current board state
+     */
+    public toFEN(): string {
+        let fen = '';
+
+        // 1. Piece placement (from 8th rank to 1st rank)
+        for (let rank = 7; rank >= 0; rank--) {
+            let emptySquares = 0;
+
+            for (let file = 0; file < 8; file++) {
+                const square = String.fromCharCode(97 + file) + (rank + 1);
+                const piece = this.getPiece(square);
+
+                if (piece) {
+                    if (emptySquares > 0) {
+                        fen += emptySquares;
+                        emptySquares = 0;
+                    }
+
+                    let symbol = piece.getNotationSymbol();
+                    fen += piece.color === Color.WHITE ? symbol.toUpperCase() : symbol.toLowerCase();
+                } else {
+                    emptySquares++;
+                }
+            }
+
+            if (emptySquares > 0) {
+                fen += emptySquares;
+            }
+
+            if (rank > 0) {
+                fen += '/';
+            }
+        }
+
+        // 2. Active color
+        // fen += ' ' + (this. === Color.WHITE ? 'w' : 'b');
+
+        // 3. Castling availability
+        let castling = '';
+        // if (this.castlingRights.whiteKingside) castling += 'K';
+        // if (this.castlingRights.whiteQueenside) castling += 'Q';
+        // if (this.castlingRights.blackKingside) castling += 'k';
+        // if (this.castlingRights.blackQueenside) castling += 'q';
+        fen += ' ' + (castling || '-');
+
+        // 4. En passant target square
+        fen += ' ' + (this.enPassantTarget || '-');
+
+        // 5. Halfmove clock (for 50-move rule)
+        // fen += ' ' + this.halfmoveClock;
+
+        // 6. Fullmove number
+        // fen += ' ' + this.fullMoveNumber;
+
+        return fen;
+    }
+
     isSquareOccupied(position: string): boolean {
         return this.pieces.has(position);
     }
@@ -122,6 +191,10 @@ export class Board {
             }
         }
         return false;
+    }
+
+    clone(): Board {
+        return JSON.parse(JSON.stringify(this));
     }
 
     reset(): void {

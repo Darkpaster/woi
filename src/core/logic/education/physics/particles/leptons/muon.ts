@@ -1,7 +1,7 @@
 // Мюон - тяжелый лептон
 import {Lepton} from "./lepton.ts";
 import {AntiMuon} from "./antiMuon.ts";
-import {Vector2D} from "../utils.ts";
+import {Vector2D} from "../../../../../../utils/math/2d.ts";
 
 export class Muon extends Lepton {
     constructor(position: Vector2D) {
@@ -27,7 +27,7 @@ export class Muon extends Lepton {
     }
 
     createAntiParticle(): Lepton {
-        return new AntiMuon({ x: this.position.x, y: this.position.y });
+        return new AntiMuon(new Vector2D(this.position.x, this.position.y));
     }
 
     // Мюоны распадаются со временем

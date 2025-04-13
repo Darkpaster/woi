@@ -1,7 +1,7 @@
 import { Proton } from './hadrons/baryons/proton.ts';
 import { Neutron } from './hadrons/baryons/neutron.ts';
-import { Vector2D } from './utils';
 import {Particle} from "./particle.ts";
+import {Vector2D} from "../../../../../utils/math/2d.ts";
 
 export class AtomCore extends Particle {
     get neutrons(): Neutron[] {
@@ -10,8 +10,8 @@ export class AtomCore extends Particle {
     get protons(): Proton[] {
         return this._protons;
     }
-    private _protons: Proton[];
-    private _neutrons: Neutron[];
+    private readonly _protons: Proton[];
+    private readonly _neutrons: Neutron[];
 
     constructor(position: Vector2D, protons: Proton[], neutrons: Neutron[]) {
         super(position, 0, protons.length, 0);
@@ -22,6 +22,14 @@ export class AtomCore extends Particle {
     get mass(): number {
         return this._protons.reduce((sum, p) => sum + p.mass, 0) +
             this._neutrons.reduce((sum, n) => sum + n.mass, 0);
+    }
+
+    set mass(mass: number) {
+        if (this.protons && this.neutrons) {
+            const unit = mass / (this.protons.length + this.neutrons.length)
+            this.protons.map(proton => proton.mass += unit);
+            this.neutrons.map(neutron => neutron.mass += unit);
+        }
     }
 
     public setVelocity(velocity: Vector2D) {
@@ -42,10 +50,8 @@ export class AtomCore extends Particle {
                 particle.setPosition(this.position);
             } else {
                 const angle = (Math.PI * 2 * index) / particlesCount;
-                particle.setPosition({
-                    x: this.position.x + Math.cos(angle) * radius,
-                    y: this.position.y + Math.sin(angle) * radius
-                });
+
+                particle.setPosition(new Vector2D(this.position.x + Math.cos(angle) * radius, this.position.y + Math.sin(angle) * radius));
             }
 
             particle.update(deltaTime);
@@ -65,11 +71,11 @@ export class AtomCore extends Particle {
     }
 
     getPosition(): Vector2D {
-        return { ...this.position };
+        return this.position;
     }
 
     setPosition(position: Vector2D): void {
-        this.position = { ...position };
+        this.position = new Vector2D(position.x, position.y);
     }
 
     createAntiParticle(): Particle {

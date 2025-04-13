@@ -1,5 +1,5 @@
 import {Point} from "../../../../../utils/math/2d.ts";
-import {BiologicalEntity, EntityType} from "../simulation/biologicalEntity.ts";
+import {BiologicalEntity, EntityType} from "../simulations/biologicalEntity.ts";
 
 export class DNAStrand extends BiologicalEntity {
     private nucleotides: string; // A sequence of A, T, G, C

@@ -10,9 +10,12 @@ import uiSlice, {toggleInventory} from "../utils/stateManagement/uiSlice.ts";
 import {useMyDispatch, useMySelector} from "../utils/stateManagement/store.ts";
 import Auth from "./layouts/Auth.tsx";
 import {InGame} from "./layouts/InGame.tsx";
-import {LoadingScreen} from "./components/game/dynamic/LoadingScreen.tsx";
 import {ParticleSimulationWindow} from "./components/game/dynamic/education/ParticleSimulationWindow.tsx";
 import {ChessWindow} from "./components/game/dynamic/education/ChessWindow.tsx";
+import {
+    ChemicalReactionsSimulationWindow
+} from "./components/game/dynamic/education/ChemicalReactionsSimulationWindow.tsx";
+import {MusicSimulationWindow} from "./components/game/dynamic/education/MusicSimulationWindow.tsx";
 
 export type EntityType = Item | Actor | Skill;
 
@@ -36,7 +39,7 @@ export const GameUI: React.FC = () => {
     const [gameState, setGameState] = useState<'auth' | 'mainMenu' | 'inGame'>(document.cookie.includes("session_active") ? 'mainMenu' : 'auth');
     const [onPause, setOnPause] = useState(false);
 
-    const [particle, setParticle] = useState(false);
+    const [particle, setParticle] = useState(true);
 
     const dispatch = useMyDispatch();
 
@@ -115,28 +118,33 @@ export const GameUI: React.FC = () => {
         pauseLoop();
     };
 
-    return (
-        <>
-            <header id="title" style={{display: gameState === 'inGame' ? 'none' : 'block'}}>
-                The Aftermath Trail
-            </header>
-            <canvas id="canvas" ref={canvasRef}></canvas>
+    const anotherModule = () => {
+        return (
+            <>
+                <header id="title" style={{display: gameState === 'inGame' ? 'none' : 'block'}}>
+                    The Aftermath Trail
+                </header>
+                <canvas id="canvas" ref={canvasRef}></canvas>
 
-            <div id="welcome-div">
-                <span id="version" style={{display: gameState === 'inGame' ? 'none' : 'block', bottom: 0, right: 0, position: "absolute"}}>v1.0.0</span>
-                {gameState === 'auth' && (
-                    <Auth onLogin={() => setGameState("mainMenu")} />
-                )}
-                {(gameState === 'mainMenu' || onPause) && (
-                    <MainMenu
-                        onStartGame={handleNewGame}
-                        onMainMenu={onPause ? handleMainMenu : undefined}
-                        onResume={() => setOnPause(false)}
-                    />
-                )}
-                {gameState === 'inGame' && <InGame />}
-                {particle && <ChessWindow></ChessWindow>}
-            </div>
-        </>
+                <div id="welcome-div">
+                    <span id="version" style={{display: gameState === 'inGame' ? 'none' : 'block', bottom: 0, right: 0, position: "absolute"}}>v1.0.0</span>
+                    {gameState === 'auth' && (
+                        <Auth onLogin={() => setGameState("mainMenu")} />
+                    )}
+                    {(gameState === 'mainMenu' || onPause) && (
+                        <MainMenu
+                            onStartGame={handleNewGame}
+                            onMainMenu={onPause ? handleMainMenu : undefined}
+                            onResume={() => setOnPause(false)}
+                        />
+                    )}
+                    {gameState === 'inGame' && <InGame />}
+                </div>
+            </>
+        )
+    }
+
+    return (
+        particle ? (<MusicSimulationWindow></MusicSimulationWindow>) : (anotherModule())
     );
 };

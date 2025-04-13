@@ -1,4 +1,4 @@
-import { Vector2D } from './utils';
+import {Vector2D} from "../../../../../utils/math/2d.ts";
 
 export interface Color {
     r: number;
@@ -25,10 +25,10 @@ export abstract class Particle {
     protected age: number = 0;
     protected antiParticle: boolean = false;
 
-    constructor(position: Vector2D, mass: number, charge: number, spin: number) {
-        this.position = { ...position };
-        this.velocity = { x: 0, y: 0 };
-        this.acceleration = { x: 0, y: 0 };
+    protected constructor(position: Vector2D, mass: number, charge: number, spin: number) {
+        this.position = position;
+        this.velocity = new Vector2D(0, 0);
+        this.acceleration = new Vector2D(0, 0);
         this.mass = mass;
         this.charge = charge;
         this.spin = spin;
@@ -83,23 +83,23 @@ export abstract class Particle {
     }
 
     getPosition(): Vector2D {
-        return { ...this.position };
+        return this.position;
     }
 
     setPosition(position: Vector2D): void {
-        this.position = { ...position };
+        this.position = new Vector2D(position.x, position.y);
     }
 
     getVelocity(): Vector2D {
-        return { ...this.velocity };
+        return this.velocity;
     }
 
     setVelocity(velocity: Vector2D): void {
-        this.velocity = { ...velocity };
+        this.velocity = new Vector2D(velocity.x, velocity.y);
     }
 
     getMass(): number {
-        return this.mass;
+        return <number>this.mass;
     }
 
     getCharge(): number {

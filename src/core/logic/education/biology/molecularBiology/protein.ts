@@ -1,4 +1,4 @@
-import {BiologicalEntity, EntityType} from "../simulation/biologicalEntity.ts";
+import {BiologicalEntity, EntityType} from "../simulations/biologicalEntity.ts";
 import {Point} from "../../../../../utils/math/2d.ts";
 
 export class Protein extends BiologicalEntity {

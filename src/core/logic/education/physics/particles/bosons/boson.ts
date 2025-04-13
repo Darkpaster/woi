@@ -1,5 +1,5 @@
 import { Particle } from '../particle.ts';
-import { Vector2D } from '../utils.ts';
+import {Vector2D} from "../../../../../../utils/math/2d.ts";
 
 // Базовый класс для частиц-переносчиков взаимодействия (бозонов)
 export abstract class Boson extends Particle {
@@ -41,7 +41,10 @@ export abstract class Boson extends Particle {
         const radius = this.radius;
 
         // Эффект затухания для бозонов с ограниченным временем жизни
-        const opacity = Math.min(1, this.remainingLife / this.lifetime);
+        // const opacity = Math.min(1, this.remainingLife / this.lifetime);
+        const opacity = this.lifetime > 0
+            ? Math.min(1, Math.max(0, this.remainingLife / this.lifetime))
+            : 1;
 
         ctx.beginPath();
         ctx.arc(this.position.x, this.position.y, radius, 0, Math.PI * 2);
@@ -52,8 +55,13 @@ export abstract class Boson extends Particle {
             this.position.x, this.position.y, radius
         );
 
-        gradient.addColorStop(0, `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${opacity})`);
-        gradient.addColorStop(1, `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, 0)`);
+        const { r, g, b } = this.color || { r: 0, g: 0, b: 0 };
+        const safeColor = `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, ${opacity})`;
+        gradient.addColorStop(0, safeColor);
+        gradient.addColorStop(1, `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, 0)`);
+
+        // gradient.addColorStop(0, `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${opacity})`);
+        // gradient.addColorStop(1, `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, 0)`);
 
         ctx.fillStyle = gradient;
         ctx.fill();

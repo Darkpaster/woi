@@ -1,5 +1,5 @@
 import { Particle } from '../particle.ts';
-import { Vector2D } from '../utils.ts';
+import {Vector2D} from "../../../../../../utils/math/2d.ts";
 
 
 // Базовый класс для кварков
@@ -8,7 +8,7 @@ export abstract class Quark extends Particle {
     protected quarkColor: string; // red, green, blue (цветовой заряд)
     protected antiParticleType: string | null = null;
 
-    constructor(
+    protected constructor(
         position: Vector2D,
         quarkType: string,
         quarkColor: string,
@@ -66,8 +66,6 @@ export abstract class Quark extends Particle {
 
     abstract createAntiParticle(): Quark;
 }
-
-// Конкретные реализации кварков
 
 
 

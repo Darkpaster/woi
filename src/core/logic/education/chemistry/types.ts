@@ -1,0 +1,12 @@
+export type AtomicNumber = number;
+export type ElementSymbol = string;
+export type MolarMass = number;
+export type Charge = number;
+export type Concentration = number;
+export type Temperature = number; // в Кельвинах
+export type Pressure = number; // в Паскалях
+export type pH = number;
+export type Energy = number;
+export type Color = string;
+export type Position = { x: number; y: number };
+export type Velocity = { vx: number; vy: number };

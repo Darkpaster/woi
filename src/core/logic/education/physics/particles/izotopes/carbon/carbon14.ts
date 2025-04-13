@@ -2,7 +2,7 @@ import {Atom} from "../../atom.ts";
 import {Vector2D} from "../../utils.ts";
 
 export class Carbon14 extends Atom {
-    constructor(position: Vector2D = { x: 0, y: 0 }) {
+    constructor(position: Vector2D = new Vector2D(0, 0)) {
         // Углерод-14: 6 протонов, 8 нейтронов, 6 электронов
         super(position, "¹⁴C", 6, 8, 6);
     }

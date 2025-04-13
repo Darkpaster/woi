@@ -89,7 +89,7 @@ export class Model {
             };
         }
 
-        // Simple prediction simulation
+        // Simple prediction simulations
         const trainCompatibility = this.trainingDataset?.getType() === dataset.getType() ? 1 : 0.5;
         const effectiveAccuracy = this.accuracy * trainCompatibility;
 

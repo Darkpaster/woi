@@ -1,4 +1,4 @@
-import {Vector2D} from "../utils.ts";
+import {Vector2D} from "../../../../../../utils/math/2d.ts";
 import {Lepton} from "./lepton.ts";
 import {Muon} from "./muon.ts";
 
@@ -26,7 +26,7 @@ export class AntiMuon extends Lepton {
     }
 
     createAntiParticle(): Lepton {
-        return new Muon({ x: this.position.x, y: this.position.y });
+        return new Muon(new Vector2D(this.position.x, this.position.y));
     }
 
     update(deltaTime: number): void {

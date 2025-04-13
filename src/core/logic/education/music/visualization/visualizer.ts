@@ -21,11 +21,12 @@ export abstract class Visualizer {
     protected ctx: CanvasRenderingContext2D;
     protected options: VisualizationOptions;
 
-    constructor(canvas: HTMLCanvasElement, options: Partial<VisualizationOptions> = {}) {
+    constructor(canvasId: string, options: Partial<VisualizationOptions> = {}) {
+        const canvas = document.getElementById(canvasId);
         this.canvas = canvas;
         this.options = { ...DEFAULT_VISUALIZATION_OPTIONS, ...options };
 
-        const ctx = canvas.getContext('2d');
+        const ctx = this.canvas.getContext('2d');
         if (!ctx) {
             throw new Error('Could not get 2D context from canvas');
         }

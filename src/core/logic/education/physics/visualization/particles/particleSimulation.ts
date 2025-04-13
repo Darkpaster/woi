@@ -1,4 +1,3 @@
-import { Vector2D, Vector } from '../../particles/utils.ts';
 import { Particle } from '../../particles/particle.ts';
 import { Electron } from '../../particles/leptons/electron.ts';
 import { Proton } from '../../particles/hadrons/baryons/proton.ts';
@@ -18,6 +17,17 @@ import {StrangeQuark} from "../../particles/quarks/strangeQuark.ts";
 import {AntiStrangeQuark} from "../../particles/quarks/antiStrangeQuark.ts";
 import {AntiDownQuark} from "../../particles/quarks/antiDownQuark.ts";
 import {AntiUpQuark} from "../../particles/quarks/antiUpQuark.ts";
+import {Vector2D} from "../../../../../../utils/math/2d.ts";
+import {Tau} from "../../particles/leptons/tau.ts";
+import {AntiTau} from "../../particles/leptons/antiTau.ts";
+import {CharmQuark} from "../../particles/quarks/charmQuark.ts";
+import {BottomQuark} from "../../particles/quarks/bottomQuark.ts";
+import {TopQuark} from "../../particles/quarks/topQuark.ts";
+import {ZBoson} from "../../particles/bosons/zBozon.ts";
+import {HiggsBoson} from "../../particles/bosons/higgsBoson.ts";
+import {WBoson} from "../../particles/bosons/wBoson.ts";
+import {Hydrogen} from "../../particles/izotopes/hydrogen/hydrogen.ts";
+import {AntiBottomQuark} from "../../particles/quarks/antiBottomQuark.ts";
 
 // Типы фундаментальных взаимодействий
 enum InteractionType {
@@ -26,6 +36,8 @@ enum InteractionType {
     WEAK = 'weak',
     GRAVITATIONAL = 'gravitational'
 }
+
+type AnyParticle = Particle|Atom|Molecule;
 
 // Конфигурация симуляции
 interface SimulationConfig {
@@ -68,7 +80,7 @@ interface SpacetimeEvent {
     position: Vector2D;
     time: number;
     type: string;
-    particles: Particle[];
+    particles: (AnyParticle)[];
     energy: number;
 }
 
@@ -76,25 +88,27 @@ interface SpacetimeEvent {
 export class ParticleSimulation {
     private canvas: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
-    private particles: Particle[] = [];
+    private particles: (AnyParticle)[] = [];
     private config: SimulationConfig;
     private stats: SimulationStats;
     private running: boolean = false;
     private time: number = 0;
     private lastFrameTime: number = 0;
-    private spatialGrid: Map<string, Particle[]> = new Map();
+    private spatialGrid: Map<string, AnyParticle[]> = new Map();
     private gridCellSize: number = 50;
     private eventHistory: SpacetimeEvent[] = [];
     private fieldVisualizationData: number[][] = [];
-    private particleTrails: Map<Particle, Vector2D[]> = new Map();
-    private interactionMatrix: Map<string, Map<string, (p1: Particle, p2: Particle) => void>> = new Map();
+    private particleTrails: Map<AnyParticle, Vector2D[]> = new Map();
+    private interactionMatrix: Map<string, Map<string, (p1: AnyParticle, p2: AnyParticle) => void>> = new Map();
     private decayProbabilities: Map<string, number> = new Map();
-    private particlesToAdd: Particle[] = [];
-    private particlesToRemove: Set<Particle> = new Set();
+    private particlesToAdd: (AnyParticle)[] = [];
+    private particlesToRemove: Set<AnyParticle> = new Set();
     private requestAnimationId: number | null = null;
     private lastUpdateTime: number = performance.now();
 
-    constructor(canvasId: string, initParticleCount: number, config?: Partial<SimulationConfig>) {
+    constructor(canvasId: string, windowSize: {x: number, y: number} =
+                {x: window.innerWidth, y: window.innerHeight},
+                initParticleCount: number = 10, config?: Partial<SimulationConfig>) {
         // Получаем элемент canvas и контекст для рисования
         const canvasElement = document.getElementById(canvasId) as HTMLCanvasElement;
         if (!canvasElement) {
@@ -108,14 +122,14 @@ export class ParticleSimulation {
         this.ctx = context;
 
         // Устанавливаем размеры канваса
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
+        this.canvas.width = windowSize.x;
+        this.canvas.height = windowSize.y;
 
         // Инициализируем конфигурацию симуляции по умолчанию
         this.config = {
             initialParticleCount: initParticleCount,
-            canvasWidth: this.canvas.width,
-            canvasHeight: this.canvas.height,
+            canvasWidth: windowSize.x,
+            canvasHeight: windowSize.y,
             gravitationalConstant: 6.674e-11,
             electromagneticConstant: 8.99e9,
             strongForceConstant: 1e2,
@@ -124,7 +138,7 @@ export class ParticleSimulation {
             quantumEffectsEnabled: true,
             temperatureKelvin: 293, // комнатная температура в Кельвинах
             timeScale: 1.0,
-            particleLimit: 1000,
+            particleLimit: 500,
             energyConservation: true,
             visualizationMode: 'standard',
             showForceFields: false,
@@ -138,7 +152,7 @@ export class ParticleSimulation {
         this.stats = {
             totalParticles: 0,
             totalEnergy: 0,
-            totalMomentum: { x: 0, y: 0 },
+            totalMomentum: new Vector2D(0, 0),
             particleTypeCount: new Map(),
             interactionCount: new Map(),
             particleCreationEvents: 0,
@@ -200,7 +214,7 @@ export class ParticleSimulation {
     private registerInteraction(
         typeA: string,
         typeB: string,
-        handler: (p1: Particle, p2: Particle) => void
+        handler: (p1: AnyParticle, p2: AnyParticle) => void
     ): void {
         if (!this.interactionMatrix.has(typeA)) {
             this.interactionMatrix.set(typeA, new Map());
@@ -252,7 +266,17 @@ export class ParticleSimulation {
             const rect = this.canvas.getBoundingClientRect();
             const x = event.clientX - rect.left;
             const y = event.clientY - rect.top;
-            this.createParticleAtPosition({ x, y });
+            // this.createRandomParticle(new Vector2D(x, y));
+            this.createProton(new Vector2D(x, y))
+        });
+
+        this.canvas.addEventListener('contextmenu', (event) => {
+            event.preventDefault();
+            const rect = this.canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            // this.createMolecule(new Vector2D(x, y));
+            this.createElectron(new Vector2D(x, y));
         });
 
         // Обработчик перетаскивания для добавления множества частиц
@@ -268,7 +292,7 @@ export class ParticleSimulation {
                 const y = event.clientY - rect.top;
                 // Добавляем частицы с меньшей вероятностью при перетаскивании
                 if (Math.random() < 0.1) {
-                    this.createParticleAtPosition({ x, y });
+                    this.createRandomParticle(new Vector2D(x, y));
                 }
             }
         });
@@ -283,10 +307,76 @@ export class ParticleSimulation {
         });
     }
 
+    private createAtom(position: Vector2D) {
+        if (this.particles.length >= this.config.particleLimit) {
+            return; // Достигнут лимит частиц
+        }
+        const hydrogen = new Hydrogen(position);
+        this.particlesToAdd.push(hydrogen);
+        this.stats.particleCreationEvents++;
+
+        // Обновление счетчика типов частиц
+        const type = hydrogen.constructor.name;
+        this.stats.particleTypeCount.set(
+            type,
+            (this.stats.particleTypeCount.get(type) || 0) + 1
+        );
+    }
+
+    private createProton(position: Vector2D) {
+        if (this.particles.length >= this.config.particleLimit) {
+            return; // Достигнут лимит частиц
+        }
+        const proton = new Proton(position);
+        this.particlesToAdd.push(proton);
+        this.stats.particleCreationEvents++;
+
+        // Обновление счетчика типов частиц
+        const type = proton.constructor.name;
+        this.stats.particleTypeCount.set(
+            type,
+            (this.stats.particleTypeCount.get(type) || 0) + 1
+        );
+    }
+
+    private createElectron(position: Vector2D) {
+        if (this.particles.length >= this.config.particleLimit) {
+            return; // Достигнут лимит частиц
+        }
+        const electron = new Electron(position);
+        this.particlesToAdd.push(electron);
+        this.stats.particleCreationEvents++;
+
+        // Обновление счетчика типов частиц
+        const type = electron.constructor.name;
+        this.stats.particleTypeCount.set(
+            type,
+            (this.stats.particleTypeCount.get(type) || 0) + 1
+        );
+    }
+
+    private createMolecule(position: Vector2D) {
+        if (this.particles.length >= this.config.particleLimit) {
+            return; // Достигнут лимит частиц
+        }
+        // const initialVelocity = new Vector2D((Math.random() - 0.5) * 2,(Math.random() - 0.5) * 2)
+
+        const newParticle = Molecule.createWater(position);
+        this.particlesToAdd.push(newParticle);
+        this.stats.particleCreationEvents++;
+
+        // Обновление счетчика типов частиц
+        const type = newParticle.constructor.name;
+        this.stats.particleTypeCount.set(
+            type,
+            (this.stats.particleTypeCount.get(type) || 0) + 1
+        );
+    }
+
     /**
      * Создание случайной частицы в заданной позиции
      */
-    private createParticleAtPosition(position: Vector2D): void {
+    private createRandomParticle(position: Vector2D): void {
         if (this.particles.length >= this.config.particleLimit) {
             return; // Достигнут лимит частиц
         }
@@ -297,7 +387,7 @@ export class ParticleSimulation {
         ];
 
         const randomType = particleTypes[Math.floor(Math.random() * particleTypes.length)];
-        let newParticle: Particle | null = null;
+        let newParticle: AnyParticle | null = null;
 
         switch (randomType) {
             case 'Electron':
@@ -314,10 +404,7 @@ export class ParticleSimulation {
                 // Задаем случайное направление для фотона
                 const randomAngle = Math.random() * Math.PI * 2;
                 const speed = 5; // Фотоны быстрые!
-                newParticle.setVelocity({
-                    x: Math.cos(randomAngle) * speed,
-                    y: Math.sin(randomAngle) * speed
-                });
+                newParticle.setVelocity(new Vector2D(Math.cos(randomAngle) * speed,Math.sin(randomAngle) * speed));
                 break;
             case 'Quark':
                 newParticle = Math.random() < 0.5 ? new UpQuark(position) : new DownQuark(position);
@@ -327,16 +414,14 @@ export class ParticleSimulation {
                 break;
             case 'Higgs':
                 // Предполагаем, что есть класс HiggsBoson
-                newParticle = new Boson(position, 125, 0, 0);
+                newParticle = new HiggsBoson(position);
                 break;
         }
 
         if (newParticle) {
             // Добавление некоторой случайной начальной скорости
-            const initialVelocity = {
-                x: (Math.random() - 0.5) * 2,
-                y: (Math.random() - 0.5) * 2
-            };
+
+            const initialVelocity = new Vector2D((Math.random() - 0.5) * 2,(Math.random() - 0.5) * 2)
 
             if (randomType !== 'Photon') { // Для фотона уже задали скорость
                 newParticle.setVelocity(initialVelocity);
@@ -406,7 +491,7 @@ export class ParticleSimulation {
         this.stats = {
             totalParticles: 0,
             totalEnergy: 0,
-            totalMomentum: { x: 0, y: 0 },
+            totalMomentum: new Vector2D(0, 0),
             particleTypeCount: new Map(),
             interactionCount: new Map(),
             particleCreationEvents: 0,
@@ -423,7 +508,7 @@ export class ParticleSimulation {
     /**
      * Добавление частицы в симуляцию
      */
-    public addParticle(particle: Particle): void {
+    public addParticle(particle: AnyParticle): void {
         this.particlesToAdd.push(particle);
 
         // Обновление счетчика типов частиц
@@ -439,7 +524,7 @@ export class ParticleSimulation {
     /**
      * Удаление частицы из симуляции
      */
-    public removeParticle(particle: Particle): void {
+    public removeParticle(particle: AnyParticle): void {
         this.particlesToRemove.add(particle);
 
         // Обновление счетчика типов частиц
@@ -572,7 +657,7 @@ export class ParticleSimulation {
     /**
      * Проверка взаимодействий между частицами в одной ячейке
      */
-    private checkParticleInteractions(particles: Particle[], deltaTime: number): void {
+    private checkParticleInteractions(particles: AnyParticle[], deltaTime: number): void {
         const n = particles.length;
         for (let i = 0; i < n; i++) {
             for (let j = i + 1; j < n; j++) {
@@ -589,8 +674,8 @@ export class ParticleSimulation {
      * Проверка взаимодействий между частицами текущей ячейки и соседней
      */
     private checkParticleInteractionsWithNeighbors(
-        particles: Particle[],
-        neighbors: Particle[],
+        particles: AnyParticle[],
+        neighbors: AnyParticle[],
         deltaTime: number
     ): void {
         for (const p1 of particles) {
@@ -604,7 +689,7 @@ export class ParticleSimulation {
     /**
      * Применение взаимодействия между двумя частицами
      */
-    private applyInteraction(p1: Particle, p2: Particle, deltaTime: number): void {
+    private applyInteraction(p1: AnyParticle, p2: AnyParticle, deltaTime: number): void {
         // Проверяем расстояние между частицами
         const pos1 = p1.getPosition();
         const pos2 = p2.getPosition();
@@ -645,7 +730,7 @@ export class ParticleSimulation {
     /**
      * Получение имени типа частицы для использования в матрице взаимодействий
      */
-    private getParticleTypeName(particle: Particle): string {
+    private getParticleTypeName(particle: AnyParticle): string {
         const constructorName = particle.constructor.name;
 
         // Проверяем, является ли частица подклассом Lepton, Quark и т.д.
@@ -661,9 +746,9 @@ export class ParticleSimulation {
     /**
      * Определение типа взаимодействия между частицами
      */
-    private determineInteractionType(p1: Particle, p2: Particle): InteractionType {
+    private determineInteractionType(p1: AnyParticle, p2: AnyParticle): InteractionType {
         // Проверяем электрический заряд для электромагнитного взаимодействия
-        if (p1.getCharge() !== 0 && p2.getCharge() !== 0) {
+        if (p1.charge !== 0 && p2.charge !== 0) {
             return InteractionType.ELECTROMAGNETIC;
         }
 
@@ -686,7 +771,7 @@ export class ParticleSimulation {
     /**
      * Обработка столкновения двух частиц
      */
-    private handleCollision(p1: Particle, p2: Particle, deltaTime: number): void {
+    private handleCollision(p1: AnyParticle, p2: AnyParticle, deltaTime: number): void {
         // Проверяем возможность аннигиляции частицы с античастицей
         if (p1 instanceof Lepton && p2 instanceof Lepton) {
             const lepton1 = p1 as Lepton;
@@ -703,8 +788,8 @@ export class ParticleSimulation {
         const pos2 = p2.getPosition();
         const vel1 = p1.getVelocity();
         const vel2 = p2.getVelocity();
-        const mass1 = p1.getMass();
-        const mass2 = p2.getMass();
+        const mass1 = p1.mass
+        const mass2 = p2.mass
 
         // Нормализованный вектор от p1 к p2
         const dx = pos2.x - pos1.x;
@@ -735,15 +820,11 @@ export class ParticleSimulation {
         const v2nAfter = v2n + impulse * mass1;
 
         // Обновляем скорости частиц
-        p1.setVelocity({
-            x: vel1.x - nx * (v1n - v1nAfter),
-            y: vel1.y - ny * (v1n - v1nAfter)
-        });
 
-        p2.setVelocity({
-            x: vel2.x - nx * (v2n - v2nAfter),
-            y: vel2.y - ny * (v2n - v2nAfter)
-        });
+        p1.setVelocity(new Vector2D(vel1.x - nx * (v1n - v1nAfter),vel1.y - ny * (v1n - v1nAfter)));
+
+
+        p2.setVelocity(new Vector2D(vel2.x - nx * (v2n - v2nAfter),vel2.y - ny * (v2n - v2nAfter)));
 
         // Разрешаем наложение частиц, немного отодвигая их друг от друга
         const overlap = (p1 as any).radius + (p2 as any).radius - distance;
@@ -751,15 +832,11 @@ export class ParticleSimulation {
             const moveX = nx * overlap * 0.5;
             const moveY = ny * overlap * 0.5;
 
-            p1.setPosition({
-                x: pos1.x - moveX,
-                y: pos1.y - moveY
-            });
 
-            p2.setPosition({
-                x: pos2.x + moveX,
-                y: pos2.y + moveY
-            });
+            p1.setPosition(new Vector2D(pos1.x - moveX,pos1.y - moveY));
+
+
+            p2.setPosition(new Vector2D(pos2.x + moveX,pos2.y + moveY));
         }
 
         // Возможное создание новых частиц при высокоэнергетическом столкновении
@@ -769,14 +846,14 @@ export class ParticleSimulation {
     /**
      * Обработка высокоэнергетических столкновений с возможным рождением новых частиц
      */
-    private handleHighEnergyCollision(p1: Particle, p2: Particle, distance: number): void {
+    private handleHighEnergyCollision(p1: AnyParticle, p2: AnyParticle, distance: number): void {
         const vel1 = p1.getVelocity();
         const vel2 = p2.getVelocity();
         const speed1 = Math.sqrt(vel1.x * vel1.x + vel1.y * vel1.y);
         const speed2 = Math.sqrt(vel2.x * vel2.x + vel2.y * vel2.y);
 
         // Суммарная кинетическая энергия
-        const kineticEnergy = 0.5 * p1.getMass() * speed1 * speed1 + 0.5 * p2.getMass() * speed2 * speed2;
+        const kineticEnergy = 0.5 * p1.mass * speed1 * speed1 + 0.5 * p2.mass * speed2 * speed2;
 
         // Порог энергии для рождения новых частиц
         const energyThreshold = 100;
@@ -785,10 +862,7 @@ export class ParticleSimulation {
             // Позиция столкновения - средняя точка между частицами
             const pos1 = p1.getPosition();
             const pos2 = p2.getPosition();
-            const collisionPos = {
-                x: (pos1.x + pos2.x) / 2,
-                y: (pos1.y + pos2.y) / 2
-            };
+            const collisionPos = new Vector2D((pos1.x + pos2.x) / 2, (pos1.y + pos2.y) / 2);
 
             // Создаем фотоны как продукты реакции
             const photonCount = Math.floor(Math.random() * 3) + 1; // 1-3 фотона
@@ -800,10 +874,8 @@ export class ParticleSimulation {
                 const randomAngle = Math.random() * Math.PI * 2;
                 const photonSpeed = 10; // Фотоны двигаются быстро
 
-                photon.setVelocity({
-                    x: Math.cos(randomAngle) * photonSpeed,
-                    y: Math.sin(randomAngle) * photonSpeed
-                });
+
+                photon.setVelocity(new Vector2D(Math.cos(randomAngle) * photonSpeed,Math.sin(randomAngle) * photonSpeed));
 
                 this.particlesToAdd.push(photon);
             }
@@ -831,8 +903,8 @@ export class ParticleSimulation {
      * Применение фундаментальных сил между частицами
      */
     private applyForces(
-        p1: Particle,
-        p2: Particle,
+        p1: AnyParticle,
+        p2: AnyParticle,
         distanceSquared: number,
         dx: number,
         dy: number,
@@ -864,36 +936,32 @@ export class ParticleSimulation {
 
         // Применяем силу к обеим частицам (в противоположных направлениях)
         const acc1 = {
-            x: totalForceX / p1.getMass(),
-            y: totalForceY / p1.getMass()
+            x: totalForceX / p1.mass,
+            y: totalForceY / p1.mass
         };
 
         const acc2 = {
-            x: -totalForceX / p2.getMass(),
-            y: -totalForceY / p2.getMass()
+            x: -totalForceX / p2.mass,
+            y: -totalForceY / p2.mass
         };
 
         const vel1 = p1.getVelocity();
         const vel2 = p2.getVelocity();
 
         // Обновляем скорости частиц на основе ускорений
-        p1.setVelocity({
-            x: vel1.x + acc1.x * deltaTime,
-            y: vel1.y + acc1.y * deltaTime
-        });
 
-        p2.setVelocity({
-            x: vel2.x + acc2.x * deltaTime,
-            y: vel2.y + acc2.y * deltaTime
-        });
+        p1.setVelocity(new Vector2D(vel1.x + acc1.x * deltaTime,vel1.y + acc1.y * deltaTime));
+
+
+        p2.setVelocity(new Vector2D(vel2.x + acc2.x * deltaTime,vel2.y + acc2.y * deltaTime));
     }
 
     /**
      * Вычисление гравитационной силы между двумя частицами
      */
-    private calculateGravitationalForce(p1: Particle, p2: Particle, distance: number): number {
-        const mass1 = p1.getMass();
-        const mass2 = p2.getMass();
+    private calculateGravitationalForce(p1: AnyParticle, p2: AnyParticle, distance: number): number {
+        const mass1 = p1.mass;
+        const mass2 = p2.mass;
 
         // Закон всемирного тяготения (F = G * m1 * m2 / r^2)
         // Используем масштабирование для визуализации
@@ -906,9 +974,9 @@ export class ParticleSimulation {
     /**
      * Вычисление электромагнитной силы между двумя частицами
      */
-    private calculateElectromagneticForce(p1: Particle, p2: Particle, distance: number): number {
-        const charge1 = p1.getCharge();
-        const charge2 = p2.getCharge();
+    private calculateElectromagneticForce(p1: AnyParticle, p2: AnyParticle, distance: number): number {
+        const charge1 = p1.charge;
+        const charge2 = p2.charge;
 
         // Если хотя бы одна частица не имеет заряда, нет электромагнитного взаимодействия
         if (charge1 === 0 || charge2 === 0) return 0;
@@ -924,7 +992,7 @@ export class ParticleSimulation {
     /**
      * Вычисление сильной ядерной силы между двумя частицами
      */
-    private calculateStrongForce(p1: Particle, p2: Particle, distance: number): number {
+    private calculateStrongForce(p1: AnyParticle, p2: AnyParticle, distance: number): number {
         // Сильное взаимодействие действует только на кварки и глюоны
         const isP1Subject = p1 instanceof Quark || p1 instanceof Gluon || p1 instanceof Hadron;
         const isP2Subject = p2 instanceof Quark || p2 instanceof Gluon || p2 instanceof Hadron;
@@ -949,7 +1017,7 @@ export class ParticleSimulation {
     /**
      * Вычисление слабой ядерной силы между двумя частицами
      */
-    private calculateWeakForce(p1: Particle, p2: Particle, distance: number): number {
+    private calculateWeakForce(p1: AnyParticle, p2: AnyParticle, distance: number): number {
         // Слабое взаимодействие действует на лептоны и кварки
         const isP1Subject = p1 instanceof Lepton || p1 instanceof Quark;
         const isP2Subject = p2 instanceof Lepton || p2 instanceof Quark;
@@ -970,29 +1038,25 @@ export class ParticleSimulation {
     /**
      * Обработка электромагнитного взаимодействия между частицами
      */
-    private handleElectromagneticInteraction(p1: Particle, p2: Particle): void {
+    private handleElectromagneticInteraction(p1: AnyParticle, p2: AnyParticle): void {
         // Базовое взаимодействие уже реализовано в расчете сил
         // Здесь можно добавить дополнительные эффекты
 
         // Например, испускание фотона с некоторой вероятностью
-        if (p1.getCharge() !== 0 && p2.getCharge() !== 0 && Math.random() < 0.01) {
+        if (p1.charge !== 0 && p2.charge !== 0 && Math.random() < 0.01) {
             const pos1 = p1.getPosition();
             const pos2 = p2.getPosition();
 
             // Создаем фотон в промежуточной точке
-            const photonPos = {
-                x: (pos1.x + pos2.x) / 2,
-                y: (pos1.y + pos2.y) / 2
-            };
+
+            const photonPos = new Vector2D((pos1.x + pos2.x) / 2,(pos1.y + pos2.y) / 2)
 
             const photon = new Photon(photonPos);
 
             // Задаем случайное направление
             const randomAngle = Math.random() * Math.PI * 2;
-            photon.setVelocity({
-                x: Math.cos(randomAngle) * 8,
-                y: Math.sin(randomAngle) * 8
-            });
+
+            photon.setVelocity(new Vector2D(Math.cos(randomAngle) * 8,Math.sin(randomAngle) * 8));
 
             this.particlesToAdd.push(photon);
 
@@ -1007,7 +1071,7 @@ export class ParticleSimulation {
     /**
      * Обработка сильного взаимодействия между частицами
      */
-    private handleStrongInteraction(p1: Particle, p2: Particle): void {
+    private handleStrongInteraction(p1: AnyParticle, p2: AnyParticle): void {
         // Сильное взаимодействие между кварками может привести к образованию адронов
         if (p1 instanceof Quark && p2 instanceof Quark && Math.random() < 0.1) {
             const quark1 = p1 as Quark;
@@ -1019,10 +1083,7 @@ export class ParticleSimulation {
                 const pos2 = quark2.getPosition();
 
                 // Позиция нового адрона
-                const hadronPos = {
-                    x: (pos1.x + pos2.x) / 2,
-                    y: (pos1.y + pos2.y) / 2
-                };
+                const hadronPos = new Vector2D((pos1.x + pos2.x) / 2,(pos1.y + pos2.y) / 2);
 
                 // Создаем новый адрон
                 const hadron = new Neutron(hadronPos);
@@ -1030,15 +1091,13 @@ export class ParticleSimulation {
                 // Устанавливаем скорость как среднюю между кварками
                 const vel1 = quark1.getVelocity();
                 const vel2 = quark2.getVelocity();
-                hadron.setVelocity({
-                    x: (vel1.x + vel2.x) / 2,
-                    y: (vel1.y + vel2.y) / 2
-                });
+
+                hadron.setVelocity(new Vector2D((vel1.x + vel2.x) / 2,(vel1.y + vel2.y) / 2));
 
                 // Добавляем адрон и удаляем кварки
                 this.particlesToAdd.push(hadron);
-                this.particlesToRemove.add(quark1);
-                this.particlesToRemove.add(quark2);
+                this.removeParticle(quark1);
+                this.removeParticle(quark2);
 
                 // Обновляем статистику
                 this.stats.interactionCount.set(
@@ -1054,7 +1113,7 @@ export class ParticleSimulation {
      */
     private canFormHadron(quark1: Quark, quark2: Quark): boolean {
         // Простая проверка: можно сформировать мезон из кварка и антикварка
-        return (quark1.isAntiParticle() && quark1.isAntiParticle(quark2)) ||
+        return (quark1.isAntiParticle() && quark1.isAntiParticle()) || //баг
             // Или два кварка разного типа могут начать формировать барион
             (quark1.getQuarkType() !== quark2.getQuarkType());
     }
@@ -1062,7 +1121,7 @@ export class ParticleSimulation {
     /**
      * Обработка слабого взаимодействия между частицами
      */
-    private handleWeakInteraction(p1: Particle, p2: Particle): void {
+    private handleWeakInteraction(p1: AnyParticle, p2: AnyParticle): void {
         // Слабое взаимодействие может вызывать распады частиц
         // Например, превращение нейтрона в протон
         if (p1 instanceof Neutron && Math.random() < 0.05) {
@@ -1076,15 +1135,13 @@ export class ParticleSimulation {
 
             // Создаем электрон и антинейтрино (продукты распада)
             const electron = new Electron(pos);
-            electron.setVelocity({
-                x: vel.x + (Math.random() - 0.5) * 2,
-                y: vel.y + (Math.random() - 0.5) * 2
-            });
+
+            electron.setVelocity(new Vector2D(vel.x + (Math.random() - 0.5) * 2,vel.y + (Math.random() - 0.5) * 2));
 
             // Добавляем новые частицы и удаляем нейтрон
             this.particlesToAdd.push(proton);
             this.particlesToAdd.push(electron);
-            this.particlesToRemove.add(neutron);
+            this.removeParticle(neutron);
 
             // Обновляем статистику
             this.stats.interactionCount.set(
@@ -1097,27 +1154,24 @@ export class ParticleSimulation {
     /**
      * Обработка гравитационного взаимодействия между частицами
      */
-    private handleGravitationalInteraction(p1: Particle, p2: Particle): void {
+    private handleGravitationalInteraction(p1: AnyParticle, p2: AnyParticle): void {
         // Базовое взаимодействие уже реализовано в расчете сил
         // Здесь можно добавить дополнительные эффекты
 
         // Например, проверка на возможное формирование "черной дыры" при очень высокой массе
         const massThreshold = 1000;
-        if (p1.getMass() + p2.getMass() > massThreshold && Math.random() < 0.001) {
+        if (p1.mass + p2.mass > massThreshold && Math.random() < 0.001) {
             // Логика формирования черной дыры
             // (упрощенно, для полной физической точности потребуется гораздо более сложная модель)
             console.log("Black hole formation possibility detected");
 
             // В этой модели просто отметим событие в истории симуляции
             this.recordSpacetimeEvent({
-                position: {
-                    x: (p1.getPosition().x + p2.getPosition().x) / 2,
-                    y: (p1.getPosition().y + p2.getPosition().y) / 2
-                },
+                position: new Vector2D((p1.getPosition().x + p2.getPosition().x) / 2, (p1.getPosition().y + p2.getPosition().y) / 2),
                 time: this.time,
                 type: 'gravitational_singularity',
                 particles: [p1, p2],
-                energy: p1.getMass() + p2.getMass()
+                energy: p1.mass + p2.mass
             });
         }
     }
@@ -1125,17 +1179,15 @@ export class ParticleSimulation {
     /**
      * Обработка аннигиляции частицы и античастицы
      */
-    private handleAnnihilation(p1: Particle, p2: Particle): void {
+    private handleAnnihilation(p1: AnyParticle, p2: AnyParticle): void {
         // Вычисляем общую энергию аннигилирующих частиц
-        const totalEnergy = p1.getMass() + p2.getMass();
+        const totalEnergy = p1.mass + p2.mass
         const pos1 = p1.getPosition();
         const pos2 = p2.getPosition();
 
         // Средняя позиция для испускания фотонов
-        const emissionPos = {
-            x: (pos1.x + pos2.x) / 2,
-            y: (pos1.y + pos2.y) / 2
-        };
+
+        const emissionPos = new Vector2D((pos1.x + pos2.x) / 2, (pos1.y + pos2.y) / 2);
 
         // Число фотонов зависит от энергии аннигиляции
         const numPhotons = Math.max(2, Math.min(10, Math.floor(totalEnergy / 10)));
@@ -1145,17 +1197,15 @@ export class ParticleSimulation {
             const angle = (i / numPhotons) * Math.PI * 2;
             const photon = new Photon(emissionPos);
 
-            photon.setVelocity({
-                x: Math.cos(angle) * 10,
-                y: Math.sin(angle) * 10
-            });
+
+            photon.setVelocity(new Vector2D(Math.cos(angle) * 10, Math.sin(angle) * 10));
 
             this.particlesToAdd.push(photon);
         }
 
         // Удаляем аннигилировавшие частицы
-        this.particlesToRemove.add(p1);
-        this.particlesToRemove.add(p2);
+        this.removeParticle(p1);
+        this.removeParticle(p2);
 
         // Записываем событие аннигиляции
         this.recordSpacetimeEvent({
@@ -1174,7 +1224,7 @@ export class ParticleSimulation {
     /**
      * Обработка формирования ядра атома из протонов и нейтронов
      */
-    private handleNuclearBinding(p1: Particle, p2: Particle): void {
+    private handleNuclearBinding(p1: AnyParticle, p2: AnyParticle): void {
         // Проверяем, что обе частицы являются протонами или нейтронами
         const isNucleon1 = p1 instanceof Proton || p1 instanceof Neutron;
         const isNucleon2 = p2 instanceof Proton || p2 instanceof Neutron;
@@ -1198,35 +1248,30 @@ export class ParticleSimulation {
             if (p2 instanceof Proton) nucleusCharge += 1;
 
             // Вычисляем массу ядра
-            const nucleusMass = p1.getMass() + p2.getMass();
+            const nucleusMass = p1.mass + p2.mass;
 
             // Создаем ядро атома
-            const nucleusPos = {
-                x: (pos1.x + pos2.x) / 2,
-                y: (pos1.y + pos2.y) / 2
-            };
+            const nucleusPos = new Vector2D((pos1.x + pos2.x) / 2,(pos1.y + pos2.y) / 2);
 
             const atomCore = new AtomCore(nucleusPos, [p1, p2], []);
 
             // Устанавливаем скорость как среднюю между нуклонами
             const vel1 = p1.getVelocity();
             const vel2 = p2.getVelocity();
-            atomCore.setVelocity({
-                x: (vel1.x + vel2.x) / 2,
-                y: (vel1.y + vel2.y) / 2
-            });
+
+            atomCore.setVelocity(new Vector2D((vel1.x + vel2.x) / 2,(vel1.y + vel2.y) / 2));
 
             // Добавляем ядро и удаляем нуклоны
             this.particlesToAdd.push(atomCore);
-            this.particlesToRemove.add(p1);
-            this.particlesToRemove.add(p2);
+            this.removeParticle(p1);
+            this.removeParticle(p2);
         }
     }
 
     /**
      * Обработка формирования атома из ядра и электрона
      */
-    private handleAtomForming(p1: Particle, p2: Particle): void {
+    private handleAtomForming(p1: AnyParticle, p2: AnyParticle): void {
         let electron: Electron | null = null;
         let atomCore: AtomCore | null = null;
 
@@ -1266,30 +1311,28 @@ export class ParticleSimulation {
         // С некоторой вероятностью формируем атом
         if (Math.random() < 0.3) {
             // Создаем атом
-            const atomPos = {
-                x: (electronPos.x + corePos.x * atomCore.getMass()) / (1 + atomCore.getMass()),
-                y: (electronPos.y + corePos.y * atomCore.getMass()) / (1 + atomCore.getMass())
-            };
+
+            const atomPos = new Vector2D((electronPos.x + corePos.x * atomCore.getMass()) / (1 + atomCore.getMass()),
+                (electronPos.y + corePos.y * atomCore.getMass()) / (1 + atomCore.getMass()));
 
             const atom = new Atom(atomPos, "test", atomCore.protons.length, atomCore.neutrons.length, 1);
 
             // Устанавливаем скорость, в основном определяемую ядром из-за большей массы
-            atom.setVelocity({
-                x: (electronVel.x + coreVel.x * atomCore.getMass()) / (1 + atomCore.getMass()),
-                y: (electronVel.y + coreVel.y * atomCore.getMass()) / (1 + atomCore.getMass())
-            });
+
+            atom.setVelocity(new Vector2D((electronVel.x + coreVel.x * atomCore.getMass()) / (1 + atomCore.getMass()),
+                (electronVel.y + coreVel.y * atomCore.getMass()) / (1 + atomCore.getMass())));
 
             // Добавляем атом и удаляем ядро и электрон
             this.particlesToAdd.push(atom);
-            this.particlesToRemove.add(electron);
-            this.particlesToRemove.add(atomCore);
+            this.removeParticle(electron);
+            this.removeParticle(atomCore);
         }
     }
 
     /**
      * Обработка формирования молекулы из атомов
      */
-    private handleMoleculeForming(p1: Particle, p2: Particle): void {
+    private handleMoleculeForming(p1: AnyParticle, p2: AnyParticle): void {
         // Проверяем, что обе частицы - атомы
         if (!(p1 instanceof Atom) || !(p2 instanceof Atom)) return;
 
@@ -1321,24 +1364,20 @@ export class ParticleSimulation {
         // С некоторой вероятностью формируем молекулу
         if (Math.random() < 0.2) {
             const totalMass = atom1.mass + atom2.mass;
-            const moleculePos = {
-                x: (pos1.x * atom1.mass + pos2.x * atom2.mass) / totalMass,
-                y: (pos1.y * atom1.mass + pos2.y * atom2.mass) / totalMass
-            };
+
+            const moleculePos = new Vector2D((pos1.x * atom1.mass + pos2.x * atom2.mass) / totalMass,(pos1.y * atom1.mass + pos2.y * atom2.mass) / totalMass)
 
             // Создаем молекулу из двух атомов
             const molecule = new Molecule("molecule", moleculePos, [atom1, atom2]);
 
             // Устанавливаем скорость на основе законов сохранения импульса
-            molecule.setVelocity({
-                x: (vel1.x * atom1.mass + vel2.x * atom2.mass) / totalMass,
-                y: (vel1.y * atom1.mass + vel2.y * atom2.mass) / totalMass
-            });
+
+            molecule.setVelocity(new Vector2D((vel1.x * atom1.mass + vel2.x * atom2.mass) / totalMass,(vel1.y * atom1.mass + vel2.y * atom2.mass) / totalMass));
 
             // Добавляем молекулу и удаляем атомы
             this.particlesToAdd.push(molecule);
-            this.particlesToRemove.add(atom1);
-            this.particlesToRemove.add(atom2);
+            this.removeParticle(atom1);
+            this.removeParticle(atom2);
         }
     }
 
@@ -1360,7 +1399,7 @@ export class ParticleSimulation {
     /**
      * Обработка распада конкретной частицы
      */
-    private handleParticleDecay(particle: Particle): void {
+    private handleParticleDecay(particle: AnyParticle): void {
         if (particle instanceof Neutron) {
             // Распад нейтрона: n -> p + e- + v̅e
             this.handleNeutronDecay(particle as Neutron);
@@ -1378,7 +1417,7 @@ export class ParticleSimulation {
             time: this.time,
             type: 'decay',
             particles: [particle],
-            energy: particle.getMass()
+            energy: particle.mass
         });
     }
 
@@ -1391,25 +1430,21 @@ export class ParticleSimulation {
 
         // Создаем протон как основной продукт распада
         const proton = new Proton(pos);
-        proton.setVelocity({
-            x: vel.x + (Math.random() - 0.5) * 0.2,
-            y: vel.y + (Math.random() - 0.5) * 0.2
-        });
+
+        proton.setVelocity(new Vector2D(vel.x + (Math.random() - 0.5) * 0.2,vel.y + (Math.random() - 0.5) * 0.2));
 
         // Создаем электрон
         const electron = new Electron(pos);
         // Электрон получает некоторую часть энергии распада
         const electronSpeed = 2 + Math.random() * 3;
         const electronAngle = Math.random() * Math.PI * 2;
-        electron.setVelocity({
-            x: vel.x + Math.cos(electronAngle) * electronSpeed,
-            y: vel.y + Math.sin(electronAngle) * electronSpeed
-        });
+
+        electron.setVelocity(new Vector2D(vel.x + Math.cos(electronAngle) * electronSpeed,vel.y + Math.sin(electronAngle) * electronSpeed));
 
         // Добавляем новые частицы и удаляем нейтрон
         this.particlesToAdd.push(proton);
         this.particlesToAdd.push(electron);
-        this.particlesToRemove.add(neutron);
+        this.removeParticle(neutron);
 
         // Обновляем статистику
         this.stats.quantumEvents++;
@@ -1448,24 +1483,19 @@ export class ParticleSimulation {
         }
 
         // Создаем новый кварк
-        newQuark.setVelocity({
-            x: vel.x + (Math.random() - 0.5) * 0.5,
-            y: vel.y + (Math.random() - 0.5) * 0.5
-        });
+        newQuark.setVelocity(new Vector2D(vel.x + (Math.random() - 0.5) * 0.5, vel.y + (Math.random() - 0.5) * 0.5));
 
         // Создаем W-бозон (или виртуальную частицу, представляющую его)
-        const wBoson = new Boson(pos, 80, quarkType.startsWith('u') ? 1 : -1, 0);
+        const wBoson = new WBoson(pos, quarkType.startsWith('u') ? 1 : -1);
         const bosonSpeed = 3 + Math.random() * 2;
         const bosonAngle = Math.random() * Math.PI * 2;
-        wBoson.setVelocity({
-            x: vel.x + Math.cos(bosonAngle) * bosonSpeed,
-            y: vel.y + Math.sin(bosonAngle) * bosonSpeed
-        });
+
+        wBoson.setVelocity(new Vector2D(vel.x + Math.cos(bosonAngle) * bosonSpeed,vel.y + Math.sin(bosonAngle) * bosonSpeed));
 
         // Добавляем новые частицы и удаляем исходный кварк
         this.particlesToAdd.push(newQuark);
         this.particlesToAdd.push(wBoson);
-        this.particlesToRemove.add(quark);
+        this.removeParticle(quark);
 
         // Обновляем статистику
         this.stats.quantumEvents++;
@@ -1474,7 +1504,7 @@ export class ParticleSimulation {
     /**
      * Обработка распада бозона Хиггса
      */
-    private handleHiggsDecay(higgs: Particle): void {
+    private handleHiggsDecay(higgs: AnyParticle): void {
         const pos = higgs.getPosition();
         const vel = higgs.getVelocity();
 
@@ -1493,23 +1523,20 @@ export class ParticleSimulation {
         switch (channel) {
             case 'bbbar':
                 // Создаем b-кварк и анти-b-кварк
-                const bQuark = new DownQuark(pos);
-                const bBarQuark = new AntiDownQuark({ x: pos.x + 1, y: pos.y + 1 });
+                const bQuark = new BottomQuark(pos);
+
+                const bBarQuark = new AntiBottomQuark(new Vector2D(pos.x + 1,pos.y + 1));
                 bBarQuark.createAntiParticle();
 
                 // Задаем скорости в противоположных направлениях
                 const bAngle = Math.random() * Math.PI * 2;
                 const bSpeed = 4 + Math.random() * 2;
 
-                bQuark.setVelocity({
-                    x: vel.x + Math.cos(bAngle) * bSpeed,
-                    y: vel.y + Math.sin(bAngle) * bSpeed
-                });
 
-                bBarQuark.setVelocity({
-                    x: vel.x - Math.cos(bAngle) * bSpeed,
-                    y: vel.y - Math.sin(bAngle) * bSpeed
-                });
+                bQuark.setVelocity(new Vector2D(vel.x + Math.cos(bAngle) * bSpeed,vel.y + Math.sin(bAngle) * bSpeed));
+
+
+                bBarQuark.setVelocity(new Vector2D(vel.x - Math.cos(bAngle) * bSpeed,vel.y - Math.sin(bAngle) * bSpeed));
 
                 this.particlesToAdd.push(bQuark);
                 this.particlesToAdd.push(bBarQuark);
@@ -1517,21 +1544,18 @@ export class ParticleSimulation {
 
             case 'WW':
                 // Создаем W+ и W- бозоны
-                const wPlus = new Boson(pos, 80, 1, 0);
-                const wMinus = new Boson({ x: pos.x + 1, y: pos.y + 1 }, 80, -1, 0);
+                const wPlus = new WBoson(pos, 1);
+
+                const wMinus = new WBoson(new Vector2D(pos.x + 1,pos.y + 1), -1);
 
                 const wAngle = Math.random() * Math.PI * 2;
                 const wSpeed = 3 + Math.random() * 2;
 
-                wPlus.setVelocity({
-                    x: vel.x + Math.cos(wAngle) * wSpeed,
-                    y: vel.y + Math.sin(wAngle) * wSpeed
-                });
 
-                wMinus.setVelocity({
-                    x: vel.x - Math.cos(wAngle) * wSpeed,
-                    y: vel.y - Math.sin(wAngle) * wSpeed
-                });
+                wPlus.setVelocity(new Vector2D(vel.x + Math.cos(wAngle) * wSpeed,vel.y + Math.sin(wAngle) * wSpeed));
+
+
+                wMinus.setVelocity(new Vector2D(vel.x - Math.cos(wAngle) * wSpeed,vel.y - Math.sin(wAngle) * wSpeed));
 
                 this.particlesToAdd.push(wPlus);
                 this.particlesToAdd.push(wMinus);
@@ -1539,21 +1563,17 @@ export class ParticleSimulation {
 
             case 'ZZ':
                 // Создаем два Z-бозона
-                const z1 = new Boson(pos, 91, 0, 0);
-                const z2 = new Boson({ x: pos.x + 1, y: pos.y + 1 }, 91, 0, 0);
+                const z1 = new ZBoson(pos);
+                const z2 = new ZBoson(new Vector2D(pos.x + 1, pos.y + 1));
 
                 const zAngle = Math.random() * Math.PI * 2;
                 const zSpeed = 3 + Math.random() * 2;
 
-                z1.setVelocity({
-                    x: vel.x + Math.cos(zAngle) * zSpeed,
-                    y: vel.y + Math.sin(zAngle) * zSpeed
-                });
 
-                z2.setVelocity({
-                    x: vel.x - Math.cos(zAngle) * zSpeed,
-                    y: vel.y - Math.sin(zAngle) * zSpeed
-                });
+                z1.setVelocity(new Vector2D(vel.x + Math.cos(zAngle) * zSpeed,vel.y + Math.sin(zAngle) * zSpeed));
+
+
+                z2.setVelocity(new Vector2D(vel.x - Math.cos(zAngle) * zSpeed,vel.y - Math.sin(zAngle) * zSpeed));
 
                 this.particlesToAdd.push(z1);
                 this.particlesToAdd.push(z2);
@@ -1562,20 +1582,16 @@ export class ParticleSimulation {
             case 'gammagamma':
                 // Создаем два фотона
                 const photon1 = new Photon(pos);
-                const photon2 = new Photon({ x: pos.x + 1, y: pos.y + 1 });
+
+                const photon2 = new Photon(new Vector2D(pos.x + 1,pos.y + 1));
 
                 const photonAngle = Math.random() * Math.PI * 2;
                 const photonSpeed = 10; // Фотоны быстрые!
 
-                photon1.setVelocity({
-                    x: Math.cos(photonAngle) * photonSpeed,
-                    y: Math.sin(photonAngle) * photonSpeed
-                });
 
-                photon2.setVelocity({
-                    x: -Math.cos(photonAngle) * photonSpeed,
-                    y: -Math.sin(photonAngle) * photonSpeed
-                });
+                photon1.setVelocity(new Vector2D(Math.cos(photonAngle) * photonSpeed,Math.sin(photonAngle) * photonSpeed));
+
+                photon2.setVelocity(new Vector2D(-Math.cos(photonAngle) * photonSpeed,-Math.sin(photonAngle) * photonSpeed));
 
                 this.particlesToAdd.push(photon1);
                 this.particlesToAdd.push(photon2);
@@ -1583,21 +1599,16 @@ export class ParticleSimulation {
 
             case 'tautau':
                 // Создаем тау-лептон и анти-тау-лептон
-                const tau = new Lepton(pos, 1.77, -1, 0);
-                const antiTau = new Lepton({ x: pos.x + 1, y: pos.y + 1 }, 1.77, 1, 0);
+                const tau = new Tau(pos);
+
+                const antiTau = new AntiTau(new Vector2D(pos.x + 1,pos.y + 1));
 
                 const tauAngle = Math.random() * Math.PI * 2;
                 const tauSpeed = 3 + Math.random() * 2;
 
-                tau.setVelocity({
-                    x: vel.x + Math.cos(tauAngle) * tauSpeed,
-                    y: vel.y + Math.sin(tauAngle) * tauSpeed
-                });
+                tau.setVelocity(new Vector2D(vel.x + Math.cos(tauAngle) * tauSpeed,vel.y + Math.sin(tauAngle) * tauSpeed));
 
-                antiTau.setVelocity({
-                    x: vel.x - Math.cos(tauAngle) * tauSpeed,
-                    y: vel.y - Math.sin(tauAngle) * tauSpeed
-                });
+                antiTau.setVelocity(new Vector2D(vel.x - Math.cos(tauAngle) * tauSpeed,vel.y - Math.sin(tauAngle) * tauSpeed));
 
                 this.particlesToAdd.push(tau);
                 this.particlesToAdd.push(antiTau);
@@ -1605,7 +1616,7 @@ export class ParticleSimulation {
         }
 
         // Удаляем бозон Хиггса
-        this.particlesToRemove.add(higgs);
+        this.removeParticle(higgs);
 
         // Обновляем статистику
         this.stats.quantumEvents++;
@@ -1614,22 +1625,20 @@ export class ParticleSimulation {
     /**
      * Применение квантовых эффектов к частице
      */
-    private applyQuantumEffects(particle: Particle, deltaTime: number): void {
+    private applyQuantumEffects(particle: AnyParticle, deltaTime: number): void {
         // Квантовая неопределенность: добавляем случайное смещение к позиции
         if (Math.random() < 0.05 * deltaTime) {
             const pos = particle.getPosition();
-            const quantumJitter = 2 / Math.max(1, particle.getMass()); // Более легкие частицы испытывают большую неопределенность
+            const quantumJitter = 2 / Math.max(1, particle.mass); // Более легкие частицы испытывают большую неопределенность
 
-            particle.setPosition({
-                x: pos.x + (Math.random() - 0.5) * quantumJitter,
-                y: pos.y + (Math.random() - 0.5) * quantumJitter
-            });
+
+            particle.setPosition(new Vector2D(pos.x + (Math.random() - 0.5) * quantumJitter,pos.y + (Math.random() - 0.5) * quantumJitter));
 
             this.stats.quantumEvents++;
         }
 
         // Квантовое туннелирование: возможность пройти через потенциальный барьер
-        if (Math.random() < 0.01 * deltaTime / Math.max(1, particle.getMass())) {
+        if (Math.random() < 0.01 * deltaTime / Math.max(1, particle.mass)) {
             // Реализация туннелирования - например, при столкновении со стеной
             // В данном контексте просто отметим событие
             this.stats.quantumEvents++;
@@ -1651,7 +1660,7 @@ export class ParticleSimulation {
     /**
      * Поиск ближайшей частицы для квантовой запутанности
      */
-    private findNearestParticleForEntanglement(particle: Particle): Particle | null {
+    private findNearestParticleForEntanglement(particle: AnyParticle): AnyParticle | null {
         const pos = particle.getPosition();
         let nearestParticle: Particle | null = null;
         let minDistanceSquared = Infinity;
@@ -1679,7 +1688,7 @@ export class ParticleSimulation {
     /**
      * Проверка возможности квантовой запутанности между частицами
      */
-    private canEntangle(p1: Particle, p2: Particle): boolean {
+    private canEntangle(p1: AnyParticle, p2: AnyParticle): boolean {
         // Примеры правил запутанности:
         // 1. Фотоны могут запутываться с фотонами
         if (p1 instanceof Photon && p2 instanceof Photon) return true;
@@ -1698,13 +1707,13 @@ export class ParticleSimulation {
     /**
      * Обработка столкновений частиц с границами симуляции
      */
-    private handleBoundaryCollisions(particle: Particle): void {
+    private handleBoundaryCollisions(particle: AnyParticle): void {
         const pos = particle.getPosition();
         const vel = particle.getVelocity();
         const radius = (particle as any).radius || 5; // Используем радиус частицы, если он есть
 
-        let newPos = { ...pos };
-        let newVel = { ...vel };
+        let newPos = pos;
+        let newVel = vel;
         let collision = false;
 
         // Проверяем столкновения с границами в зависимости от настроек
@@ -1755,7 +1764,7 @@ export class ParticleSimulation {
                 // Частица удаляется при выходе за границы
                 if (pos.x < -radius || pos.x > this.config.canvasWidth + radius ||
                     pos.y < -radius || pos.y > this.config.canvasHeight + radius) {
-                    this.particlesToRemove.add(particle);
+                    this.removeParticle(particle)
                     collision = true;
                 }
                 break;
@@ -1771,7 +1780,7 @@ export class ParticleSimulation {
     /**
      * Обновление следа частицы
      */
-    private updateParticleTrail(particle: Particle): void {
+    private updateParticleTrail(particle: AnyParticle): void {
         const pos = particle.getPosition();
 
         if (!this.particleTrails.has(particle)) {
@@ -1780,7 +1789,7 @@ export class ParticleSimulation {
 
         const trail = this.particleTrails.get(particle);
         if (trail) {
-            trail.push({ ...pos });
+            trail.push(pos);
 
             // Ограничиваем длину следа
             while (trail.length > this.config.trailLength) {
@@ -1844,7 +1853,7 @@ export class ParticleSimulation {
 
         for (const particle of this.particles) {
             const vel = particle.getVelocity();
-            const mass = particle.getMass();
+            const mass = particle.mass;
             const speed = Math.sqrt(vel.x * vel.x + vel.y * vel.y);
 
             // Кинетическая энергия
@@ -1869,7 +1878,8 @@ export class ParticleSimulation {
         }
 
         this.stats.totalEnergy = totalEnergy;
-        this.stats.totalMomentum = { x: totalMomentumX, y: totalMomentumY };
+
+        this.stats.totalMomentum = new Vector2D(totalMomentumX, totalMomentumY);
 
         // Оценка средней температуры системы (пропорциональна средней кинетической энергии частиц)
         if (this.particles.length > 0) {
@@ -1898,7 +1908,7 @@ export class ParticleSimulation {
         // Для каждой частицы вычисляем ее вклад в поле в каждой точке сетки
         for (const particle of this.particles) {
             const pos = particle.getPosition();
-            const charge = particle.getCharge();
+            const charge = particle.charge;
 
             // Пропускаем нейтральные частицы
             if (charge === 0) continue;
@@ -2117,170 +2127,22 @@ export class ParticleSimulation {
                 strokeStyle = 'dodgerblue';
             }
 
-            // Отрисовываем частицу в зависимости от метода отрисовки
-            switch (drawMethod) {
-                case 'circle':
-                    this.drawCircleParticle(pos.x, pos.y, radius, fillStyle, strokeStyle);
-                    break;
-                case 'square':
-                    this.drawSquareParticle(pos.x, pos.y, radius, fillStyle, strokeStyle);
-                    break;
-                case 'wave':
-                    this.drawWaveParticle(pos.x, pos.y, radius, fillStyle, strokeStyle, particle.getVelocity());
-                    break;
-                case 'atom':
-                    this.drawAtomParticle(pos.x, pos.y, radius, fillStyle, strokeStyle);
-                    break;
-                case 'molecule':
-                    this.drawMoleculeParticle(pos.x, pos.y, radius, fillStyle, strokeStyle);
-                    break;
-                default:
-                    this.drawCircleParticle(pos.x, pos.y, radius, fillStyle, strokeStyle);
-            }
+            particle.draw(this.ctx);
 
             // Отображаем заряд частицы, если он есть
-            const charge = particle.getCharge();
+            const charge = particle.charge;
             if (charge !== 0) {
                 this.ctx.fillStyle = 'white';
                 this.ctx.font = '10px Arial';
                 const chargeSign = charge > 0 ? '+' : '-';
                 const chargeText = Math.abs(charge) === 1 ? chargeSign : `${chargeSign}${Math.abs(charge)}`;
                 this.ctx.fillText(chargeText, pos.x + radius + 2, pos.y - radius - 2);
+            } else {
+                this.ctx.fillStyle = 'white';
+                this.ctx.font = '10px Arial';
+                this.ctx.fillText(particle.constructor.name, pos.x + radius + 2, pos.y - radius - 2);
             }
         }
-    }
-
-    /**
-     * Отрисовка частицы в виде круга
-     */
-    private drawCircleParticle(x: number, y: number, radius: number, fillStyle: string, strokeStyle: string): void {
-        this.ctx.beginPath();
-        this.ctx.arc(x, y, radius, 0, Math.PI * 2);
-        this.ctx.fillStyle = fillStyle;
-        this.ctx.fill();
-        this.ctx.strokeStyle = strokeStyle;
-        this.ctx.lineWidth = 1;
-        this.ctx.stroke();
-    }
-
-    /**
-     * Отрисовка частицы в виде квадрата
-     */
-    private drawSquareParticle(x: number, y: number, radius: number, fillStyle: string, strokeStyle: string): void {
-        const size = radius * 1.8; // Размер квадрата примерно соответствует кругу с данным радиусом
-        this.ctx.fillStyle = fillStyle;
-        this.ctx.strokeStyle = strokeStyle;
-        this.ctx.lineWidth = 1;
-        this.ctx.fillRect(x - size / 2, y - size / 2, size, size);
-        this.ctx.strokeRect(x - size / 2, y - size / 2, size, size);
-    }
-
-    /**
-     * Отрисовка частицы в виде волны (фотон)
-     */
-    private drawWaveParticle(x: number, y: number, radius: number, fillStyle: string, strokeStyle: string, velocity: { x: number, y: number }): void {
-        const size = radius * 3;
-        const angle = Math.atan2(velocity.y, velocity.x);
-
-        this.ctx.save();
-        this.ctx.translate(x, y);
-        this.ctx.rotate(angle);
-
-        // Рисуем волну (синусоиду)
-        this.ctx.beginPath();
-        this.ctx.moveTo(-size, 0);
-
-        const waveAmplitude = radius / 2;
-        const wavePoints = 20;
-
-        for (let i = 0; i <= wavePoints; i++) {
-            const t = i / wavePoints;
-            const px = -size + t * 2 * size;
-            const py = waveAmplitude * Math.sin(t * Math.PI * 4);
-            this.ctx.lineTo(px, py);
-        }
-
-        this.ctx.strokeStyle = strokeStyle;
-        this.ctx.lineWidth = 2;
-        this.ctx.stroke();
-
-        // Добавим свечение для фотона
-        this.ctx.shadowBlur = 15;
-        this.ctx.shadowColor = fillStyle;
-        this.ctx.strokeStyle = fillStyle;
-        this.ctx.lineWidth = 1;
-        this.ctx.stroke();
-        this.ctx.shadowBlur = 0;
-
-        this.ctx.restore();
-    }
-
-    /**
-     * Отрисовка атома
-     */
-    private drawAtomParticle(x: number, y: number, radius: number, fillStyle: string, strokeStyle: string): void {
-        // Рисуем ядро
-        this.ctx.beginPath();
-        this.ctx.arc(x, y, radius / 2, 0, Math.PI * 2);
-        this.ctx.fillStyle = 'red';
-        this.ctx.fill();
-        this.ctx.strokeStyle = 'darkred';
-        this.ctx.lineWidth = 1;
-        this.ctx.stroke();
-
-        // Рисуем орбиты электронов
-        const time = this.time * 0.001; // Используем время для анимации
-        const numOrbits = 3;
-
-        for (let i = 0; i < numOrbits; i++) {
-            const orbitRadius = radius * (1 + (i * 0.5));
-            const electronAngle = time * (1 + i * 0.5) + (i * Math.PI / 3);
-
-            // Рисуем орбиту
-            this.ctx.beginPath();
-            this.ctx.arc(x, y, orbitRadius, 0, Math.PI * 2);
-            this.ctx.strokeStyle = 'rgba(100, 150, 255, 0.3)';
-            this.ctx.lineWidth = 1;
-            this.ctx.stroke();
-
-            // Рисуем электрон на орбите
-            const electronX = x + Math.cos(electronAngle) * orbitRadius;
-            const electronY = y + Math.sin(electronAngle) * orbitRadius;
-
-            this.ctx.beginPath();
-            this.ctx.arc(electronX, electronY, radius / 4, 0, Math.PI * 2);
-            this.ctx.fillStyle = 'blue';
-            this.ctx.fill();
-        }
-    }
-
-    /**
-     * Отрисовка молекулы
-     */
-    private drawMoleculeParticle(x: number, y: number, radius: number, fillStyle: string, strokeStyle: string): void {
-        // Рисуем несколько атомов, соединенных вместе
-        const atomRadius = radius * 0.7;
-        const bondLength = radius;
-
-        // Первый атом
-        const atom1X = x - bondLength / 2;
-        const atom1Y = y;
-
-        // Второй атом
-        const atom2X = x + bondLength / 2;
-        const atom2Y = y;
-
-        // Рисуем связь между атомами
-        this.ctx.beginPath();
-        this.ctx.moveTo(atom1X, atom1Y);
-        this.ctx.lineTo(atom2X, atom2Y);
-        this.ctx.strokeStyle = strokeStyle;
-        this.ctx.lineWidth = 3;
-        this.ctx.stroke();
-
-        // Рисуем атомы
-        this.drawCircleParticle(atom1X, atom1Y, atomRadius, fillStyle, strokeStyle);
-        this.drawCircleParticle(atom2X, atom2Y, atomRadius, fillStyle, strokeStyle);
     }
 
     /**
@@ -2299,32 +2161,32 @@ export class ParticleSimulation {
         this.ctx.font = '14px Arial';
         this.ctx.fillStyle = 'white';
 
-        this.ctx.fillText(`Частиц: ${this.stats.totalParticles}`, padding, y += lineHeight);
-        this.ctx.fillText(`Время: ${this.time.toFixed(2)}`, padding, y += lineHeight);
-        this.ctx.fillText(`Энергия: ${this.stats.totalEnergy.toExponential(2)}`, padding, y += lineHeight);
-        this.ctx.fillText(`Температура: ${this.stats.averageTemperature.toFixed(2)}`, padding, y += lineHeight);
-        this.ctx.fillText(`Стабильность: ${(this.stats.stabilityIndex * 100).toFixed(1)}%`, padding, y += lineHeight);
-        this.ctx.fillText(`Квантовые события: ${this.stats.quantumEvents}`, padding, y += lineHeight);
+        this.ctx.fillText(`Частиц: ${this.stats.totalParticles}`, padding + 50, y += lineHeight);
+        this.ctx.fillText(`Время: ${this.time.toFixed(2)}`, padding + 50, y += lineHeight);
+        this.ctx.fillText(`Энергия: ${this.stats.totalEnergy.toExponential(2)}`, padding + 50, y += lineHeight);
+        this.ctx.fillText(`Температура: ${this.stats.averageTemperature.toFixed(2)}`, padding + 50, y += lineHeight);
+        this.ctx.fillText(`Стабильность: ${(this.stats.stabilityIndex * 100).toFixed(1)}%`, padding + 50, y += lineHeight);
+        this.ctx.fillText(`Квантовые события: ${this.stats.quantumEvents}`, padding + 50, y += lineHeight);
 
         // Отображаем количество взаимодействий по типам
         y += lineHeight / 2; // Дополнительный отступ
-        this.ctx.fillText('Взаимодействия:', padding, y += lineHeight);
+        this.ctx.fillText('Взаимодействия:', padding + 50, y += lineHeight);
 
         // Электромагнитные
         const emCount = this.stats.interactionCount.get(InteractionType.ELECTROMAGNETIC) || 0;
-        this.ctx.fillText(`- ЭМ: ${emCount}`, padding + 10, y += lineHeight);
+        this.ctx.fillText(`- ЭМ: ${emCount}`, padding + 50, y += lineHeight);
 
         // Сильные
         const strongCount = this.stats.interactionCount.get(InteractionType.STRONG) || 0;
-        this.ctx.fillText(`- Сильные: ${strongCount}`, padding + 10, y += lineHeight);
+        this.ctx.fillText(`- Сильные: ${strongCount}`, padding + 50, y += lineHeight);
 
         // Слабые
         const weakCount = this.stats.interactionCount.get(InteractionType.WEAK) || 0;
-        this.ctx.fillText(`- Слабые: ${weakCount}`, padding + 10, y += lineHeight);
+        this.ctx.fillText(`- Слабые: ${weakCount}`, padding + 50, y += lineHeight);
 
         // Гравитационные
         const gravCount = this.stats.interactionCount.get(InteractionType.GRAVITATIONAL) || 0;
-        this.ctx.fillText(`- Грав.: ${gravCount}`, padding + 10, y += lineHeight);
+        this.ctx.fillText(`- Грав.: ${gravCount}`, padding + 50, y += lineHeight);
     }
 
     /**
@@ -2374,10 +2236,8 @@ export class ParticleSimulation {
 
         for (let i = 0; i < particleCount; i++) {
             // Случайная позиция в пределах канваса
-            const position = {
-                x: Math.random() * width,
-                y: Math.random() * height
-            };
+
+            const position = new Vector2D(Math.random() * width, Math.random() * height);
 
             // Случайная скорость
             const velocity = {
@@ -2387,7 +2247,7 @@ export class ParticleSimulation {
 
             // Создаем случайную частицу
             const particleType = Math.random();
-            let particle: Particle;
+            let particle: AnyParticle;
 
             if (particleType < 0.25) {
                 // Электрон
@@ -2408,7 +2268,28 @@ export class ParticleSimulation {
                 // Кварк
                 const quarkTypes = ['up', 'down', 'strange', 'charm', 'bottom', 'top'];
                 const type = quarkTypes[Math.floor(Math.random() * quarkTypes.length)];
-                particle = new UpQuark(position); //random
+                switch (type) {
+                    case 'up':
+                        particle = new UpQuark(position); //random
+                        break;
+                    case 'down':
+                        particle = new DownQuark(position);
+                        break;
+                    case 'strange':
+                        particle = new StrangeQuark(position);
+                        break;
+                    case 'charm':
+                        particle = new CharmQuark(position);
+                        break
+                    case 'bottom':
+                        particle = new BottomQuark(position);
+                        break
+                    case 'top':
+                        particle = new TopQuark(position);
+                        break
+                    default:
+                        particle = new UpQuark(position);
+                }
 
                 // Некоторые кварки могут быть антикварками
                 if (Math.random() < 0.5) {
@@ -2498,59 +2379,6 @@ export class ParticleSimulation {
     }
 
     /**
-     * Добавление новой частицы в симуляцию
-     */
-    public addParticle(particleType: string, position: { x: number, y: number }, velocity?: { x: number, y: number }): void {
-        let particle: Particle | null = null;
-
-        switch (particleType.toLowerCase()) {
-            case 'electron':
-                particle = new Electron(position);
-                break;
-            case 'proton':
-                particle = new Proton(position);
-                break;
-            case 'neutron':
-                particle = new Neutron(position);
-                break;
-            case 'photon':
-                particle = new Photon(position);
-                break;
-            case 'quark':
-                // По умолчанию создаем up-кварк
-                particle = new UpQuark(position);
-                break;
-            case 'higgs':
-                // Предполагаем, что у нас есть класс для бозона Хиггса
-                // particle = new Boson(position, 125, 0, 0); // Хиггс имеет массу около 125 ГэВ и нейтрален
-                break;
-            default:
-                console.warn(`Неизвестный тип частицы: ${particleType}`);
-        }
-
-        if (particle) {
-            // Устанавливаем скорость, если она указана
-            if (velocity) {
-                particle.setVelocity(velocity);
-            } else {
-                // Иначе задаем случайную скорость
-                particle.setVelocity({
-                    x: (Math.random() - 0.5) * 2,
-                    y: (Math.random() - 0.5) * 2
-                });
-            }
-
-            // Добавляем частицу
-            this.particlesToAdd.push(particle);
-
-            // Инициализируем след для частицы, если они включены
-            if (this.config.showParticleTrails) {
-                this.particleTrails.set(particle, [position]);
-            }
-        }
-    }
-
-    /**
      * Получение текущей статистики симуляции
      */
     public getStats(): SimulationStats {
@@ -2579,7 +2407,7 @@ export class ParticleSimulation {
             particleTypeCount: new Map<string, number>(),
             totalParticles: 0,
             totalEnergy: 0,
-            totalMomentum: { x: 0, y: 0 },
+            totalMomentum: new Vector2D(0, 0),
             averageTemperature: 0,
             stabilityIndex: 1.0,
             interactionCount: new Map<InteractionType, number>(),

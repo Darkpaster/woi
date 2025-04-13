@@ -1,6 +1,6 @@
 import {TRNA, TRNAState} from "./trna.ts";
 import {Point} from "../../../../../utils/math/2d.ts";
-import {SimulationObject} from "../simulation/simulation.ts";
+import {SimulationObject} from "../simulations/simulation.ts";
 
 export class TRNAPool implements SimulationObject {
     private id: string;

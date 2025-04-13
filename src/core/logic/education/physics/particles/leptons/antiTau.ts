@@ -1,6 +1,6 @@
-import {Vector2D} from "../utils.ts";
 import {Lepton} from "./lepton.ts";
 import {Tau} from "./tau.ts";
+import {Vector2D} from "../../../../../../utils/math/2d.ts";
 
 export class AntiTau extends Lepton {
     constructor(position: Vector2D) {
@@ -24,7 +24,8 @@ export class AntiTau extends Lepton {
     }
 
     createAntiParticle(): Lepton {
-        return new Tau({ x: this.position.x, y: this.position.y });
+
+        return new Tau(new Vector2D(this.position.x, this.position.y));
     }
 
     update(deltaTime: number): void {

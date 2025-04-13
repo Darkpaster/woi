@@ -1,8 +1,8 @@
-import { Particle, Color } from '../particle.ts';
-import { Vector2D } from '../utils.ts';
+import { Particle } from '../particle.ts';
+import {Vector2D} from "../../../../../../utils/math/2d.ts";
 
 export abstract class Lepton extends Particle {
-    constructor(position: Vector2D, mass: number, charge: number, spin: number) {
+    protected constructor(position: Vector2D, mass: number, charge: number, spin: number) {
         super(position, mass, charge, spin);
     }
 
@@ -44,7 +44,7 @@ export abstract class Lepton extends Particle {
 
         // Избегаем деления на ноль
         if (distanceSquared < 0.0001) {
-            return { x: 0, y: 0 };
+            return new Vector2D(0, 0);
         }
 
         // Константа для силы (упрощенно)
@@ -58,17 +58,17 @@ export abstract class Lepton extends Particle {
         const forceX = forceMagnitude * dx / distance;
         const forceY = forceMagnitude * dy / distance;
 
-        return { x: forceX, y: forceY };
+        return new Vector2D(forceX, forceY);
     }
 
     // Квантовые свойства лептонов
     oscillate(time: number): void {
         // Квантовое колебание - может влиять на вероятностное распределение
-        const frequency = 0.1;
-        const amplitude = 0.5;
-
-        const oscillation = Math.sin(time * frequency) * amplitude;
-        this.radius = this.radius * (1 + oscillation * 0.2);
+        // const frequency = 0.1;
+        // const amplitude = 0.5;
+        //
+        // const oscillation = Math.sin(time * frequency) * amplitude;
+        // this.radius = this.radius * (1 + oscillation * 0.1);
     }
 
     // Переопределение метода обновления с учетом квантовых свойств

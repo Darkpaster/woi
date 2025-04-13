@@ -1,8 +1,8 @@
 
 // Тау-лептон - самый тяжелый лептон
-import {Vector2D} from "../utils.ts";
-import {AntiTau, Lepton} from "./lepton.ts";
-import {AntiTauon} from "../tauon.ts";
+import {Vector2D} from "../../../../../../utils/math/2d.ts";
+import {Lepton} from "./lepton.ts";
+import {AntiTau} from "./antiTau.ts";
 
 export class Tau extends Lepton {
     constructor(position: Vector2D) {
@@ -27,7 +27,7 @@ export class Tau extends Lepton {
     }
 
     createAntiParticle(): Lepton {
-        const antiTau = new AntiTauon(this.getPosition());
+        const antiTau = new AntiTau(this.getPosition());
         antiTau.setVelocity(this.getVelocity());
         return antiTau;
     }

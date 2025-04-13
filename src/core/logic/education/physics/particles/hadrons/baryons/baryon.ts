@@ -1,5 +1,5 @@
 import { Particle } from '../../particle.ts';
-import { Vector2D } from '../../utils.ts';
+import {Vector2D} from "../../../../../../../utils/math/2d.ts";
 import {Quark} from "../../quarks/quark.ts";
 
 export abstract class Baryon extends Particle {
@@ -47,7 +47,7 @@ export abstract class Baryon extends Particle {
             const x = this.position.x + Math.cos(angle) * offset;
             const y = this.position.y + Math.sin(angle) * offset;
 
-            quark.setPosition({ x, y });
+            quark.setPosition(new Vector2D(x,y));
             quark.draw(ctx);
         });
 

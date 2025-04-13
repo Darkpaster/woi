@@ -1,15 +1,14 @@
 // W-бозон (переносчик слабого взаимодействия)
 import {Boson} from "./boson.ts";
-import {Vector2D} from "../utils.ts";
+import {Vector2D} from "../../../../../../utils/math/2d.ts";
 import {Particle} from "../particle.ts";
 
 export class WBoson extends Boson {
-    constructor(position: Vector2D = { x: 0, y: 0 }, charge: number = 1) {
+    constructor(position: Vector2D = new Vector2D(0, 0), charge: number = 1) {
         // W-бозон: масса около 80.4 ГэВ, заряд +1 или -1
-        super(position, 80.4, charge, 'weak');
+        super(position, 'weak', 80.4, charge, 0, 6, 15);
         this.name = `W${charge > 0 ? '+' : '-'}`;
         this.color = { r: 50, g: 50, b: 255 }; // Синий цвет
-        this.radius = 6;
         this.antiParticle = charge < 0; // W- считается античастицей W+
     }
 

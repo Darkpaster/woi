@@ -1,4 +1,4 @@
-import {SimulationObject} from "../simulation/simulation.ts";
+import {SimulationObject} from "../simulations/simulation.ts";
 import {Molecule} from "./molecule.ts";
 
 export enum BondType {

@@ -17,7 +17,7 @@ export const settings: {
     language: "ru",
     soundVolume: 100,
     musicVolume: 100,
-    defaultTileScale: 4,
+    defaultTileScale: 2,
     tileSize: 16,
     showFPS: false,
 

@@ -1,10 +1,10 @@
 // Гравитон (теоретический переносчик гравитационного взаимодействия)
-import {Vector2D} from "../utils.ts";
+import {Vector2D} from "../../../../../../utils/math/2d.ts";
 import {Boson} from "../bosons/boson.ts";
 import {Particle} from "../particle.ts";
 
 export class Graviton extends Boson {
-    constructor(position: Vector2D = { x: 0, y: 0 }) {
+    constructor(position: Vector2D = new Vector2D(0, 0)) {
         // Гравитон: теоретически безмассовый, нейтральный, спин 2
         super(position, 0, 0, 'gravitational');
         this.name = 'G';

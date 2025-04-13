@@ -1,12 +1,12 @@
 // Гравитино (суперпартнёр гравитона в теории суперсимметрии)
-import {Vector2D} from "../utils.ts";
+import {Vector2D} from "../../../../../../utils/math/2d.ts";
 import {Lepton} from "../leptons/lepton.ts";
 import {Particle} from "../particle.ts";
 
 export class Gravitino extends Lepton {
     private superSymmetryEnergy: number;
 
-    constructor(position: Vector2D = { x: 0, y: 0 }) {
+    constructor(position: Vector2D = new Vector2D(0, 0)) {
         // Гравитино: фермионный партнёр гравитона со спином 3/2
         super(position, 0, 0);
         this.name = 'G̃';

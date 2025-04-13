@@ -1,11 +1,11 @@
 import {Baryon} from "../baryon.ts";
-import {Vector2D} from "../../../utils.ts";
+import {Vector2D} from "../../../../../../../../utils/math/2d.ts";
 import {UpQuark} from "../../../quarks/upQuark.ts";
 import {StrangeQuark} from "../../../quarks/strangeQuark.ts";
 import {DownQuark} from "../../../quarks/downQuark.ts";
 
 export class Xi extends Baryon {
-    constructor(position: Vector2D = { x: 0, y: 0 }, charge: number = 0) {
+    constructor(position: Vector2D = new Vector2D(0, 0), charge: number = 0) {
         // Кси-барионы имеют заряд 0 или -1
         super(position, 1.321, charge, 0.5);
         this.color = { r: 200, g: 100, b: 200 };

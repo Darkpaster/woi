@@ -2,13 +2,19 @@ import { AtomCore } from './atomCore';
 import { Electron } from './leptons/electron.ts';
 import { Neutron } from './hadrons/baryons/neutron.ts';
 import { Proton } from './hadrons/baryons/proton.ts';
-import { Vector2D } from './utils';
+import {Vector2D} from "../../../../../utils/math/2d.ts";
 
 export class Atom {
+    get velocity(): Vector2D {
+        return this._velocity;
+    }
+    get position(): Vector2D {
+        return this._position;
+    }
     private core: AtomCore;
     private electrons: Electron[] = [];
-    private position: Vector2D;
-    private velocity: Vector2D;
+    private _position: Vector2D;
+    private _velocity: Vector2D;
     private element: string;
 
     constructor(
@@ -18,8 +24,8 @@ export class Atom {
         neutrons: number,
         electrons: number
     ) {
-        this.position = position;
-        this.velocity = { x: 0, y: 0 };
+        this._position = position;
+        this._velocity = new Vector2D(0, 0);
         this.element = element;
 
         // Создаем ядро атома
@@ -40,10 +46,8 @@ export class Atom {
         for (let i = 0; i < electrons; i++) {
             const angle = (Math.PI * 2 * i) / electrons;
             const orbitRadius = 30 + (i % 3) * 15; // Разные орбиты
-            const electronPosition = {
-                x: position.x + Math.cos(angle) * orbitRadius,
-                y: position.y + Math.sin(angle) * orbitRadius
-            };
+
+            const electronPosition = new Vector2D(position.x + Math.cos(angle) * orbitRadius,position.y + Math.sin(angle) * orbitRadius);
             this.electrons.push(new Electron(electronPosition));
         }
     }
@@ -52,17 +56,21 @@ export class Atom {
         return this.core.mass + this.electrons.reduce((sum, e) => sum + e.mass, 0);
     }
 
-    get charge(): number {
+    set mass(mass: number) {
+        this.core.mass = mass;
+    }
+
+    public get charge(): number {
         return this.core.charge - this.electrons.length;
     }
 
     update(deltaTime: number): void {
         // Обновляем позицию атома
-        this.position.x += this.velocity.x * deltaTime;
-        this.position.y += this.velocity.y * deltaTime;
+        this._position.x += this._velocity.x * deltaTime;
+        this._position.y += this._velocity.y * deltaTime;
 
         // Обновляем ядро
-        this.core.setPosition(this.position);
+        this.core.setPosition(this._position);
         this.core.update(deltaTime);
 
         // Обновляем электроны (вращаем вокруг ядра)
@@ -74,10 +82,8 @@ export class Atom {
 
             const angle = (Math.PI * 2 * electronIndex) / 8 + angularVelocity * deltaTime;
 
-            const electronPosition = {
-                x: this.position.x + Math.cos(angle) * orbitRadius,
-                y: this.position.y + Math.sin(angle) * orbitRadius
-            };
+
+            const electronPosition = new Vector2D(this._position.x + Math.cos(angle) * orbitRadius,this._position.y + Math.sin(angle) * orbitRadius);
 
             electron.setPosition(electronPosition);
             electron.update(deltaTime);
@@ -90,8 +96,8 @@ export class Atom {
             y: force.y / this.mass
         };
 
-        this.velocity.x += acceleration.x;
-        this.velocity.y += acceleration.y;
+        this._velocity.x += acceleration.x;
+        this._velocity.y += acceleration.y;
     }
 
     draw(ctx: CanvasRenderingContext2D): void {
@@ -104,22 +110,22 @@ export class Atom {
         // Рисуем информацию об атоме
         ctx.fillStyle = 'white';
         ctx.font = '10px Arial';
-        ctx.fillText(this.element, this.position.x - 10, this.position.y - 40);
+        ctx.fillText(this.element, this._position.x - 20, this._position.y - 20);
     }
 
     getPosition(): Vector2D {
-        return { ...this.position };
+        return this._position;
     }
 
     setPosition(position: Vector2D): void {
-        this.position = { ...position };
+        this._position = new Vector2D(position.x, position.y);
     }
 
     getVelocity(): Vector2D {
-        return { ...this.velocity };
+        return this._velocity;
     }
 
     setVelocity(velocity: Vector2D): void {
-        this.velocity = { ...velocity };
+        this._velocity = new Vector2D(velocity.x, velocity.y);
     }
 }

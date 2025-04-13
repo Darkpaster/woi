@@ -1,5 +1,5 @@
 import { Atom } from './atom';
-import { Vector2D } from './utils';
+import {Vector2D} from "../../../../../utils/math/2d.ts";
 
 interface AtomWithBond {
     atom: Atom;
@@ -10,12 +10,20 @@ export class Molecule {
     private atoms: Map<Atom, AtomWithBond[]>;
     private position: Vector2D;
     private velocity: Vector2D;
-    private name: string;
+    private readonly name: string;
+
+    public get mass() {
+        return Array.from(this.atoms.keys()).reduce((_, n) => n.mass + _, 0)
+    }
+
+    public get charge() {
+        return Array.from(this.atoms.keys()).reduce((_, n) => n.charge + _, 0)
+    }
 
     constructor(name: string, position: Vector2D, atoms?: Atom[]) {
         this.atoms = new Map();
-        this.position = { ...position };
-        this.velocity = { x: 0, y: 0 };
+        this.position = position;
+        this.velocity = new Vector2D(0, 0);
         this.name = name;
         if (atoms) {
             for (const atom of atoms) {
@@ -76,10 +84,8 @@ export class Molecule {
         // Обновляем все атомы
         for (const atom of this.atoms.keys()) {
             const pos = atom.getPosition();
-            atom.setPosition({
-                x: pos.x + offsetX,
-                y: pos.y + offsetY
-            });
+
+            atom.setPosition(new Vector2D(pos.x + offsetX, pos.y + offsetY));
 
             atom.update(deltaTime);
         }
@@ -171,7 +177,7 @@ export class Molecule {
     }
 
     getPosition(): Vector2D {
-        return { ...this.position };
+        return this.position;
     }
 
     setPosition(position: Vector2D): void {
@@ -181,21 +187,19 @@ export class Molecule {
         // Перемещаем молекулу, обновляя позицию каждого атома
         for (const atom of this.atoms.keys()) {
             const pos = atom.getPosition();
-            atom.setPosition({
-                x: pos.x + deltaX,
-                y: pos.y + deltaY
-            });
+
+            atom.setPosition(new Vector2D(pos.x + deltaX, pos.y + deltaY));
         }
 
-        this.position = { ...position };
+        this.position = position;
     }
 
     getVelocity(): Vector2D {
-        return { ...this.velocity };
+        return this.velocity;
     }
 
     setVelocity(velocity: Vector2D): void {
-        this.velocity = { ...velocity };
+        this.velocity = new Vector2D(velocity.x, velocity.y);
     }
 
     getName(): string {
@@ -206,9 +210,9 @@ export class Molecule {
     static createWater(position: Vector2D): Molecule {
         const water = new Molecule('H₂O', position);
 
-        const oxygen = new Atom({ x: position.x, y: position.y }, 'O', 8, 8, 8);
-        const hydrogen1 = new Atom({ x: position.x - 25, y: position.y - 10 }, 'H', 1, 0, 1);
-        const hydrogen2 = new Atom({ x: position.x + 25, y: position.y - 10 }, 'H', 1, 0, 1);
+        const oxygen = new Atom(new Vector2D(position.x, position.y), 'O', 8, 8, 8);
+        const hydrogen1 = new Atom(new Vector2D(position.x - 25, position.y - 10), 'H', 1, 0, 1);
+        const hydrogen2 = new Atom(new Vector2D(position.x + 25, position.y - 10), 'H', 1, 0, 1);
 
         water.addAtom(oxygen, [
             { atom: hydrogen1, bondType: 1 },
@@ -229,9 +233,9 @@ export class Molecule {
     static createCarbonDioxide(position: Vector2D): Molecule {
         const co2 = new Molecule('CO₂', position);
 
-        const carbon = new Atom({ x: position.x, y: position.y }, 'C', 6, 6, 6);
-        const oxygen1 = new Atom({ x: position.x - 30, y: position.y }, 'O', 8, 8, 8);
-        const oxygen2 = new Atom({ x: position.x + 30, y: position.y }, 'O', 8, 8, 8);
+        const carbon = new Atom(new Vector2D(position.x, position.y), 'C', 6, 6, 6);
+        const oxygen1 = new Atom(new Vector2D(position.x - 30, position.y), 'O', 8, 8, 8);
+        const oxygen2 = new Atom(new Vector2D(position.x + 30, position.y), 'O', 8, 8, 8);
 
         co2.addAtom(carbon, [
             { atom: oxygen1, bondType: 2 },

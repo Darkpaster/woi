@@ -138,7 +138,7 @@ export class DataScienceSystem extends SimulationEntity {
     }
 
     public generateVisualization(visualization: Visualization, dataset: Dataset, computeResource: ComputeResource): string {
-        // Simple visualization generation simulation
+        // Simple visualization generation simulations
         const compatibleTypes = this.getCompatibleVisualizationTypes(dataset.getType());
 
         if (!compatibleTypes.includes(visualization.getType())) {

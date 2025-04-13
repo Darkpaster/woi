@@ -1,6 +1,6 @@
 import {Particle} from "../../../particle.ts";
 import {Quark} from "../../../quarks/quark.ts";
-import {Vector2D} from "../../../utils.ts";
+import {Vector2D} from "../../../../../../../../utils/math/2d.ts";
 import {CharmQuark} from "../../../quarks/charmQuark.ts";
 import {AntiCharmQuark} from "../../../quarks/antiCharmQuark.ts";
 import {UpQuark} from "../../../quarks/upQuark.ts";
@@ -9,7 +9,7 @@ import {AntiUpQuark} from "../../../quarks/antiUpQuark.ts";
 export class TetraQuark extends Particle {
     protected quarks: Quark[] = [];
 
-    constructor(position: Vector2D = { x: 0, y: 0 }) {
+    constructor(position: Vector2D = new Vector2D(0, 0)) {
         // Тетракварк X(3872) имеет заряд 0
         super(position, 3.872, 0, 1);
         this.color = { r: 200, g: 200, b: 50 };

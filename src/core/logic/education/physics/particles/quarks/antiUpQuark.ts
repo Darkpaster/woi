@@ -1,10 +1,10 @@
 // Анти-u-кварк
 import {UpQuark} from "./upQuark.ts";
 import {Quark} from "./quark.ts";
-import {Vector2D} from "../utils.ts";
+import {Vector2D} from "../../../../../../utils/math/2d.ts";
 
 export class AntiUpQuark extends Quark {
-    constructor(position: Vector2D = { x: 0, y: 0 }, quarkColor: string = 'anti-red') {
+    constructor(position: Vector2D = new Vector2D(0, 0), quarkColor: string = 'anti-red') {
         super(position, 'anti-up', quarkColor, 0.002, -2/3);
         this.color = { r: 100, g: 255, b: 255 };
         this.name = 'ū';

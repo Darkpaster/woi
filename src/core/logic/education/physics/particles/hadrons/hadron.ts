@@ -1,7 +1,7 @@
 import { Particle } from '../particle.ts';
 import { Quark } from '../quarks/quark.ts';
 import { Gluon } from '../bosons/gluon.ts';
-import { Vector2D } from '../utils.ts';
+import {Vector2D} from "../../../../../../utils/math/2d.ts";
 
 // Базовый класс для адронов (частиц, состоящих из кварков)
 export abstract class Hadron extends Particle {
@@ -9,7 +9,7 @@ export abstract class Hadron extends Particle {
     protected gluons: Gluon[] = [];
     protected hadronType: string; // baryon или meson
 
-    constructor(position: Vector2D, quarks: Quark[]) {
+    protected constructor(position: Vector2D, quarks: Quark[]) {
         // Вычисляем массу, заряд и спин на основе составляющих кварков
         const totalMass = quarks.reduce((sum, q) => sum + q.getMass(), 0);
         const totalCharge = quarks.reduce((sum, q) => sum + q.getCharge(), 0);
@@ -34,10 +34,8 @@ export abstract class Hadron extends Particle {
 
         this.quarks.forEach((quark, index) => {
             const angle = (Math.PI * 2 * index) / this.quarks.length;
-            const quarkPosition = {
-                x: this.position.x + Math.cos(angle) * radius,
-                y: this.position.y + Math.sin(angle) * radius
-            };
+
+            const quarkPosition = new Vector2D(this.position.x + Math.cos(angle) * radius,this.position.y + Math.sin(angle) * radius);
 
             quark.setPosition(quarkPosition);
         });
@@ -53,10 +51,7 @@ export abstract class Hadron extends Particle {
                 const quark2 = this.quarks[j];
 
                 // Создаем глюон, соединяющий два кварка
-                const gluonPosition = {
-                    x: (quark1.getPosition().x + quark2.getPosition().x) / 2,
-                    y: (quark1.getPosition().y + quark2.getPosition().y) / 2
-                };
+                const gluonPosition = new Vector2D((quark1.getPosition().x + quark2.getPosition().x) / 2,(quark1.getPosition().y + quark2.getPosition().y) / 2);
 
                 // Цвет глюона зависит от цветов соединяемых кварков
                 const gluon = new Gluon(

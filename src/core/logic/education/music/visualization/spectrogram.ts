@@ -35,7 +35,7 @@ export class Spectrogram extends Visualizer {
     private options: SpectrogramOptions;
     private data: SpectrogramData | null = null;
 
-    constructor(canvas: HTMLCanvasElement, options: Partial<SpectrogramOptions> = {}) {
+    constructor(canvas: string, options: Partial<SpectrogramOptions> = {}) {
         super(canvas, options);
         this.options = { ...DEFAULT_SPECTROGRAM_OPTIONS, ...options };
     }

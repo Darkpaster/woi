@@ -183,6 +183,7 @@ export class Graphics {
                         }
                     }
                 }
+                this.ctx?.strokeRect(chunk.startX * scaledTileSize(), chunk.startY * scaledTileSize(), 32 * scaledTileSize(), 32 * scaledTileSize())
             }
         }
     }

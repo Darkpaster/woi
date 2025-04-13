@@ -1,12 +1,12 @@
 // Магнитный монополь (гипотетическая частица с одним магнитным полюсом)
-import {Vector2D} from "../utils.ts";
+import {Vector2D} from "../../../../../../utils/math/2d.ts";
 import {Particle} from "../particle.ts";
 
 export class MagneticMonopole extends Particle {
     private magneticCharge: number; // Северный (+1) или южный (-1) магнитный полюс
     private fieldStrength: number;
 
-    constructor(position: Vector2D = { x: 0, y: 0 }, magneticCharge: number = 1) {
+    constructor(position: Vector2D = new Vector2D(0, 0), magneticCharge: number = 1) {
         // Магнитные монополи: массивные, с магнитным зарядом
         super(position, 1000, 0); // Очень тяжёлая частица
         this.name = magneticCharge > 0 ? 'N' : 'S';

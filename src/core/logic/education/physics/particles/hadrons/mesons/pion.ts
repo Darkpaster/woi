@@ -1,12 +1,12 @@
 import {Meson} from "./meson.ts";
-import {Vector2D} from "../../utils.ts";
+import {Vector2D} from "../../../../../../../utils/math/2d.ts";
 import {UpQuark} from "../../quarks/upQuark.ts";
 import {AntiDownQuark} from "../../quarks/antiDownQuark.ts";
 import {AntiUpQuark} from "../../quarks/antiUpQuark.ts";
 import {DownQuark} from "../../quarks/downQuark.ts";
 
 export class Pion extends Meson {
-    constructor(position: Vector2D = { x: 0, y: 0 }, charge: number = 0) {
+    constructor(position: Vector2D = new Vector2D(0, 0), charge: number = 0) {
         // Пионы имеют заряд -1, 0 или +1
         super(position, 0.14, charge, 0);
         this.color = { r: 255, g: 200, b: 0 };

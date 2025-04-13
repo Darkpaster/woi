@@ -8,7 +8,7 @@ export class String extends Particle {
     private length: number;
     private tension: number;
 
-    constructor(position: Vector2D = { x: 0, y: 0 }) {
+    constructor(position: Vector2D = new Vector2D(0, 0)) {
         // Струны имеют планковскую длину (чрезвычайно малы)
         super(position, 0, 0);
         this.name = 'STR';

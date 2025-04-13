@@ -1,5 +1,5 @@
 // Стерильное нейтрино (кандидат на роль тёмной материи)
-import {Vector2D} from "../utils.ts";
+import {Vector2D} from "../../../../../../utils/math/2d.ts";
 import {Lepton} from "../leptons/lepton.ts";
 import {Particle} from "../particle.ts";
 
@@ -7,7 +7,7 @@ export class SterileNeutrino extends Lepton {
     private oscillationPhase: number;
     private oscillationRate: number;
 
-    constructor(position: Vector2D = { x: 0, y: 0 }) {
+    constructor(position: Vector2D = new Vector2D(0, 0)) {
         // Стерильное нейтрино: очень лёгкое, нейтральное, не участвует в слабых взаимодействиях
         super(position, 0.0001, 0);
         this.name = 'νs';

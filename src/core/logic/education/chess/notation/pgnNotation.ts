@@ -105,7 +105,7 @@ export class PGNNotation {
         // Clean up the movetext
         movetext = movetext.trim()
             .replace(/\s+/g, ' ')              // Normalize whitespace
-            .replace(/\{[^}]*\}/g, '')         // Remove comments in curly braces
+            .replace(/\{[^}]*}/g, '')         // Remove comments in curly braces
             .replace(/;.*/g, '')               // Remove comments starting with semicolon
             .replace(/\$\d+/g, '')             // Remove NAG annotations
             .replace(/\([^)]*\)/g, '')         // Remove variations in parentheses
@@ -113,7 +113,7 @@ export class PGNNotation {
             .trim();
 
         // Extract moves
-        const moveRegex = /\d+\.+\s+([^\s]+)\s+([^\s]+)|\d+\.+\s+([^\s]+)/g;
+        const moveRegex = /\d+\.+\s+(\S+)\s+(\S+)|\d+\.+\s+(\S+)/g;
         let match;
 
         while ((match = moveRegex.exec(movetext)) !== null) {

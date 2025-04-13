@@ -3,7 +3,7 @@ import {Chromosome, ChromosomeType} from "./chromosome.ts";
 import {DNAStrand} from "../molecularBiology/dnaStrand.ts";
 import {Point} from "../../../../../utils/math/2d.ts";
 import {Cell} from "../cellBiology/cell.ts";
-import {SimulationObject} from "../simulation/simulation.ts";
+import {SimulationObject} from "../simulations/simulation.ts";
 
 export enum SpeciesGenome {
     HUMAN = 'human',         // 46 chromosomes (23 pairs)
@@ -261,7 +261,7 @@ export class Genome implements SimulationObject {
         // Gene expression regulation would happen here
         // This could be based on cell state, external signals, etc.
 
-        // In a more complex simulation, we might:
+        // In a more complex simulations, we might:
         // - Update gene expression based on cell signals
         // - Model epigenetic changes
         // - Handle DNA replication during cell cycle

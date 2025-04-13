@@ -107,7 +107,7 @@ export class InformationSecuritySystem extends SimulationEntity {
     }
 
     public encryptData(data: string, key: string): string {
-        // Simple XOR encryption for simulation
+        // Simple XOR encryption for simulations
         let encrypted = "";
         for (let i = 0; i < data.length; i++) {
             encrypted += String.fromCharCode(data.charCodeAt(i) ^ key.charCodeAt(i % key.length));

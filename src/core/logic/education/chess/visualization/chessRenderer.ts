@@ -221,7 +221,10 @@ export class ChessRenderer {
         }
     }
 
-    private highlightSquare(position: string, color: string): void {
+    private highlightSquare(position: string | undefined, color: string): void {
+        if (!position) {
+            return
+        }
         const file = position.charCodeAt(0) - 97;
         const rank = 8 - parseInt(position.charAt(1));
 

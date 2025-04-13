@@ -1,13 +1,14 @@
 // Экзотические барионы
 import {Baryon} from "../baryon.ts";
-import {Vector2D} from "../../../utils.ts";
 import {UpQuark} from "../../../quarks/upQuark.ts";
 import {DownQuark} from "../../../quarks/downQuark.ts";
 import {CharmQuark} from "../../../quarks/charmQuark.ts";
 import {AntiCharmQuark} from "../../../quarks/antiCharmQuark.ts";
+import {Vector2D} from "../../../../../../../../utils/math/2d.ts";
+
 
 export class PentaQuark extends Baryon {
-    constructor(position: Vector2D = { x: 0, y: 0 }) {
+    constructor(position: Vector2D = new Vector2D(0, 0)) {
         // Пентакварк Pc(4380)+ имеет заряд +1
         super(position, 4.38, 1, 1.5);
         this.color = { r: 255, g: 150, b: 0 };

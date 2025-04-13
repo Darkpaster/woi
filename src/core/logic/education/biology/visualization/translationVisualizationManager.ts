@@ -1,7 +1,7 @@
 import { TranslationSystem, TranslationSite } from '../cellBiology/translationSystem';
 import { Ribosome, RibosomeState } from '../cellBiology/ribosome';
 import { Cell } from '../cellBiology/cell';
-import {SimulationObject} from "../simulation/simulation.ts";
+import {SimulationObject} from "../simulations/simulation.ts";
 import {Point} from "../../../../../utils/math/2d.ts";
 import {GeneticEvent} from "../genetics/genetics.ts";
 
@@ -37,7 +37,7 @@ export class TranslationVisualizationManager implements SimulationObject {
 
     public update(deltaTime: number): void {
         // Check for user interaction to select a ribosome
-        // This would be handled by the main simulation loop and event listeners
+        // This would be handled by the main simulations loop and event listeners
 
         // Update codon visualizations if a ribosome is selected
         if (this.selectedRibosome) {

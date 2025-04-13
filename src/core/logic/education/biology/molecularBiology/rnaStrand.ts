@@ -1,6 +1,6 @@
 import {Point} from "../../../../../utils/math/2d.ts";
 import {Protein} from "./protein.ts";
-import {SimulationObject} from "../simulation/simulation.ts";
+import {SimulationObject} from "../simulations/simulation.ts";
 
 export enum RNAType {
     MESSENGER = 'mRNA',
@@ -102,7 +102,7 @@ export class RNAStrand implements SimulationObject {
         // Degrade RNA over time
         if (this.age >= this.maxAge) {
             // RNA degradation
-            // In a complete implementation, this would remove the RNA from the simulation
+            // In a complete implementation, this would remove the RNA from the simulations
         }
     }
 

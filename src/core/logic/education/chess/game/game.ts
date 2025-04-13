@@ -176,7 +176,7 @@ export class Game {
 
         // Restore captured piece if any
         if (lastMove.capturedPiece) {
-            this.board.setPiece(lastMove.to, lastMove.capturedPiece);
+            this.board.addPiece(lastMove.capturedPiece);
         }
 
         // Handle special move undos (castling, en passant)
@@ -244,7 +244,7 @@ export class Game {
         }
 
         // Set the new piece
-        this.board.setPiece(square, newPiece);
+        this.board.addPiece(newPiece);
 
         // Update the last move to reflect promotion
         if (this.moveHistory.length > 0) {
@@ -368,7 +368,7 @@ export class Game {
 
         // Undo en passant
         if (move.enPassant && move.capturedPiece) {
-            this.board.setPiece(move.enPassant, move.capturedPiece);
+            this.board.addPiece(move.capturedPiece);
         }
     }
 
@@ -494,7 +494,7 @@ export class Game {
         const kingSquare = color === Color.WHITE ? 'e1' : 'e8';
         const king = this.board.getPiece(kingSquare);
 
-        if (!king || king.type !== 'king' || king.hasMoved()) {
+        if (!king || king.type !== 'king' || king.hasMoved) {
             return false;
         }
 
@@ -504,7 +504,7 @@ export class Game {
             : (color === Color.WHITE ? 'a1' : 'a8');
         const rook = this.board.getPiece(rookSquare);
 
-        if (!rook || rook.type !== 'rook' || rook.hasMoved()) {
+        if (!rook || rook.type !== 'rook' || rook.hasMoved) {
             return false;
         }
 

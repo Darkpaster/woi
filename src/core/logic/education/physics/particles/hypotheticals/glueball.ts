@@ -1,5 +1,5 @@
 import { Particle } from '../particle.ts';
-import { Vector2D } from '../utils.ts';
+import {Vector2D} from "../../../../../../utils/math/2d.ts";
 
 export class Glueball extends Particle {
     protected glueballState: number;

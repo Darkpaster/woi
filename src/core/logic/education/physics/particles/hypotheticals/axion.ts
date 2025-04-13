@@ -1,4 +1,4 @@
-import {Vector2D} from "../utils.ts";
+import {Vector2D} from "../../../../../../utils/math/2d.ts";
 import {Boson} from "../bosons/boson.ts";
 import {Particle} from "../particle.ts";
 
@@ -6,7 +6,7 @@ export class Axion extends Boson {
     private phaseShift: number;
     private interactionRadius: number;
 
-    constructor(position: Vector2D = { x: 0, y: 0 }) {
+    constructor(position: Vector2D = new Vector2D(0, 0)) {
         // Аксионы: очень лёгкие, нейтральные, скалярные (спин 0)
         super(position, 0.000001, 0, 'weak');
         this.name = 'AX';

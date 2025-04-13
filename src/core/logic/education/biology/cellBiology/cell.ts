@@ -1,4 +1,4 @@
-import {BiologicalEntity, EntityType} from "../simulation/biologicalEntity.ts";
+import {BiologicalEntity, EntityType} from "../simulations/biologicalEntity.ts";
 import {CellOrganelle, Organelle} from "./organelle.ts";
 import {Protein} from "../molecularBiology/protein.ts";
 import {Molecule, MoleculeType} from "../molecularBiology/molecule.ts";

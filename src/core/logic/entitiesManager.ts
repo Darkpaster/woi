@@ -144,6 +144,9 @@ export class EntityManager {
 
     private getNearestKeys(x: number, y: number): string[] {
         const unit = Math.round(window.innerHeight / 2);
+        // const incrementValue = 2
+        // const width = window.innerWidth / scaledTileSize();
+        // const height = window.innerHeight / scaledTileSize();
         const result: string[] = [];
         const angles = [[x - unit, y - unit], [x - unit, y + unit], [x + unit, y - unit], [x + unit, y + unit]];
         for (const coor of angles) {
