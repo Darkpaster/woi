@@ -1,4 +1,8 @@
 import {SimulationEntity} from "../../../../../utils/simulation/simulationEntity.ts";
+import {Lexer} from "../compilers/lexer.ts";
+import {Parser} from "../compilers/parser.ts";
+import {Optimizer} from "../compilers/optimizer.ts";
+import {CodeGenerator} from "../compilers/codeGenerator.ts";
 
 export class Compiler extends SimulationEntity {
     protected sourceCode: string;

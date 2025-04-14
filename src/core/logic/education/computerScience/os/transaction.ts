@@ -1,3 +1,5 @@
+import {Operation} from "./operation.ts";
+
 export class Transaction {
     private id: string;
     private operations: Operation[];

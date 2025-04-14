@@ -1,3 +1,10 @@
+import {Service, ServiceStatus, ServiceType} from "../distributedSystems/service.ts";
+import {Message} from "../distributedSystems/message.ts";
+import {ConsensusAlgorithm, PartitionManager} from "../distributedSystems/partitionManager.ts";
+import {SimulationEntity} from "../../../../../utils/simulation/simulationEntity.ts";
+import {RaftConsensus} from "../distributedSystems/consensusAlgorithm.ts";
+import {NodeStatus} from "../distributedSystems/node.ts";
+
 export class DistributedSystem extends SimulationEntity {
     private nodes: Node[];
     private services: Service[];

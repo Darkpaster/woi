@@ -1,7 +1,8 @@
 import {Point} from "../../../../../utils/math/2d.ts";
 import {RenderOptions, Visualizable} from "../../../../../utils/math/graphics.ts";
 import {CoordinateSystem} from "../visualization/coordinateSystem.ts";
-import {MathObject} from "../mathObject.ts";
+import {MathObject} from "../../../../../utils/math/general.ts";
+import {f} from "../parser.ts";
 
 export namespace Calculus {
 
@@ -10,19 +11,91 @@ export namespace Calculus {
     /**
      * Базовый класс для математических функций
      */
-    export abstract class MathFunction extends MathObject implements Visualizable {
-        constructor(name: string, description?: string) {
+    export class MathFunction extends MathObject implements Visualizable {
+        protected expression = "";
+        // Map of function references where key is function name and value is the function expression
+        private static functionRefs: Map<string, MathFunction> = new Map();
+
+        constructor(expression: string = "x", name: string = "default", description?: string) {
             super(name, description);
+            this.expression = expression;
+
+            // Register this function by name if provided
+            if (name && name !== "default") {
+                MathFunction.functionRefs.set(name, this);
+            }
         }
 
-        abstract evaluate(x: number): number;
+        /**
+         * Evaluate the function at a given x value
+         */
+        public evaluate(x: number): number {
+            // const result = f(this.expression, { x: x });
+            // console.log("expression: "+this.expression + ", x: "+x+", result: " + result);
+            // return result
+            // For simple evaluation, defer to the parser
+            try {
+                // Check if the expression contains references to other functions
+                const compiledExpression = this.compileExpression();
+                return compiledExpression(x);
+            } catch (error) {
+                console.error(`Error evaluating function ${this.getName()} at x=${x}:`, error);
+                return NaN;
+            }
+        }
 
-        // Численное дифференцирование
+        /**
+         * Compile the expression into a callable function
+         */
+        private compileExpression(): (x: number) => number {
+            // This is a simplification - in a real implementation, you'd need to parse the expression
+            // and replace function references with actual function calls
+
+            // Return a function that evaluates the expression using the parser
+            return (x: number) => {
+                // Replace any function references in the expression with their values
+                let processedExpr = this.expression;
+
+                // Look for pattern like g(x) where g is a function name
+                const functionCallRegex = /([a-zA-Z_]\w*)\(x\)/g;
+                processedExpr = processedExpr.replace(functionCallRegex, (match, funcName) => {
+                    const referencedFunc = MathFunction.functionRefs.get(funcName);
+                    if (referencedFunc) {
+                        // Replace with the actual value at this x
+                        return referencedFunc.evaluate(x).toString();
+                    }
+                    return match; // Keep as is if function not found
+                });
+
+                // Now use the parser to evaluate the processed expression
+                return f(processedExpr, { x: x });
+            };
+        }
+
+        public setExpression(expression: string) {
+            this.expression = expression;
+        }
+
+        /**
+         * Register a function reference that can be used in expressions
+         */
+        public static registerFunction(name: string, func: MathFunction): void {
+            MathFunction.functionRefs.set(name, func);
+        }
+
+        /**
+         * Get a registered function by name
+         */
+        public static getFunction(name: string): MathFunction | undefined {
+            return MathFunction.functionRefs.get(name);
+        }
+
+        // Numerical differentiation
         derivative(x: number, h: number = 0.0001): number {
             return (this.evaluate(x + h) - this.evaluate(x - h)) / (2 * h);
         }
 
-        // Численное интегрирование (метод трапеций)
+        // Numerical integration (trapezoidal method)
         integrate(a: number, b: number, steps: number = 1000): number {
             if (a > b) {
                 [a, b] = [b, a];
@@ -40,12 +113,12 @@ export namespace Calculus {
             return sum * dx;
         }
 
-        // Визуализация функции на графике
+        // Visualize the function on a graph
         render(ctx: CanvasRenderingContext2D, options?: RenderOptions & {
-            xMin?: number;
-            xMax?: number;
-            yMin?: number;
-            yMax?: number;
+            xMin?: number,
+            xMax?: number,
+            yMin?: number,
+            yMax?: number,
             coordinateSystem?: CoordinateSystem;
             samples?: number;
         }): void {
@@ -59,20 +132,20 @@ export namespace Calculus {
             const origin = coordinateSystem.getOrigin();
             const scale = coordinateSystem.getScale();
 
-            // Определяем границы отображения
-            const xMin = options?.xMin ?? -Math.floor(origin.x / scale);
-            const xMax = options?.xMax ?? Math.floor((canvas.width - origin.x) / scale);
+            // Define display boundaries
+            const xMin = options?.xMin ?? -Math.floor(origin.x / scale.scaleX);
+            const xMax = options?.xMax ?? Math.floor((canvas.width - origin.x) / scale.scaleX);
             const samples = options?.samples ?? canvas.width;
 
             ctx.save();
 
-            // Рисуем график функции
+            // Draw function graph
             ctx.beginPath();
 
-            // Шаг по X в математических координатах
+            // X step in mathematical coordinates
             const dx = (xMax - xMin) / samples;
 
-            // Проходим по всем точкам от xMin до xMax
+            // Go through all points from xMin to xMax
             let isFirstPoint = true;
 
             for (let i = 0; i <= samples; i++) {
@@ -82,9 +155,9 @@ export namespace Calculus {
                 try {
                     y = this.evaluate(x);
 
-                    // Проверяем, что значение в пределах разумного диапазона
+                    // Check if the value is within a reasonable range
                     if (!isFinite(y) || isNaN(y)) {
-                        // Если функция не определена в этой точке, прерываем линию
+                        // If the function is not defined at this point, break the line
                         if (!isFirstPoint) {
                             ctx.stroke();
                             ctx.beginPath();
@@ -93,7 +166,7 @@ export namespace Calculus {
                         continue;
                     }
 
-                    // Преобразуем в экранные координаты
+                    // Convert to screen coordinates
                     const screenPoint = coordinateSystem.toScreenCoordinates(new Point(x, y));
 
                     if (isFirstPoint) {
@@ -103,7 +176,7 @@ export namespace Calculus {
                         ctx.lineTo(screenPoint.x, screenPoint.y);
                     }
                 } catch (error) {
-                    // Если возникла ошибка при вычислении, прерываем линию
+                    // If there was an error in calculation, break the line
                     if (!isFirstPoint) {
                         ctx.stroke();
                         ctx.beginPath();
@@ -116,22 +189,22 @@ export namespace Calculus {
             ctx.lineWidth = options?.strokeWidth || 2;
             ctx.stroke();
 
-            // Добавляем метку, если нужно
+            // Add a label if needed
             if (options?.showLabels && this.getName()) {
                 ctx.font = `${options?.fontSize || 12}px ${options?.fontFamily || 'Arial'}`;
                 ctx.fillStyle = options?.color || 'blue';
 
-                // Находим хорошую позицию для метки (в середине видимой части графика)
+                // Find a good position for the label (in the middle of the visible part of the graph)
                 const midX = (xMin + xMax) / 2;
                 let midY;
                 try {
                     midY = this.evaluate(midX);
                     const screenMidPoint = coordinateSystem.toScreenCoordinates(new Point(midX, midY));
 
-                    // Смещаем метку на несколько пикселей от графика
+                    // Offset the label by a few pixels from the graph
                     ctx.fillText(this.getName(), screenMidPoint.x + 5, screenMidPoint.y - 5);
                 } catch (error) {
-                    // Если не удалось вычислить значение в средней точке, размещаем метку в углу
+                    // If unable to calculate value at midpoint, place label in corner
                     ctx.fillText(this.getName(), origin.x + 10, origin.y - 10);
                 }
             }

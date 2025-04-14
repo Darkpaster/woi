@@ -1,4 +1,5 @@
 import {FSNode} from "./fsNode.ts";
+import {Directory} from "./directory.ts";
 
 export class File extends FSNode {
     private content: string;

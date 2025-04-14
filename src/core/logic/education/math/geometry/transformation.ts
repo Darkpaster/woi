@@ -1,7 +1,4 @@
-import {Polygon} from "./polygon.ts";
-import {Line} from "./line.ts";
-import {Geometry} from "./geometry.ts";
-import Point = Geometry.Point;
+import {Line, Point, Polygon} from "../../../../../utils/math/2d.ts";
 
 /**
  * Class for demonstrating geometric transformations
@@ -10,8 +7,8 @@ export class Transformation {
     // Apply translation to a point
     static translate(point: Point, dx: number, dy: number): Point {
         return new Point(
-            point.getX() + dx,
-            point.getY() + dy,
+            point.x + dx,
+            point.y + dy,
             `${point.getName()}'`
         );
     }
@@ -30,8 +27,8 @@ export class Transformation {
 
     // Apply rotation to a point around the origin
     static rotateAroundOrigin(point: Point, angle: number): Point {
-        const x = point.getX();
-        const y = point.getY();
+        const x = point.x;
+        const y = point.y;
 
         const cos = Math.cos(angle);
         const cos = Math.cos(angle);
@@ -46,13 +43,13 @@ export class Transformation {
     // Apply rotation to a point around another point
     static rotateAroundPoint(point: Point, center: Point, angle: number): Point {
         // Translate to origin
-        const translated = Transformation.translate(point, -center.getX(), -center.getY());
+        const translated = Transformation.translate(point, -center.x, -center.y);
 
         // Rotate around origin
         const rotated = Transformation.rotateAroundOrigin(translated, angle);
 
         // Translate back
-        return Transformation.translate(rotated, center.getX(), center.getY());
+        return Transformation.translate(rotated, center.x, center.y);
     }
 
     // Apply rotation to a polygon around a point
@@ -72,8 +69,8 @@ export class Transformation {
     // Apply scaling to a point relative to the origin
     static scaleFromOrigin(point: Point, sx: number, sy: number): Point {
         return new Point(
-            point.getX() * sx,
-            point.getY() * sy,
+            point.x * sx,
+            point.y * sy,
             `${point.getName()}'`
         );
     }
@@ -81,13 +78,13 @@ export class Transformation {
     // Apply scaling to a point relative to another point
     static scaleFromPoint(point: Point, center: Point, sx: number, sy: number): Point {
         // Translate to origin
-        const translated = Transformation.translate(point, -center.getX(), -center.getY());
+        const translated = Transformation.translate(point, -center.x, -center.y);
 
         // Scale
         const scaled = Transformation.scaleFromOrigin(translated, sx, sy);
 
         // Translate back
-        return Transformation.translate(scaled, center.getX(), center.getY());
+        return Transformation.translate(scaled, center.x, center.y);
     }
 
     // Apply scaling to a polygon
@@ -110,8 +107,8 @@ export class Transformation {
         const b = line.getB();
         const c = line.getC();
 
-        const x = point.getX();
-        const y = point.getY();
+        const x = point.x;
+        const y = point.y;
 
         // Calculate the closest point on the line (projection)
         const denominator = a * a + b * b;

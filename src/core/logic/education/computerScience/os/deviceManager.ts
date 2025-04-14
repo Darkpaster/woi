@@ -1,3 +1,5 @@
+import {Device} from "./device.ts";
+
 export class DeviceManager {
     private devices: Device[];
 

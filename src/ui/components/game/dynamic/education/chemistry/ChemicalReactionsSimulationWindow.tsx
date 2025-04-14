@@ -1,10 +1,13 @@
 import {useEffect} from "react";
-import {Visualization} from "../../../../../core/logic/education/math/visualization/visualization.ts";
+import {
+    ChemistrySimulationApp
+} from "../../../../../../core/logic/education/chemistry/simulations/baseChemistrySimulation.ts";
 
 export const ChemicalReactionsSimulationWindow = () => {
     useEffect(() => {
-        const simulation = new Visualization.MathCanvas();
+        const simulation = new ChemistrySimulationApp("chemistry-canvas");
         try {
+            simulation.start();
 
             const stopButton = document.getElementById('stop-button');
             const startButton = document.getElementById('start-button');
@@ -25,12 +28,12 @@ export const ChemicalReactionsSimulationWindow = () => {
     }, []);
     return (
         <div className={"ui-div"}>
-            <h1>Визуализация математики</h1>
-    <canvas id="math-canvas"></canvas>
-        <div className="controls">
-    <button id="stop-button" className={"ui-div"}>остановить</button>
-        <button id="start-button" className={"ui-div"}>запустить</button>
+            <h1>Симуляция химических реакций</h1>
+            <canvas id="chemistry-canvas"></canvas>
+            <div className="controls">
+                <button id="stop-button" className={"ui-div"}>остановить</button>
+                <button id="start-button" className={"ui-div"}>запустить</button>
+            </div>
         </div>
-        </div>
-)
+    )
 }

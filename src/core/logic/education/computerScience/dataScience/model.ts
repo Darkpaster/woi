@@ -1,3 +1,6 @@
+import {Dataset} from "./dataset.ts";
+import {PredictionResult} from "./computeResource.ts";
+
 export class Model {
     private id: string;
     private name: string;

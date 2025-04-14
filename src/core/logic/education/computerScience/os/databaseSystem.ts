@@ -1,4 +1,10 @@
 import {SimulationEntity} from "../../../../../utils/simulation/simulationEntity.ts";
+import {Table} from "./table.ts";
+import {Index} from "./index.ts";
+import {Transaction} from "./transaction.ts";
+import {QueryExecutor} from "./queryExecutor.ts";
+import {Column} from "./column.ts";
+import {QueryResult} from "./queryResult.ts";
 
 export class DatabaseSystem extends SimulationEntity {
     private tables: Table[];

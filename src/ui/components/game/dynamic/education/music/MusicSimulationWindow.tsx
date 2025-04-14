@@ -1,17 +1,15 @@
 import {useEffect} from "react";
-import {SoundFontPlayer} from "../../../../../core/logic/education/music/visualization/soundFontPlayer.ts";
-import {Metronome} from "../../../../../core/logic/education/music/visualization/metronome.ts";
-import {ScoreEditor} from "../../../../../core/logic/education/music/visualization/scoreEditor.ts";
+import {PianoRoll} from "../../../../../../core/logic/education/music/visualization/pianoRoll.ts";
 
 export const MusicSimulationWindow = () => {
     useEffect(() => {
-        // const piano = new PianoRoll("music-canvas");
+        const piano = new PianoRoll("music-canvas");
         // const midi = new MIDIVisualizer("music-canvas");
         // const soundFontPlayer = new SoundFontPlayer();
         // const metronome = new Metronome("music-canvas")
         // const scoreEditor = new ScoreEditor("music-canvas")
         try {
-            // piano.render();
+            piano.render();
             // midi.render()
             // soundFontPlayer.playNote({pitch: "C4", duration: 1024, startTime: 100, velocity: 55});
 

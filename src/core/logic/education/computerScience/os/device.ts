@@ -1,3 +1,5 @@
+import {DeviceRequest} from "./deviceRequest.ts";
+
 export abstract class Device {
     protected name: string;
     protected busy: boolean;

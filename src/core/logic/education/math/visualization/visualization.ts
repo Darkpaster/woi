@@ -1,11 +1,8 @@
-import {Geometry} from "../geometry/geometry.ts";
 import {CoordinateSystem} from "./coordinateSystem.ts";
 import {RenderOptions, Visualizable} from "../../../../../utils/math/graphics.ts";
+import {Point} from "../../../../../utils/math/2d.ts";
 
 export namespace Visualization {
-
-    import Point = Geometry.Point;
-
     /**
      * Class for mathematical canvas to visualize geometric objects
      */
@@ -13,7 +10,7 @@ export namespace Visualization {
         private canvas: HTMLCanvasElement;
         private ctx: CanvasRenderingContext2D;
         private coordinateSystem: CoordinateSystem;
-        private objects: Array<Visualizable & { renderOptions?: RenderOptions }>;
+        private objects: Array<{ object: Visualizable, options: RenderOptions }>;
         private animationFrameId: number | null = null;
         private eventListeners: { [key: string]: Function[] } = {};
 
@@ -36,6 +33,9 @@ export namespace Visualization {
                 this.canvas = canvasElement;
             }
 
+            this.canvas.width = 600;
+            this.canvas.height = 600;
+
             const context = this.canvas.getContext('2d');
             if (!context) {
                 throw new Error('Failed to get canvas 2D context');
@@ -44,11 +44,10 @@ export namespace Visualization {
 
             // Initialize coordinate system with default values if not provided
             this.coordinateSystem = new CoordinateSystem(
-                originX ?? this.canvas.width / 2,
-                originY ?? this.canvas.height / 2,
+                new Point(originX ?? this.canvas.width / 2, originY ?? this.canvas.height / 2),
                 scaleX ?? 50,
                 scaleY ?? 50,
-                invertY
+                // invertY
             );
 
             // Initialize objects array
@@ -84,13 +83,19 @@ export namespace Visualization {
 
         // Add a visualizable object to the canvas
         addObject(object: Visualizable, renderOptions?: RenderOptions): void {
-            this.objects.push({ ...object, renderOptions });
+            if (typeof object.render !== 'function') {
+                console.error('Object does not have a render method', object);
+                return;
+            }
+
+            this.objects.push({ object: object, options: renderOptions });
+
             this.render();
         }
 
         // Remove an object from the canvas
         removeObject(object: Visualizable): boolean {
-            const index = this.objects.findIndex(o => o === object);
+            const index = this.objects.findIndex(o => o.object === object);
 
             if (index >= 0) {
                 this.objects.splice(index, 1);
@@ -109,30 +114,27 @@ export namespace Visualization {
 
         // Convert screen coordinates to math coordinates
         screenToMath(x: number, y: number): Point {
-            return this.coordinateSystem.toMathCoordinates({ x, y });
+            return this.coordinateSystem.toMathCoordinates(new Point(x, y));
         }
 
         // Convert math coordinates to screen coordinates
-        mathToScreen(point: Point): Geometry.ScreenPoint {
+        mathToScreen(point: Point): Point {
             return this.coordinateSystem.toScreenCoordinates(point);
         }
 
         // Render all objects
         render(): void {
-            // Clear canvas
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-            // Draw coordinate system
             this.coordinateSystem.render(this.ctx, {
                 showGrid: true,
                 showAxes: true,
                 showLabels: true
             });
 
-            // Draw all objects
-            for (const obj of this.objects) {
-                obj.render(this.ctx, {
-                    ...obj.renderOptions,
+            for (const item of this.objects) {
+                item.object.render(this.ctx, {
+                    ...item.options,
                     coordinateSystem: this.coordinateSystem
                 });
             }
@@ -156,7 +158,7 @@ export namespace Visualization {
                 const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
 
                 // Zoom coordinate system around mouse position
-                this.coordinateSystem.zoom(zoomFactor, mouseX, mouseY);
+                this.coordinateSystem.zoom(zoomFactor, mouseX, mouseY); //zoom тоже надо создать
 
                 // Trigger zoom event
                 this.triggerEvent('zoom', { factor: zoomFactor, x: mouseX, y: mouseY });
@@ -185,15 +187,15 @@ export namespace Visualization {
                 this.triggerEvent('mousemove', {
                     x: mouseX,
                     y: mouseY,
-                    mathX: mathPoint.getX(),
-                    mathY: mathPoint.getY()
+                    mathX: mathPoint.x,
+                    mathY: mathPoint.y
                 });
 
                 if (isDragging) {
                     const dx = e.clientX - lastX;
                     const dy = e.clientY - lastY;
 
-                    this.coordinateSystem.pan(dx, dy);
+                    this.coordinateSystem.pan(dx, dy); // функцию pan тоже надо создать
 
                     // Trigger pan event
                     this.triggerEvent('pan', { dx, dy });
@@ -242,11 +244,10 @@ export namespace Visualization {
                 const newOriginY = origin.y * (this.canvas.height / oldHeight);
 
                 this.coordinateSystem = new CoordinateSystem(
-                    newOriginX,
-                    newOriginY,
-                    this.coordinateSystem.getScaleX(),
-                    this.coordinateSystem.getScaleY(),
-                    true
+                    new Point(newOriginX, newOriginY),
+                    this.coordinateSystem.getScale().scaleX,
+                    this.coordinateSystem.getScale().scaleY,
+                    // true
                 );
 
                 // Re-render

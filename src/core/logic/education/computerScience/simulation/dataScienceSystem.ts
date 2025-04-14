@@ -1,3 +1,10 @@
+import {SimulationEntity} from "../../../../../utils/simulation/simulationEntity.ts";
+import {Dataset, DatasetType} from "../dataScience/dataset.ts";
+import {Model, ModelStatus, ModelType} from "../dataScience/model.ts";
+import {Pipeline, PipelineStatus} from "../dataScience/pipeline.ts";
+import {ComputeResource, ComputeResourceType, PipelineResult, TrainingResult} from "../dataScience/computeResource.ts";
+import {Visualization, VisualizationType} from "../dataScience/visualization.ts";
+
 export class DataScienceSystem extends SimulationEntity {
     private datasets: Dataset[];
     private models: Model[];

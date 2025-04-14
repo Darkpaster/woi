@@ -1,7 +1,7 @@
 import {useEffect} from "react";
 import {
     SimpleParticleSimulation
-} from "../../../../../core/logic/education/physics/visualization/particles/draft/simpleParticleSimulation.ts";
+} from "../../../../../../core/logic/education/physics/visualization/particles/draft/simpleParticleSimulation.ts";
 
 
 export const SimpleParticleSimulationWindow = () => {

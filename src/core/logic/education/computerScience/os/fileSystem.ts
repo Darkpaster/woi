@@ -1,3 +1,6 @@
+import {Directory} from "./directory.ts";
+import {FSNode} from "./fsNode.ts";
+
 export class FileSystem {
     private root: Directory;
     private currentDirectory: Directory;

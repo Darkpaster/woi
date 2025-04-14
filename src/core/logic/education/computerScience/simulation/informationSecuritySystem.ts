@@ -1,3 +1,10 @@
+import {SimulationEntity} from "../../../../../utils/simulation/simulationEntity.ts";
+import {User, UserRole} from "../informationSecurity/user.ts";
+import {ResourceType, SecureResource, SensitivityLevel} from "../informationSecurity/secureResource.ts";
+import {AccessControlList, Permission} from "../informationSecurity/accessControlList.ts";
+import {Attack, AttackType} from "../informationSecurity/attack.ts";
+import {SecurityEventType, SecurityLog} from "../informationSecurity/securityLog.ts";
+
 export class InformationSecuritySystem extends SimulationEntity {
     private users: User[];
     private resources: SecureResource[];

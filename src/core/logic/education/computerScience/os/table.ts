@@ -1,3 +1,5 @@
+import {Column} from "./column.ts";
+
 export class Table {
     private name: string;
     private columns: Column[];

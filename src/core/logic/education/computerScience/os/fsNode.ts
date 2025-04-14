@@ -1,3 +1,5 @@
+import {Directory} from "./directory.ts";
+
 export abstract class FSNode {
     protected name: string;
     protected parent: Directory | null;

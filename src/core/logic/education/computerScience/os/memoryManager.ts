@@ -1,4 +1,5 @@
 import {Process} from "../concurrency/process.ts";
+import {MemoryBlock} from "./memoryBlock.ts";
 
 export class MemoryManager {
     private totalMemory: number;

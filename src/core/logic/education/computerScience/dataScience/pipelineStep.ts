@@ -1,3 +1,5 @@
+import {ComputeResource} from "./computeResource.ts";
+
 export class PipelineStep {
     private id: string;
     private name: string;

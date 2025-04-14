@@ -1,5 +1,6 @@
-import { Visualizer, VisualizationOptions, DEFAULT_VISUALIZATION_OPTIONS } from './visualizer';
 import {Note} from "./musicNotation.ts";
+import {Visualizer} from "./visualizer.ts";
+import {DEFAULT_VISUALIZATION_OPTIONS, VisualizationOptions} from "../../../../../utils/math/graphics.ts";
 
 export interface PianoRollOptions extends VisualizationOptions {
     keyboardVisible: boolean;

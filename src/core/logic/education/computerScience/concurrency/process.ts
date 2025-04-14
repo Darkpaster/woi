@@ -1,5 +1,7 @@
 // Concurrency section
 import {SimulationEntity} from "../../../../../utils/simulation/simulationEntity.ts";
+import {Resource} from "./resource.ts";
+import {Instruction} from "./instruction.ts";
 
 export class Process extends SimulationEntity {
     protected state: ProcessState;

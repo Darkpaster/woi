@@ -1,4 +1,4 @@
-import {Scheduler} from "./concurrencySimulator.ts";
+import {Scheduler} from "../simulation/concurrencySimulator.ts";
 import {Process, ProcessState} from "./process.ts";
 
 export class RoundRobinScheduler implements Scheduler {

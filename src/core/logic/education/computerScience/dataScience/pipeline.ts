@@ -1,3 +1,5 @@
+import {PipelineStep, PipelineStepType} from "./pipelineStep.ts";
+
 export class Pipeline {
     private id: string;
     private name: string;

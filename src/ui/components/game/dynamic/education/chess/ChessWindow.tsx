@@ -1,8 +1,8 @@
 import {useEffect} from "react";
-import {ChessRenderer} from "../../../../../core/logic/education/chess/visualization/chessRenderer.ts";
-import {Board} from "../../../../../core/logic/education/chess/board/board.ts";
-import {ChessController} from "../../../../../core/logic/education/chess/game/chessController.ts";
-import {Game} from "../../../../../core/logic/education/chess/game/game.ts";
+import {ChessRenderer} from "../../../../../../core/logic/education/chess/visualization/chessRenderer.ts";
+import {Board} from "../../../../../../core/logic/education/chess/board/board.ts";
+import {ChessController} from "../../../../../../core/logic/education/chess/game/chessController.ts";
+import {Game} from "../../../../../../core/logic/education/chess/game/game.ts";
 
 
 export const ChessWindow = () => {

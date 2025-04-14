@@ -595,12 +595,6 @@ class MathExpressionParser {
     }
 }
 
-let expression: string = "x";
-
-export function setExpression(exp: string) {
-    expression = exp;
-}
-
-export function f(x: number): number {
-    return MathExpressionParser.evaluate(expression, { "x": x });
+export function f(expression: string, variables: {[key: string]: number}): number {
+    return MathExpressionParser.evaluate(expression, variables);
 }

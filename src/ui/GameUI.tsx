@@ -10,12 +10,11 @@ import uiSlice, {toggleInventory} from "../utils/stateManagement/uiSlice.ts";
 import {useMyDispatch, useMySelector} from "../utils/stateManagement/store.ts";
 import Auth from "./layouts/Auth.tsx";
 import {InGame} from "./layouts/InGame.tsx";
-import {ParticleSimulationWindow} from "./components/game/dynamic/education/ParticleSimulationWindow.tsx";
-import {ChessWindow} from "./components/game/dynamic/education/ChessWindow.tsx";
+import {MusicSimulationWindow} from "./components/game/dynamic/education/music/MusicSimulationWindow.tsx";
 import {
-    ChemicalReactionsSimulationWindow
-} from "./components/game/dynamic/education/ChemicalReactionsSimulationWindow.tsx";
-import {MusicSimulationWindow} from "./components/game/dynamic/education/MusicSimulationWindow.tsx";
+    SimpleInformationSecutirySimulation
+} from "./components/game/dynamic/education/computerScience/SimpleInformationSecutirySimulation.tsx";
+import {ChessWindow} from "./components/game/dynamic/education/chess/ChessWindow.tsx";
 
 export type EntityType = Item | Actor | Skill;
 
@@ -145,6 +144,6 @@ export const GameUI: React.FC = () => {
     }
 
     return (
-        particle ? (<MusicSimulationWindow></MusicSimulationWindow>) : (anotherModule())
+        particle ? (<ChessWindow></ChessWindow>) : (anotherModule())
     );
 };

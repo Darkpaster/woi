@@ -1,20 +1,5 @@
-export interface VisualizationOptions {
-    width: number;
-    height: number;
-    backgroundColor: string;
-    foregroundColor: string;
-    fontFamily: string;
-    fontSize: number;
-}
+import {DEFAULT_VISUALIZATION_OPTIONS, VisualizationOptions} from "../../../../../utils/math/graphics.ts";
 
-export const DEFAULT_VISUALIZATION_OPTIONS: VisualizationOptions = {
-    width: 800,
-    height: 400,
-    backgroundColor: '#282c34',
-    foregroundColor: '#61dafb',
-    fontFamily: 'Arial, sans-serif',
-    fontSize: 12
-};
 
 export abstract class Visualizer {
     protected canvas: HTMLCanvasElement;

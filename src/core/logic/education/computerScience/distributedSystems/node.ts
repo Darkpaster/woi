@@ -1,3 +1,5 @@
+import {Message} from "./message.ts";
+
 export class Node {
     private name: string;
     private status: NodeStatus;

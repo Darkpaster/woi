@@ -1,7 +1,9 @@
 import {SimulationEntity} from "../../../../../utils/simulation/simulationEntity.ts";
 import {Process, ProcessState} from "../concurrency/process.ts";
-import {Scheduler} from "../concurrency/concurrencySimulator.ts";
+import {Scheduler} from "../simulation/concurrencySimulator.ts";
 import {RoundRobinScheduler} from "../concurrency/roundRobinShedulder.ts";
+import {MemoryManager} from "./memoryManager.ts";
+import {DeviceManager} from "./deviceManager.ts";
 
 export class OperatingSystem extends SimulationEntity {
     private processes: Process[];

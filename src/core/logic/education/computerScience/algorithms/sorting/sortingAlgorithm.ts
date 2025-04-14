@@ -30,4 +30,7 @@ export class SortingAlgorithm extends Algorithm {
     public getSwaps(): number {
         return this.swaps;
     }
+
+    initialize(): void {
+    }
 }

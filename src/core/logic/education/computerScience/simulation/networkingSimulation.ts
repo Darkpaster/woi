@@ -1,8 +1,8 @@
 import {SimulationEntity} from "../../../../../utils/simulation/simulationEntity.ts";
-import {NetworkNode} from "./networkNode.ts";
-import {Connection} from "./connection.ts";
-import {Packet} from "./packet.ts";
-import {Protocol} from "./protocol.ts";
+import {NetworkNode} from "../networking/networkNode.ts";
+import {Connection} from "../networking/connection.ts";
+import {Packet} from "../networking/packet.ts";
+import {Protocol} from "../networking/protocol.ts";
 
 export class NetworkSimulator extends SimulationEntity {
     private nodes: NetworkNode[];
