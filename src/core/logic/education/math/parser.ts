@@ -34,7 +34,7 @@ interface Variable extends Node {
 }
 
 interface Token {
-    type: 'number' | 'operator' | 'leftParen' | 'rightParen' | 'comma' | 'identifier';
+    type: 'number' | 'operator' | 'leftParen' | 'rightParen' | 'comma' | 'identifier' | 'rightBracket' | 'leftBracket';
     value: string;
 }
 
@@ -218,12 +218,12 @@ class Parser {
     //     return false;
     // }
 
-    private expect(tokenType: string, message: string): Token {
+    private expect(tokenTypes: string[], message: string): Token {
         const token = this.peek();
-        if (token && token.type === tokenType) {
+        if (token && tokenTypes.includes(token.type)) {
             return this.consume();
         }
-        throw new Error(message || `Expected ${tokenType} but found ${token?.type || 'end of expression'}`);
+        throw new Error(message || `Expected ${tokenTypes} but found ${token?.type || 'end of expression'}`);
     }
 
     public parse(): Node {
@@ -313,7 +313,8 @@ class Parser {
             const identifier = this.consume().value;
 
             // Если за идентификатором следует открывающая скобка, это вызов функции
-            if (this.peek()?.type === 'leftParen') {
+            const t = this.peek()?.type;
+            if (t === 'leftParen' || t === 'leftBracket') {
                 return this.parseFunction(identifier);
             }
 
@@ -328,7 +329,7 @@ class Parser {
         if (token.type === 'leftParen') {
             this.consume(); // Потребляем '('
             const expression = this.parseExpression();
-            this.expect('rightParen', "Expected ')' after expression");
+            this.expect(['rightParen'], "Expected ')' after expression");
             return expression;
         }
 
@@ -336,7 +337,7 @@ class Parser {
     }
 
     private parseFunction(name: string): Node {
-        this.expect('leftParen', `Expected '(' after function name '${name}'`);
+        this.expect(['leftParen', 'leftBracket'], `Expected '( | {' after function name '${name}'`);
         const args: Node[] = [];
 
         // Проверяем, есть ли аргументы
@@ -351,7 +352,7 @@ class Parser {
             }
         }
 
-        this.expect('rightParen', `Expected ')' after arguments of function '${name}'`);
+        this.expect(['rightParen', 'rightBracket'], `Expected ')' after arguments of function '${name}'`);
 
         return {
             type: 'FunctionCall',

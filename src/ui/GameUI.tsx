@@ -15,6 +15,12 @@ import {
     SimpleInformationSecutirySimulation
 } from "./components/game/dynamic/education/computerScience/SimpleInformationSecutirySimulation.tsx";
 import {ChessWindow} from "./components/game/dynamic/education/chess/ChessWindow.tsx";
+import {
+    SimpleMathVisualizationWindow
+} from "./components/game/dynamic/education/math/SimpleMathVisualizationWindow.tsx";
+import {
+    SimpleEngineeringSimulationWindow
+} from "./components/game/dynamic/education/engineering/SimpleEngineeringSimulationWindow.tsx";
 
 export type EntityType = Item | Actor | Skill;
 
@@ -144,6 +150,6 @@ export const GameUI: React.FC = () => {
     }
 
     return (
-        particle ? (<ChessWindow></ChessWindow>) : (anotherModule())
+        particle ? (<SimpleEngineeringSimulationWindow></SimpleEngineeringSimulationWindow>) : (anotherModule())
     );
 };
