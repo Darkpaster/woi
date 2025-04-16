@@ -1,6 +1,6 @@
 import {settings} from "../../../core/config/settings.ts";
 
-export const SettingsWindow = () => {
+const SettingsWindow = () => {
 
     return (
         <div className={"ui-div settings-div"}>
@@ -42,3 +42,5 @@ export const SettingsWindow = () => {
         </div>
     )
 }
+
+export default SettingsWindow;

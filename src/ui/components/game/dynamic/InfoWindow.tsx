@@ -10,7 +10,7 @@ interface InfoWindowProps {
     position: { left: number; top: number };
 }
 
-export const InfoWindow: React.FC<InfoWindowProps> = ({entity, position}: InfoWindowProps) => {
+const InfoWindow: React.FC<InfoWindowProps> = ({entity, position}: InfoWindowProps) => {
     const divRef = useRef<HTMLDivElement>(null);
 
     const getColor = (rarity: string) => {
@@ -56,3 +56,5 @@ export const InfoWindow: React.FC<InfoWindowProps> = ({entity, position}: InfoWi
         </div>
     );
 }
+
+export default InfoWindow;

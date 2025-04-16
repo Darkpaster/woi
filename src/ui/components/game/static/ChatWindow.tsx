@@ -3,7 +3,7 @@ import {io, Socket} from "socket.io-client";
 import {entityManager, gameRTC, initWS, player} from "../../../../core/main.ts";
 import {isMounted} from "../../../GameUI.tsx";
 import {actions} from "../../../input/input.ts";
-import {MessageBubble} from "../dynamic/MessageBubble.tsx";
+import MessageBubble from "../dynamic/MessageBubble.tsx";
 
 export type messageType = {
     senderId: number,
@@ -15,7 +15,7 @@ export type messageType = {
 
 const check = isMounted();
 
-export const ChatWindow: React.FC = () => {
+const ChatWindow: React.FC = () => {
 
     const [ws, setWs] = useState<null | Socket<never, never>>(null);
     const [messages, setMessages] = useState<messageType[]>([]);
@@ -114,3 +114,5 @@ export const ChatWindow: React.FC = () => {
 
     );
 };
+
+export default ChatWindow;

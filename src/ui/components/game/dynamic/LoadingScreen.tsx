@@ -1,6 +1,5 @@
 
-
-export const LoadingScreen = () => {
+const LoadingScreen = () => {
     return (
         <div id={"loading-div"}>
             <br/>
@@ -8,3 +7,5 @@ export const LoadingScreen = () => {
         </div>
     )
 }
+
+export default LoadingScreen;

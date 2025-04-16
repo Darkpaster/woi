@@ -1,0 +1,535 @@
+// src/styles/main.scss
+
+// Переменные
+$primary-color: #4CAF50;
+$secondary-color: #2196F3;
+$advanced-color: #f44336;
+$light-gray: #f0f0f0;
+$medium-gray: #ccc;
+$dark-gray: #666;
+$white: #ffffff;
+$black: #000000;
+
+$font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+$border-radius: 4px;
+$box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+$transition: all 0.3s ease;
+
+// Миксины
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin button-base {
+  padding: 8px 15px;
+  border: none;
+  border-radius: $border-radius;
+  cursor: pointer;
+  transition: $transition;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+@mixin card {
+  background-color: $white;
+  border-radius: $border-radius;
+  padding: 15px;
+  box-shadow: $box-shadow;
+}
+
+// Базовые стили
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: $font-family;
+  line-height: 1.6;
+  color: $black;
+  background-color: $light-gray;
+  min-height: 100vh;
+}
+
+// Общие компоненты
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.header {
+  background-color: $primary-color;
+  color: $white;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+  h1 {
+    margin: 0;
+    font-size: 1.8rem;
+  }
+}
+
+.container {
+  display: flex;
+  flex: 1;
+  min-height: 0; // Важно для Flex-контейнеров, чтобы дочерние элементы не выходили за границы
+}
+
+// Стили для панели инструментов
+.tools-panel {
+  width: 220px;
+  background-color: $white;
+  padding: 15px;
+  border-right: 1px solid $medium-gray;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+
+  .tools-section {
+    margin-bottom: 15px;
+  }
+
+  .tool-button {
+    @include button-base;
+    display: block;
+    width: 100%;
+    margin-bottom: 5px;
+    text-align: left;
+    background-color: $light-gray;
+
+    &.active {
+      background-color: $secondary-color;
+      color: $white;
+    }
+  }
+
+  .color-control, .line-width-control {
+    margin: 15px 0;
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: $dark-gray;
+    }
+
+    input[type="color"] {
+      width: 100%;
+      height: 40px;
+      border: 1px solid $medium-gray;
+      border-radius: $border-radius;
+    }
+
+    input[type="range"] {
+      width: 100%;
+    }
+  }
+
+  .action-buttons {
+    margin-top: auto;
+    padding-top: 15px;
+
+    button {
+      @include button-base;
+      width: 100%;
+      margin-bottom: 8px;
+      background-color: $secondary-color;
+      color: $white;
+
+      &:nth-child(3) { // Кнопка очистки
+        background-color: $advanced-color;
+      }
+
+      &:last-child { // Кнопка сохранения
+        background-color: $primary-color;
+      }
+    }
+  }
+}
+
+// Стили для холста
+.canvas-container {
+  flex: 1;
+  position: relative;
+  background-color: #f9f9f9;
+  overflow: hidden;
+  border: 1px solid $medium-gray;
+
+  canvas {
+    display: block;
+    background-color: $white;
+    width: 100%;
+    height: 100%;
+    cursor: crosshair;
+  }
+}
+
+// Стили для панели уроков
+.lessons-panel {
+  width: 320px;
+  background-color: $white;
+  padding: 15px;
+  border-left: 1px solid $medium-gray;
+  overflow-y: auto;
+
+  h2 {
+    color: $primary-color;
+    margin-bottom: 15px;
+    border-bottom: 2px solid $light-gray;
+    padding-bottom: 8px;
+  }
+
+  .lesson-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .lesson-card {
+    @include card;
+    transition: $transition;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    &.beginner {
+      border-left: 5px solid $primary-color;
+    }
+
+    &.intermediate {
+      border-left: 5px solid $secondary-color;
+    }
+
+    &.advanced {
+      border-left: 5px solid $advanced-color;
+    }
+
+    h3 {
+      margin-top: 0;
+      color: $black;
+      font-size: 1.1rem;
+    }
+
+    .lesson-category, .lesson-difficulty {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.9rem;
+      color: $dark-gray;
+    }
+
+    .lesson-progress {
+      margin: 12px 0;
+
+      .progress-bar {
+        height: 8px;
+        background-color: $light-gray;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 5px;
+
+        .progress-value {
+          height: 100%;
+          background-color: $primary-color;
+          border-radius: 10px;
+        }
+      }
+
+      span {
+        font-size: 0.8rem;
+        color: $dark-gray;
+      }
+    }
+
+    .start-lesson-btn {
+      @include button-base;
+      width: 100%;
+      background-color: $primary-color;
+      color: $white;
+      text-align: center;
+      padding: 8px 0;
+      margin-top: 8px;
+    }
+  }
+}
+
+// Стили для панели обратной связи
+.feedback-panel {
+  .step-info {
+    .hints-list {
+      list-style-type: disc;
+      padding-left: 20px;
+      margin-bottom: 15px;
+
+      li {
+        margin-bottom: 5px;
+        color: $dark-gray;
+      }
+    }
+
+    .step-duration {
+      font-style: italic;
+      color: $dark-gray;
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+  }
+
+  .reference-image {
+    margin-bottom: 20px;
+
+    h5 {
+      margin-bottom: 8px;
+      color: $primary-color;
+    }
+
+    img {
+      max-width: 100%;
+      border-radius: $border-radius;
+      border: 1px solid $medium-gray;
+      box-shadow: $box-shadow;
+    }
+  }
+
+  .navigation-buttons {
+    @include flex-center;
+    justify-content: space-between;
+    margin-top: 20px;
+
+    button {
+      @include button-base;
+      background-color: $secondary-color;
+      color: $white;
+      padding: 10px 15px;
+      min-width: 120px;
+
+      &:first-child {
+        background-color: $light-gray;
+        color: $dark-gray;
+      }
+
+      &:nth-child(2) {
+        background-color: $dark-gray;
+      }
+
+      &:last-child {
+        background-color: $primary-color;
+      }
+    }
+  }
+}
+
+// Стили для сообщения о завершении урока
+.lesson-complete {
+  @include card;
+  text-align: center;
+  max-width: 600px;
+  margin: 30px auto;
+  padding: 25px;
+  background-color: #e8f5e9;
+
+  h3 {
+    color: $primary-color;
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+  }
+
+  p {
+    color: $dark-gray;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+  }
+
+  button {
+    @include button-base;
+    background-color: $primary-color;
+    color: $white;
+    padding: 10px 20px;
+    font-size: 1rem;
+  }
+}
+
+// Медиа-запросы для адаптивности
+@media (max-width: 1200px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .tools-panel {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid $medium-gray;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 10px;
+
+    .tools-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-right: 10px;
+    }
+
+    .tool-button {
+      width: auto;
+      margin-right: 5px;
+    }
+
+    .color-control, .line-width-control {
+      margin: 5px 10px;
+      min-width: 150px;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 5px;
+      padding-top: 0;
+
+      button {
+        width: auto;
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .lessons-panel {
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid $medium-gray;
+
+    .lesson-grid {
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+  }
+
+  .feedback-panel {
+    .navigation-buttons {
+      flex-direction: row;
+
+      button {
+        margin: 0 5px;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .tools-panel {
+    .tools-section {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    .color-control, .line-width-control {
+      width: 45%;
+    }
+
+    .action-buttons {
+      width: 100%;
+      margin-top: 10px;
+    }
+  }
+
+  .feedback-panel {
+    .navigation-buttons {
+      flex-direction: column;
+
+      button {
+        width: 100%;
+        margin: 5px 0;
+      }
+    }
+  }
+
+  .lesson-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+// Анимации для улучшения UX
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromBottom {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.lesson-card {
+  animation: fadeIn 0.3s ease;
+}
+
+.feedback-panel:not(.empty) {
+  animation: slideInFromBottom 0.4s ease;
+}
+
+// Дополнительные стили для активных состояний и hover-эффектов
+.tool-button:hover {
+  background-color: darken($light-gray, 5%);
+
+  &.active:hover {
+    background-color: darken($secondary-color, 5%);
+  }
+}
+
+.navigation-buttons button:hover {
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.start-lesson-btn:hover {
+  background-color: darken($primary-color, 5%);
+}
+
+// Стили для инструкций и подсказок
+.instruction-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  max-width: 80%;
+  text-align: center;
+  z-index: 100;
+
+  h3 {
+    color: $primary-color;
+    margin-bottom: 10px;
+  }
+
+  p {
+    margin-bottom: 15px;
+  }
+
+  button {
+    @include button-base;
+    background-color: $primary-color;
+    color: $white;
+  }
+}

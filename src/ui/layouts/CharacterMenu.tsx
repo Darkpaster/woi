@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from "react";
 import Player from "../../core/logic/actors/player.ts";
 import {entityManager, init} from "../../core/main.ts";
-import {LoadingScreen} from "../components/game/dynamic/LoadingScreen.tsx";
 import UseInitAPI from "../service/hooks/initAPI.ts";
 import Wanderer from "../../core/logic/actors/characters/wanderer.ts";
 import axios from "axios";
 import {SmallPotionOfHealing} from "../../core/logic/items/consumable/potions/smallPotionOfHealing.ts";
 import BlueSlime from "../../core/logic/actors/mobs/enemies/blueSlime.ts";
+import LoadingScreen from "../components/game/dynamic/LoadingScreen.tsx";
 
 export type ItemPosition = {
     itemId: number,

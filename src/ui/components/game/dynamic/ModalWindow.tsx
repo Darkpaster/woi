@@ -22,4 +22,4 @@ const ModalWindow: React.FC<WindowProps> = ({ children = "Undefined", buttons = 
     );
 }
 
-export default Window;
+export default ModalWindow;

@@ -25,6 +25,30 @@ export default defineConfig({
         target: "http://localhost:8080",
         changeOrigin: true,
       },
+      "/friends": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+      },
+      "/chat": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+      },
+      "/event": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+      },
+      "/guild": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+      },
+      "/profession": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+      },
+      "/talent": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+      },
     },
   },
 })

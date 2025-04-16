@@ -4,7 +4,7 @@ import {actions} from "../../../input/input.ts";
 import {setInfoEntity, setInfoPosition} from "../../../../utils/stateManagement/uiSlice.ts";
 import {useMyDispatch} from "../../../../utils/stateManagement/store.ts";
 
-export const Panel = () => {
+const Panel = () => {
     const [spellBook, setSpellBook] = useState(player!.spellBook);
 
     const dispatch = useMyDispatch();
@@ -84,3 +84,5 @@ export const Panel = () => {
         </div>
     );
 };
+
+export default Panel;

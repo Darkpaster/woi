@@ -17,7 +17,7 @@ const getRarityColor = (rarity: string): string => {
     }
 };
 
-export const InventoryWindow = () => {
+const InventoryWindow = () => {
     const [inventory, setInventory] = useState(player!.inventory);
 
     const dispatch = useMyDispatch();
@@ -65,3 +65,5 @@ export const InventoryWindow = () => {
         </div>
     );
 };
+
+export default InventoryWindow;

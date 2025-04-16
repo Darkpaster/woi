@@ -1,14 +1,14 @@
-import {CharWidget} from "../components/game/static/CharWidget.tsx";
 import {gameRTC, initWS, player} from "../../core/main.ts";
-import {Panel} from "../components/game/static/Panel.tsx";
-import {ChatWindow} from "../components/game/static/ChatWindow.tsx";
-import {InventoryWindow} from "../components/game/dynamic/InventoryWindow.tsx";
-import {InfoWindow} from "../components/game/dynamic/InfoWindow.tsx";
 import {memo, useEffect, useState} from "react";
 import {useMySelector} from "../../utils/stateManagement/store.ts";
 import {UIState} from "../../utils/stateManagement/uiSlice.ts";
 import {isMounted} from "../GameUI.tsx";
-import {LoadingScreen} from "../components/game/dynamic/LoadingScreen.tsx";
+import CharWidget from "../components/game/static/CharWidget.tsx";
+import Panel from "../components/game/static/Panel.tsx";
+import ChatWindow from "../components/game/static/ChatWindow.tsx";
+import InventoryWindow from "../components/game/dynamic/InventoryWindow.tsx";
+import InfoWindow from "../components/game/dynamic/InfoWindow.tsx";
+import LoadingScreen from "../components/game/dynamic/LoadingScreen.tsx";
 
 const check = isMounted();
 

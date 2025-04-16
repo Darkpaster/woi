@@ -7,10 +7,11 @@ import Motor = Electrical.Motor;
 import {Thermodynamics} from "../../../../../../core/logic/education/engineering/thermodynamics.ts";
 import HeatSource = Thermodynamics.HeatSource;
 import HeatTransfer = Thermodynamics.HeatTransfer;
+import {FluidsSimulationManager} from "../../../../../../core/logic/education/engineering/fluids.ts";
 
 export const SimpleEngineeringSimulationWindow = () => {
     useEffect(() => {
-        const simulation = new SimulationEngine("engineering-canvas");
+        const simulation = new FluidsSimulationManager("engineering-canvas", 800, 800);
         try {
             // simulation.addObject(new Wheel(100, 100, 50))
             // simulation.addObject(new Spring(300, 300, 5, 100, 10))
@@ -25,16 +26,15 @@ export const SimpleEngineeringSimulationWindow = () => {
             // const trans = new HeatTransfer(300, 300, 200, 50);
             // trans.addHeatSource(src);
             // simulation.addObject(trans)
-            simulation.start()
             const stopButton = document.getElementById('stop-button');
             const startButton = document.getElementById('start-button');
 
-            if (stopButton) {
-                stopButton.addEventListener('click', () => simulation.stop());
-            }
-            if (startButton) {
-                startButton.addEventListener('click', () => simulation.start());
-            }
+            // if (stopButton) {
+            //     stopButton.addEventListener('click', () => simulation.stop());
+            // }
+            // if (startButton) {
+            //     startButton.addEventListener('click', () => simulation.start());
+            // }
         } catch (error) {
             console.error('Ошибка инициализации симуляции:', error);
         }
@@ -48,8 +48,8 @@ export const SimpleEngineeringSimulationWindow = () => {
             <h1>Симуляция инженерии</h1>
             <canvas id="engineering-canvas"></canvas>
             <div className="controls">
-                <button id="stop-button" className={"ui-div"}>остановить</button>
-                <button id="start-button" className={"ui-div"}>запустить</button>
+                {/*<button id="stop-button" className={"ui-div"}>остановить</button>*/}
+                {/*<button id="start-button" className={"ui-div"}>запустить</button>*/}
             </div>
         </div>
     )

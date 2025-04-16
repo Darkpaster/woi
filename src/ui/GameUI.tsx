@@ -10,17 +10,9 @@ import uiSlice, {toggleInventory} from "../utils/stateManagement/uiSlice.ts";
 import {useMyDispatch, useMySelector} from "../utils/stateManagement/store.ts";
 import Auth from "./layouts/Auth.tsx";
 import {InGame} from "./layouts/InGame.tsx";
-import {MusicSimulationWindow} from "./components/game/dynamic/education/music/MusicSimulationWindow.tsx";
-import {
-    SimpleInformationSecutirySimulation
-} from "./components/game/dynamic/education/computerScience/SimpleInformationSecutirySimulation.tsx";
-import {ChessWindow} from "./components/game/dynamic/education/chess/ChessWindow.tsx";
-import {
-    SimpleMathVisualizationWindow
-} from "./components/game/dynamic/education/math/SimpleMathVisualizationWindow.tsx";
-import {
-    SimpleEngineeringSimulationWindow
-} from "./components/game/dynamic/education/engineering/SimpleEngineeringSimulationWindow.tsx";
+import BookWindow from "./components/game/dynamic/BookWindow.tsx";
+import {SimpleRiddlesWindow} from "./components/game/dynamic/education/riddles/SimpleRiddlesWindow.tsx";
+import DrawingWindow from "./components/game/dynamic/education/drawing/DrawingWindow.tsx";
 
 export type EntityType = Item | Actor | Skill;
 
@@ -150,6 +142,6 @@ export const GameUI: React.FC = () => {
     }
 
     return (
-        particle ? (<SimpleEngineeringSimulationWindow></SimpleEngineeringSimulationWindow>) : (anotherModule())
+        particle ? (<DrawingWindow></DrawingWindow>) : (anotherModule())
     );
 };

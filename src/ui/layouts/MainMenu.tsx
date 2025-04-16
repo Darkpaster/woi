@@ -1,8 +1,8 @@
 import React, {useState} from "react";
 import {txtList} from "../../core/config/lang.ts";
 import {CharacterMenu} from "./CharacterMenu.tsx";
-import {ShortcutsWindow} from "../components/menu/ShortcutsWindow.tsx";
-import {SettingsWindow} from "../components/menu/SettingsWindow.tsx";
+import ShortcutsWindow from "../components/menu/ShortcutsWindow.tsx";
+import SettingsWindow from "../components/menu/SettingsWindow.tsx";
 
 
 interface MenuProps {
