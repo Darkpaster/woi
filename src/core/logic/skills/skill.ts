@@ -7,6 +7,7 @@ import {AnimatedEffect, AnimatedImageManager} from "../../graphics/image.ts";
 import {calcDistance} from "../../../utils/math/2d.ts";
 import {randomInt} from "../../../utils/math/random.ts";
 import {scaledTileSize} from "../../../utils/math/general.ts";
+import {RarityTypes} from "../../types.ts";
 // import {v4 as uuidv4} from "uuid";
 
 export class Skill implements EntityUIInfo {
@@ -37,11 +38,11 @@ export class Skill implements EntityUIInfo {
     set note(value: string) {
         this._note = value;
     }
-    get rarity(): "common" | "uncommon" | "rare" | "epic" | "legendary" | "godlike" {
+    get rarity(): RarityTypes {
         return this._rarity;
     }
 
-    set rarity(value: "common" | "uncommon" | "rare" | "epic" | "legendary" | "godlike") {
+    set rarity(value: RarityTypes) {
         this._rarity = value;
     }
     get description(): string {
@@ -65,7 +66,7 @@ export class Skill implements EntityUIInfo {
     private _sprite?: string | null;
     private _description: string = "No description";
     private _note?: string;
-    private _rarity: "common" | "uncommon" | "rare" | "epic" | "legendary" | "godlike" = "common";
+    private _rarity: RarityTypes = "none";
 
     public animation: AnimatedEffect | null;
     public minDamage: number;

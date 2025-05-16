@@ -8,11 +8,6 @@ import {SmallPotionOfHealing} from "../../core/logic/items/consumable/potions/sm
 import BlueSlime from "../../core/logic/actors/mobs/enemies/blueSlime.ts";
 import LoadingScreen from "../components/game/dynamic/LoadingScreen.tsx";
 
-export type ItemPosition = {
-    itemId: number,
-    x: number,
-    y: number
-}
 
 export const CharacterMenu = ({onEnter, onBack}: { onEnter: () => void, onBack: () => void }) => {
     const [mode, setMode] = useState<"select" | "create">("select");
@@ -97,7 +92,7 @@ export const CharacterMenu = ({onEnter, onBack}: { onEnter: () => void, onBack: 
                         const newItem = new SmallPotionOfHealing();
                         newItem.x = item.x;
                         newItem.y = item.y;
-                        newItem.id = item.itemId;
+                        newItem.ids = [item.itemId];
                         entityManager.addItem(item);
                     }
                     for (const mob of mobList.data) {

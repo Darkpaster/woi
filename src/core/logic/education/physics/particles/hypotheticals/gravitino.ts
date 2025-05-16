@@ -1,6 +1,6 @@
 // Гравитино (суперпартнёр гравитона в теории суперсимметрии)
 import {Vector2D} from "../../../../../../utils/math/2d.ts";
-import {Lepton} from "../leptons/lepton.ts";
+import {Lepton} from "../elementary/fermions/leptons/lepton.ts";
 import {Particle} from "../particle.ts";
 
 export class Gravitino extends Lepton {

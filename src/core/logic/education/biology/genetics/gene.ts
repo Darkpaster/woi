@@ -1,4 +1,6 @@
 import {GeneticEvent, TranscriptionData} from "./genetics.ts";
+import {DNAStrand} from "../molecularBiology/dnaStrand.ts";
+import {RNAStrand} from "../molecularBiology/rnaStrand.ts";
 
 export enum GeneType {
     STRUCTURAL = 'structural',   // Codes for proteins that form structures

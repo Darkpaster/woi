@@ -7,6 +7,9 @@ export interface Color {
 }
 
 export abstract class Particle {
+    get name(): string {
+        return this._name;
+    }
     protected position: Vector2D;
     protected velocity: Vector2D;
     protected acceleration: Vector2D;
@@ -21,7 +24,7 @@ export abstract class Particle {
     protected spin: number;
     protected color: Color;
     protected radius: number;
-    protected name: string;
+    protected _name: string;
     protected age: number = 0;
     protected antiParticle: boolean = false;
 
@@ -34,7 +37,7 @@ export abstract class Particle {
         this.spin = spin;
         this.color = { r: 255, g: 255, b: 255 };
         this.radius = 5;
-        this.name = '?';
+        this._name = '?';
     }
 
     update(deltaTime: number): void {
@@ -67,11 +70,11 @@ export abstract class Particle {
         ctx.fill();
 
         // Отображаем название частицы
-        ctx.fillStyle = 'white';
-        ctx.font = '10px Arial';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(this.name, this.position.x, this.position.y + this.radius + 8);
+        // ctx.fillStyle = 'white';
+        // ctx.font = '10px Arial';
+        // ctx.textAlign = 'center';
+        // ctx.textBaseline = 'middle';
+        // ctx.fillText(this._name, this.position.x, this.position.y + this.radius + 8);
     }
 
     collidesWith(other: Particle): boolean {
@@ -111,7 +114,7 @@ export abstract class Particle {
     }
 
     getName(): string {
-        return this.name;
+        return this._name;
     }
 
     isAntiParticle(): boolean {

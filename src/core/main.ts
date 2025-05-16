@@ -24,11 +24,10 @@ export async function init(pl: Player|Wanderer) {
     return new Promise((resolve) => {
         player = pl;
         worldMap = new MapManager();
-        worldMap.initWorld().then((result) => {
+        worldMap.initWorld().then((map) => {
             graphics = new Graphics(document.getElementById("canvas") as HTMLCanvasElement);
             entityManager = new EntityManager();
             camera = new Camera({x: player.x, y: player.y});
-        }).then(() => {
             resolve("result");
         });
     })

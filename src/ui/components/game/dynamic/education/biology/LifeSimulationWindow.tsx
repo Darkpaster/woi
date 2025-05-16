@@ -1,8 +1,10 @@
 import {useEffect} from "react";
+import {BiologicalSimulation} from "../../../../../../core/logic/education/biology/simulations/simulation.ts";
 
 
 export const LifeSimulationWindow = () => {
     useEffect(() => {
+        const simulation = new BiologicalSimulation("life-canvas");
 
     }, []);
     return (

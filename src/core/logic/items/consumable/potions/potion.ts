@@ -21,8 +21,8 @@ export class Potion extends Item {
     private _minPower: number = 1;
     private _maxPower: number = 1;
 
-    constructor() {
-        super();
+    constructor(ids: number[]) {
+        super(ids);
         this.icon = greyPotion;
         this.name = "Unknown potion";
         this.description = "It has unknown effects.";

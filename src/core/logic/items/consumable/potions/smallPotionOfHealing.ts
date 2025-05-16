@@ -7,8 +7,8 @@ import {randomInt} from "../../../../../utils/math/random.ts";
 
 export class SmallPotionOfHealing extends Potion {
 
-    constructor() {
-        super();
+    constructor(ids: number[]) {
+        super(ids);
         this.icon = redPotion;
         this.name = txtList().unknownPotion;
         this.minPower = 10;

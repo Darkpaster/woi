@@ -8,7 +8,7 @@ export interface Simulatable {
     tick(deltaTime: number): void;
 }
 
-export abstract class Simulation implements Simulatable {
+export abstract class BiologicalSimulation implements Simulatable {
     protected objects: SimulationObject[] = [];
     protected time: number = 0;
     protected running: boolean = false;

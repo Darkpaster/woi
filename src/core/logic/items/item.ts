@@ -1,13 +1,31 @@
 import {EntityUIInfo} from "../actors/actor.ts";
 import {AnimatedImageManager} from "../../graphics/image.ts";
+import * as console from "node:console";
+import {EquipmentType, RarityTypes} from "../../types.ts";
+import * as console from "node:console";
 
 export default class Item implements EntityUIInfo {
-    get id(): number {
-        return this._id;
+    get maxStackSize(): number {
+        return this._maxStackSize;
+    }
+    get amount(): number {
+        return this._amount;
     }
 
-    set id(value: number) {
-        this._id = value;
+    set amount(ids: number[]) {
+        if (!this.stackable || ids.length > this._maxStackSize || ids.length < 1) {
+            return
+        }
+
+        this.ids = [...ids];
+        this._amount = ids.length;
+    }
+    get ids(): number[] {
+        return this._ids;
+    }
+
+    set ids(value: number[]) {
+        this._ids = [...value];
     }
 
     get x(): number {
@@ -38,13 +56,7 @@ export default class Item implements EntityUIInfo {
     set stackable(value: boolean) {
         this._stackable = value;
     }
-    get actions(): any[] {
-        return this._actions;
-    }
 
-    set actions(value: any[]) {
-        this._actions = value;
-    }
     get image(): AnimatedImageManager | null | undefined {
         return this._image;
     }
@@ -59,11 +71,11 @@ export default class Item implements EntityUIInfo {
     set note(value: string) {
         this._note = value;
     }
-    get rarity(): "common" | "uncommon" | "rare" | "epic" | "legendary" | "godlike" {
+    get rarity(): RarityTypes {
         return this._rarity;
     }
 
-    set rarity(value: "common" | "uncommon" | "rare" | "epic" | "legendary" | "godlike") {
+    set rarity(value: RarityTypes) {
         this._rarity = value;
     }
     get description(): string {
@@ -81,22 +93,27 @@ export default class Item implements EntityUIInfo {
         this._name = value;
     }
     private _stackable: boolean;
-    private _actions: any[];
+    private _amount: number;
+    private _maxStackSize: number;
+    private equipmentType: EquipmentType;
 
     private _name: string = "Item";
-    private _id: number = 0;
+    private _ids: number[] = [];
     private _image?: null | AnimatedImageManager;
     private _sprite?: null | string;
     private _description: string = "No description";
     private _note?: string;
-    private _rarity: "common" | "uncommon" | "rare" | "epic" | "legendary" | "godlike" = "common";
+    private _rarity: RarityTypes = "common";
 
     private _x: number = 0;
     private _y: number = 0;
 
-    constructor() {
-        this._stackable = false;
-        this._actions = [];
+    constructor(ids: number[]) {
+        this._maxStackSize = 64;
+        this._amount = 1;
+        this._stackable = ids.length > 1;
+        this.amount = ids;
+        this.equipmentType = "none";
     }
 
     public onUse(): void {

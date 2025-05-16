@@ -11,16 +11,8 @@ import {MapManager} from "../world/mapManager.ts";
 import {calcDistance} from "../../../utils/math/2d.ts";
 import {randomInt} from "../../../utils/math/random.ts";
 import {scaledTileSize} from "../../../utils/math/general.ts";
+import {RarityTypes} from "../../types.ts";
 
-export interface EntityUIInfo {
-    // id: string;
-    name: string;
-    image?: AnimatedImageManager | null;
-    icon?: string | null;
-    description: string;
-    note?: string;
-    rarity: "common" | "uncommon" | "rare" | "epic" | "legendary" | "godlike";
-}
 
 export abstract class Actor implements EntityUIInfo {
     get id(): number {
@@ -270,11 +262,11 @@ export abstract class Actor implements EntityUIInfo {
         this._note = value;
     }
 
-    public get rarity(): "common" | "uncommon" | "rare" | "epic" | "legendary" | "godlike" {
+    public get rarity(): RarityTypes {
         return this._rarity;
     }
 
-    public set rarity(value: "common" | "uncommon" | "rare" | "epic" | "legendary" | "godlike") {
+    public set rarity(value: RarityTypes) {
         this._rarity = value;
     }
 
@@ -303,7 +295,7 @@ export abstract class Actor implements EntityUIInfo {
     private _sprite?: string | null;
     private _description: string = "Unknown creature";
     private _note?: string;
-    private _rarity: "common" | "uncommon" | "rare" | "epic" | "legendary" | "godlike" = "common";
+    private _rarity: RarityTypes = "common";
 
     private _x: number = 0;
     private _y: number = 0;

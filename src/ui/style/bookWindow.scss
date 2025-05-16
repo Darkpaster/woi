@@ -29,6 +29,8 @@ $transition-duration: 500ms;
   background-color: $color-bg;
   padding: 2rem;
 
+  overflow: hidden;
+
   &__title {
     font-size: 1.875rem;
     font-weight: 700;

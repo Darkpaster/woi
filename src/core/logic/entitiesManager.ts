@@ -17,10 +17,10 @@ export class EntityManager {
 
     private _players = new Map<number, Player>();
     private _mobs = new Map<number, Mob>();
-    private _items = new Map<number, Item>();
+    private _items = new Map<number[], Item>();
     private playerStorage = new Map<string, Set<number>>();
     private mobStorage = new Map<string, Set<number>>();
-    private itemStorage = new Map<string, Set<number>>();
+    private itemStorage = new Map<string, Set<number[]>>();
 
     private getChunkPosKey(x: number, y: number): string { //обычные координаты в чанки
         const col = Math.floor(x / scaledTileSize() / MapManager.CHUNK_SIZE);
@@ -30,6 +30,10 @@ export class EntityManager {
 
     public hasPlayer(id: number) {
         return this._players.has(id);
+    }
+
+    public hasItem(id: number[]) {
+        return this._items.has(id);
     }
 
     public getPlayer(id: number) {
@@ -59,15 +63,15 @@ export class EntityManager {
     }
 
     public addItem<I extends Item>(item: I) {
-        this._items.set(item.id, item);
+        this._items.set(item.ids, item);
         const key = this.getChunkPosKey(item.x, item.y);
         if (!this.itemStorage.has(key)) {
             this.itemStorage.set(key, new Set());
         }
-        this.itemStorage.get(key)!.add(item.id);
+        this.itemStorage.get(key)!.add(item.ids);
     }
 
-    public removeItem(itemId: number) {
+    public removeItem(itemId: number[]) {
         const item = this._items.get(itemId);
         if (item) {
             const key = this.getChunkPosKey(item.x, item.y);

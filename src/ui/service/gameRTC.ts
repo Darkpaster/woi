@@ -10,41 +10,14 @@ export type CharacterInit = {
     nickname: string, characterId: number, roomId: string, characterType: "wanderer"|"samurai"|"knight"|"werewolf"|"mage"
 }
 
-type Position = {
-    entityId: number, x: number, y: number, renderState: string
-}
 
-type MobDTO = {
-    id: number,
-    x: number,
-    y: number,
-    health: number,
-    target: {x: number, y: number, entityId: number},
-    renderState: string
-}
-
-type ItemPosition = {
-    itemId: number,
-    x: number,
-    y: number,
-    itemType: string
-}
-
-type DamageDTO = {
-    value: number,
-    target: {
-        targetId: number,
-        targetType: string
-    }
-}
-
-function getItemByType(type: string): Item {
+function getItemByType(type: string, ids: number[]): Item {
     switch (type) {
         case "smallPotionOfHealing": new SmallPotionOfHealing();
         break
     }
     console.log("noooo!")
-    return new Item();
+    return new Item(ids);
 }
 
 export class GameRTC {
@@ -90,7 +63,7 @@ export class GameRTC {
         this.socket.emit('sendPlayerPosition', { entityId: entityId, x: Math.round(x / settings.defaultTileScale), y: Math.round(y / settings.defaultTileScale), renderState: "idle" });
     }
 
-    public dealDamage(dmg: DamageDTO) {
+    public dealDamage(dmg: DamageDTOType) {
         this.socket.emit("dealDamage", { value: dmg.value, target: {targetId: dmg.target.targetId, targetType: dmg.target.targetType} });
     }
 
@@ -117,7 +90,7 @@ export class GameRTC {
             console.error('Connection error:', error);
         });
 
-        this.socket.on("receivePlayerPosition", (position: Position) => {
+        this.socket.on("receivePlayerPosition", (position: PositionType) => {
             if (entityManager.hasPlayer(position.entityId)) {
                 const pl = entityManager.getPlayer(position.entityId);
                 pl!.x = position.x;
@@ -127,7 +100,7 @@ export class GameRTC {
 
 
         this.socket.on("updateAllMobs", (data) => {
-            const parsedData: MobDTO[] = JSON.parse(JSON.stringify(data));
+            const parsedData: MobDTOType[] = JSON.parse(JSON.stringify(data));
             // console.log(JSON.stringify(data))
             for (const updatedMob of parsedData) {
                 const mob = entityManager.getMob(updatedMob.id);
@@ -150,7 +123,7 @@ export class GameRTC {
             }
         })
 
-        this.socket.on("addItem", (item: ItemPosition) => {
+        this.socket.on("addItem", (item: ItemPositionType) => {
             const newItem: Item = getItemByType(item.itemType);
             newItem.x = item.x;
             newItem.y = item.y;
@@ -158,7 +131,7 @@ export class GameRTC {
             entityManager.addItem(newItem);
         })
 
-        this.socket.on("deleteItem", (item: ItemPosition) => {
+        this.socket.on("deleteItem", (item: ItemPositionType) => {
             entityManager.removeItem(item.itemId);
         })
 

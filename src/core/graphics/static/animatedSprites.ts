@@ -34,58 +34,58 @@ export const animationTypes = {
 
 export function getBlueSlimeAnimations(): AnimationList {
     return {
-        idle: new AnimatedImage("idle", blueSlimeIdleSheet, 8, 1, 64),
-        walk: new AnimatedImage("walk", blueSlimeWalkSheet, 8, 1, 64),
-        run: new AnimatedImage("run", blueSlimeRunSheet, 7, 1, 64),
-        jump: new AnimatedImage("jump", blueSlimeJumpSheet, 13, 1, 64),
-        hurt: new AnimatedImage("hurt", blueSlimeHurtSheet, 6, 1, 64),
-        death: new AnimatedImage("death", blueSlimeDeathSheet, 3, 1, 64),
-        attack1: new AnimatedImage("attack1", blueSlimeAttack1Sheet, 4, 1, 64),
-        attack2: new AnimatedImage("attack2", blueSlimeAttack2Sheet, 4, 1, 64),
-        attack3: new AnimatedImage("attack3", blueSlimeAttack3Sheet, 4, 1, 64),
+        idle: new AnimatedImage(animationTypes.IDLE, blueSlimeIdleSheet, 8, 1, 64),
+        walk: new AnimatedImage(animationTypes.WALK, blueSlimeWalkSheet, 8, 1, 64),
+        run: new AnimatedImage(animationTypes.RUN, blueSlimeRunSheet, 7, 1, 64),
+        jump: new AnimatedImage(animationTypes.JUMP, blueSlimeJumpSheet, 13, 1, 64),
+        hurt: new AnimatedImage(animationTypes.HURT, blueSlimeHurtSheet, 6, 1, 64),
+        death: new AnimatedImage(animationTypes.DEATH, blueSlimeDeathSheet, 3, 1, 64),
+        attack1: new AnimatedImage(animationTypes.ATTACK1, blueSlimeAttack1Sheet, 4, 1, 64),
+        attack2: new AnimatedImage(animationTypes.ATTACK2, blueSlimeAttack2Sheet, 4, 1, 64),
+        attack3: new AnimatedImage(animationTypes.ATTACK3, blueSlimeAttack3Sheet, 4, 1, 64),
         runPlusAttack: new AnimatedImage("runPlusAttack", blueSlimeRunPlusAttackSheet, 10, 1, 64),
     }
 }
 
 export function getRedPlantAnimations(): AnimationList {
     return {
-        idle: new AnimatedImage("idle", madBoarIdleSheet, 8),
-        walk: new AnimatedImage("walk", madBoarWalkSheet, 8),
+        idle: new AnimatedImage(animationTypes.IDLE, madBoarIdleSheet, 8),
+        walk: new AnimatedImage(animationTypes.WALK, madBoarWalkSheet, 8),
     }
 }
 
 export function getBoarAnimations(): AnimationList {
     return {
-        idle: new AnimatedImage("idle", madBoarIdleSheet, 8),
-        walk: new AnimatedImage("walk", madBoarWalkSheet, 8),
+        idle: new AnimatedImage(animationTypes.IDLE, madBoarIdleSheet, 8),
+        walk: new AnimatedImage(animationTypes.WALK, madBoarWalkSheet, 8),
     }
 }
 
 export function getRabbitAnimations(): AnimationList {
     return {
-        idle: new AnimatedImage("idle", rabbitIdleSheet, 10, 3, 10),
-        walk: new AnimatedImage("walk", rabbitRunSheet, 6, 1, 10),
+        idle: new AnimatedImage(animationTypes.IDLE, rabbitIdleSheet, 10, 3, 10),
+        walk: new AnimatedImage(animationTypes.WALK, rabbitRunSheet, 6, 1, 10),
     }
 }
 
 export function getKnightAnimations(): AnimationList {
     return {
-        idle: new AnimatedImage("idle", knightIdleSheet, 5, 3),
-        walk: new AnimatedImage("walk", knightRunSheet, 5, 1),
+        idle: new AnimatedImage(animationTypes.IDLE, knightIdleSheet, 5, 3),
+        walk: new AnimatedImage(animationTypes.WALK, knightRunSheet, 5, 1),
     }
 }
 
 export function getWerewolfAnimations(): AnimationList {
     return {
-        idle: new AnimatedImage("idle", werewolfIdleSheet, 8, 3, 48),
-        walk: new AnimatedImage("walk", werewolfRunSheet, 9, 0.5, 48),
+        idle: new AnimatedImage(animationTypes.IDLE, werewolfIdleSheet, 8, 3, 48),
+        walk: new AnimatedImage(animationTypes.WALK, werewolfRunSheet, 9, 0.5, 48),
     }
 }
 
 export function getWerewolfHumanAnimations(): AnimationList {
     return {
-        idle: new AnimatedImage("idle", human_form_idle, 13, 3, 32),
-        walk: new AnimatedImage("walk", human_form_idle, 13, 3, 32),
+        idle: new AnimatedImage(animationTypes.IDLE, human_form_idle, 13, 3, 32),
+        walk: new AnimatedImage(animationTypes.WALK, human_form_idle, 13, 3, 32),
     }
 }
 

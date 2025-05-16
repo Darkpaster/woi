@@ -7,7 +7,7 @@ interface TileProps {
     animated: boolean,
 }
 
-export interface Tile {
+export interface Tiles {
     [key: number]: {
         name: string;
         props: TileProps;
@@ -15,7 +15,7 @@ export interface Tile {
     }
 }
 
-export const tileList: Tile = {};
+export const tileList: Tiles = {};
 
 interface Tileset {
     name: string;

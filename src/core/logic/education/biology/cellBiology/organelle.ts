@@ -1,5 +1,6 @@
 import {Point} from "../../../../../utils/math/2d.ts";
 import {SimulationObject} from "../simulations/simulation.ts";
+import { Cell } from "./cell.ts";
 
 export enum CellOrganelle {
     NUCLEUS,

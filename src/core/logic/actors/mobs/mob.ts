@@ -2,9 +2,6 @@ import {TimeDelay} from "../../../../utils/general/time.ts";
 
 import {Actor} from "../actor.ts";
 
-import {entityManager, player} from "../../../main.ts";
-import {randomInt} from "../../../../utils/math/random.ts";
-import {calcDistance} from "../../../../utils/math/2d.ts";
 import {scaledTileSize} from "../../../../utils/math/general.ts";
 
 
@@ -45,22 +42,7 @@ export default class Mob extends Actor {
         this.idle = true;
         this._agroRadius = 5;
         this.fearFactor = 10;
-        // this.spawn();
     }
-
-    // private spawn(): void {
-    //     Mob.mobList.push(this);
-    //     this.x = scaledTileSize() * randomInt(getCurrentLocation().floor[0].length - 1);
-    //     this.y = scaledTileSize() * randomInt(getCurrentLocation().floor[0].length - 1);
-    //
-    //     let cond = getWallTile(this.posX, this.posY).props.isWalkable;
-    //     while (!cond) {
-    //         this.x = scaledTileSize() * randomInt(getCurrentLocation().floor[0].length - 1);
-    //         this.y = scaledTileSize() * randomInt(getCurrentLocation().floor[0].length - 1);
-    //         const test = getWallTile(this.posX, this.posY);
-    //         cond = test.props.isWalkable;
-    //     }
-    // }
 
     get agroRadius(): number {
         return scaledTileSize() * this._agroRadius;
@@ -69,159 +51,5 @@ export default class Mob extends Actor {
     set agroRadius(r: number) {
         this._agroRadius = r;
     }
-
-    static getMobsOnTile(x: number, y: number): Mob[] {
-        const result: Mob[] = []
-        // for (const mob of Mob.mobList) {
-        //     if (mob.posX === Math.floor(x / scaledTileSize())
-        //         && mob.posX === Math.floor(y / scaledTileSize())) {
-        //         result.push(mob);
-        //     }
-        // }
-        return result
-    }
-
-    public update() {
-        // Assuming events is a method that exists in the context.
-        // If it's not defined yet, the type should be adjusted accordingly.
-        // The following line may need to be updated based on the actual implementation.
-        this.events();
-
-        // const collision = this.collision(Mob.mobList);
-
-        // if (collision.x) {
-        //     this.x = diff.x;
-        // }
-        //
-        // if (collision.y) {
-        //     this.y = diff.y;
-        // }
-    }
-
-    setState(): void {
-        if (this.state !== Mob.states.CHASING && this.state !== Mob.states.FLEEING && calcDistance(player, this) < this.agroRadius) {
-            if (player?.fearFactor > this.fearFactor) {
-                this.state = Mob.states.FLEEING;
-                this.renderState = "walk";
-            } else {
-                this.state = Mob.states.CHASING;
-                this.renderState = "walk";
-                this.target = player;
-            }
-        } else {
-            if (this.state === Mob.states.WANDERING) {
-                return
-            }
-            this.state = Mob.states.WANDERING;
-            this.renderState = "idle";
-            this.target = null;
-        }
-    }
-
-    // checkVisibility(): boolean {
-    //     const directPath = this.getDirectPathTiles();
-    //     return directPath.every((value) => value.walkable);
-    // }
-
-    events(): void {
-        this.attackEvents();
-    }
-
-    chase(): void {
-        if (player.x - this.x > 0) {
-            this.x += this.moveSpeed;
-            this.direction = "right";
-        } else if (player.x - this.x < 0) {
-            this.x -= this.moveSpeed;
-            this.direction = "left";
-        }
-
-        if (player.y - this.y > 0) {
-            this.y += this.moveSpeed;
-        } else if (player.y - this.y < 0) {
-            this.y -= this.moveSpeed;
-        }
-    }
-
-    // calcPath(): void {
-    // }
-
-    // getDirectPathTiles(): Array<any> {
-    //     const ray = {x: player.x, y: player.y};
-    //     const tilesNum = Math.floor(calcDistance(player, this) / scaledTileSize());
-    //     const pathX = calcDistanceX(player, this);
-    //     const pathY = calcDistanceY(player, this);
-    //
-    //     const offsetX = pathX / tilesNum || 0;
-    //     const offsetY = pathY / tilesNum || 0;
-    //
-    //     const foundTiles: Array<any> = [];
-    //
-    //     const pX = player.x - this.x < 0;
-    //     const pY = player.y - this.y < 0;
-    //
-    //     for (let i = 1; i <= tilesNum; i++) {
-    //         ray.x += pX ? offsetX : -offsetX;
-    //         ray.y += pY ? offsetY : -offsetY;
-    //
-    //         const tileX: number = Math.floor(ray.x / scaledTileSize());
-    //         const tileY: number = Math.floor(ray.y / scaledTileSize());
-    //
-    //         foundTiles.push(tiles[getCurrentLocation().floor[tileY][tileX]].props);
-    //     }
-    //
-    //     return foundTiles;
-    // }
-
-    wander(): void {
-        let direction: number = randomInt(200);
-
-        switch (direction) {
-            case 0:
-                this.x += this.moveSpeed / 2;
-                this.direction = "right";
-                break;
-            case 1:
-                this.x -= this.moveSpeed / 2;
-                this.direction = "left";
-                break;
-            case 2:
-                this.y += this.moveSpeed / 2;
-                break;
-            case 3:
-                this.y -= this.moveSpeed / 2;
-                break;
-        }
-    }
-
-    flee(): void {
-        if (this.x < player!.x) {
-            this.x -= this.moveSpeed;
-            this.direction = "left";
-        } else if (this.x > player!.x) {
-            this.x += this.moveSpeed;
-            this.direction = "right";
-        } else if (this.y < player!.y) {
-            this.y -= this.moveSpeed;
-        } else if (this.y > player!.y) {
-            this.y += this.moveSpeed;
-        }
-    }
-
-    // spellEvents(): boolean {
-    //     let success: boolean = false;
-    //
-    //     for (const spell of this.spellbook) {
-    //         success = spell.useSkill(this, player);
-    //    }
-    //
-    //    return success;
-    // }
-
-    public dealDamage(damage: number, source: any = null): void {
-        super.dealDamage(damage, source);
-
-    }
-
 
 }

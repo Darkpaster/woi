@@ -1,6 +1,6 @@
 // Стерильное нейтрино (кандидат на роль тёмной материи)
 import {Vector2D} from "../../../../../../utils/math/2d.ts";
-import {Lepton} from "../leptons/lepton.ts";
+import {Lepton} from "../elementary/fermions/leptons/lepton.ts";
 import {Particle} from "../particle.ts";
 
 export class SterileNeutrino extends Lepton {

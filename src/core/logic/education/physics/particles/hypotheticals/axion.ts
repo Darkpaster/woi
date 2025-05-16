@@ -1,5 +1,5 @@
 import {Vector2D} from "../../../../../../utils/math/2d.ts";
-import {Boson} from "../bosons/boson.ts";
+import {Boson} from "../elementary/bosons/boson.ts";
 import {Particle} from "../particle.ts";
 
 export class Axion extends Boson {

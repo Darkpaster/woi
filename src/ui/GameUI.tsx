@@ -2,19 +2,15 @@ import React, {useState, useEffect, useRef} from 'react';
 import {pauseMusic, playMusic, resumeMusic} from '../core/audio/music.ts';
 import {MainMenu} from "./layouts/MainMenu.tsx";
 import {init, pauseLoop, player, startLoop} from "../core/main.ts";
-import Item from "../core/logic/items/item.ts";
-import {Actor} from "../core/logic/actors/actor.ts";
-import {Skill} from "../core/logic/skills/skill.ts";
 import {actions, useKeyboard} from "./input/input.ts";
 import uiSlice, {toggleInventory} from "../utils/stateManagement/uiSlice.ts";
 import {useMyDispatch, useMySelector} from "../utils/stateManagement/store.ts";
 import Auth from "./layouts/Auth.tsx";
 import {InGame} from "./layouts/InGame.tsx";
-import BookWindow from "./components/game/dynamic/BookWindow.tsx";
-import {SimpleRiddlesWindow} from "./components/game/dynamic/education/riddles/SimpleRiddlesWindow.tsx";
-import DrawingWindow from "./components/game/dynamic/education/drawing/DrawingWindow.tsx";
-
-export type EntityType = Item | Actor | Skill;
+import SimpleOrganismSimulationWindow
+    from "./components/game/dynamic/education/biology/SimpleOrganismSimulationWindow.tsx";
+import {LifeSimulationWindow} from "./components/game/dynamic/education/biology/LifeSimulationWindow.tsx";
+import {ParticleSimulationWindow} from "./components/game/dynamic/education/physics/ParticleSimulationWindow.tsx";
 
 let canvas: HTMLCanvasElement | null;
 
@@ -36,7 +32,7 @@ export const GameUI: React.FC = () => {
     const [gameState, setGameState] = useState<'auth' | 'mainMenu' | 'inGame'>(document.cookie.includes("session_active") ? 'mainMenu' : 'auth');
     const [onPause, setOnPause] = useState(false);
 
-    const [particle, setParticle] = useState(true);
+    const [particle, setParticle] = useState(false);
 
     const dispatch = useMyDispatch();
 
@@ -142,6 +138,6 @@ export const GameUI: React.FC = () => {
     }
 
     return (
-        particle ? (<DrawingWindow></DrawingWindow>) : (anotherModule())
+        particle ? (<ParticleSimulationWindow></ParticleSimulationWindow>) : (anotherModule())
     );
 };

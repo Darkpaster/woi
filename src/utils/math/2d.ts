@@ -27,6 +27,10 @@ export class Vector2D extends MathObject implements Visualizable {
         return new Vector2D(this.x * scalar, this.y * scalar);
     }
 
+    public clone(): Vector2D {
+        return new Vector2D(this.x, this.y);
+    }
+
     public divide(scalar: number): Vector2D {
         return new Vector2D(this.x / scalar, this.y / scalar);
     }

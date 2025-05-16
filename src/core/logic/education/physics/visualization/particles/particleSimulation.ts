@@ -1,33 +1,34 @@
 import { Particle } from '../../particles/particle.ts';
-import { Electron } from '../../particles/leptons/electron.ts';
-import { Proton } from '../../particles/hadrons/baryons/proton.ts';
-import { Neutron } from '../../particles/hadrons/baryons/neutron.ts';
-import { Photon } from '../../particles/bosons/photon.ts';
-import { Lepton } from '../../particles/leptons/lepton.ts';
-import { Boson } from '../../particles/bosons/boson.ts';
-import { Gluon } from '../../particles/bosons/gluon.ts';
-import { Hadron } from '../../particles/hadrons/hadron.ts';
-import { AtomCore } from '../../particles/atomCore.ts';
-import { Atom } from '../../particles/atom.ts';
-import { Molecule } from '../../particles/molecule.ts';
-import {UpQuark} from "../../particles/quarks/upQuark.ts";
-import {DownQuark} from "../../particles/quarks/downQuark.ts";
-import {Quark} from "../../particles/quarks/quark.ts";
-import {StrangeQuark} from "../../particles/quarks/strangeQuark.ts";
-import {AntiStrangeQuark} from "../../particles/quarks/antiStrangeQuark.ts";
-import {AntiDownQuark} from "../../particles/quarks/antiDownQuark.ts";
-import {AntiUpQuark} from "../../particles/quarks/antiUpQuark.ts";
+import { Electron } from '../../particles/elementary/fermions/leptons/electron.ts';
+import { Proton } from '../../particles/constituent/hadrons/baryons/proton.ts';
+import { Neutron } from '../../particles/constituent/hadrons/baryons/neutron.ts';
+import { Photon } from '../../particles/elementary/bosons/photon.ts';
+import { Lepton } from '../../particles/elementary/fermions/leptons/lepton.ts';
+import { Boson } from '../../particles/elementary/bosons/boson.ts';
+import { Gluon } from '../../particles/elementary/bosons/gluon.ts';
+import { Hadron } from '../../particles/constituent/hadrons/hadron.ts';
+import { AtomCore } from '../../particles/constituent/structures/atomCore.ts';
+import { Atom } from '../../particles/constituent/structures/atom.ts';
+import { Molecule } from '../../particles/constituent/structures/molecule.ts';
+import {UpQuark} from "../../particles/elementary/fermions/quarks/upQuark.ts";
+import {DownQuark} from "../../particles/elementary/fermions/quarks/downQuark.ts";
+import {Quark} from "../../particles/elementary/fermions/quarks/quark.ts";
+import {StrangeQuark} from "../../particles/elementary/fermions/quarks/strangeQuark.ts";
+import {AntiStrangeQuark} from "../../particles/elementary/fermions/quarks/antiStrangeQuark.ts";
+import {AntiDownQuark} from "../../particles/elementary/fermions/quarks/antiDownQuark.ts";
+import {AntiUpQuark} from "../../particles/elementary/fermions/quarks/antiUpQuark.ts";
 import {Vector2D} from "../../../../../../utils/math/2d.ts";
-import {Tau} from "../../particles/leptons/tau.ts";
-import {AntiTau} from "../../particles/leptons/antiTau.ts";
-import {CharmQuark} from "../../particles/quarks/charmQuark.ts";
-import {BottomQuark} from "../../particles/quarks/bottomQuark.ts";
-import {TopQuark} from "../../particles/quarks/topQuark.ts";
-import {ZBoson} from "../../particles/bosons/zBozon.ts";
-import {HiggsBoson} from "../../particles/bosons/higgsBoson.ts";
-import {WBoson} from "../../particles/bosons/wBoson.ts";
-import {Hydrogen} from "../../particles/izotopes/hydrogen/hydrogen.ts";
-import {AntiBottomQuark} from "../../particles/quarks/antiBottomQuark.ts";
+import {Tau} from "../../particles/elementary/fermions/leptons/tau.ts";
+import {AntiTau} from "../../particles/elementary/fermions/leptons/antiTau.ts";
+import {CharmQuark} from "../../particles/elementary/fermions/quarks/charmQuark.ts";
+import {BottomQuark} from "../../particles/elementary/fermions/quarks/bottomQuark.ts";
+import {TopQuark} from "../../particles/elementary/fermions/quarks/topQuark.ts";
+import {ZBoson} from "../../particles/elementary/bosons/zBozon.ts";
+import {HiggsBoson} from "../../particles/elementary/bosons/higgsBoson.ts";
+import {WBoson} from "../../particles/elementary/bosons/wBoson.ts";
+import {Hydrogen} from "../../particles/constituent/structures/izotopes/hydrogen/hydrogen.ts";
+import {AntiBottomQuark} from "../../particles/elementary/fermions/quarks/antiBottomQuark.ts";
+import {once} from "../../../../../main.ts";
 
 // Типы фундаментальных взаимодействий
 enum InteractionType {
@@ -95,7 +96,7 @@ export class ParticleSimulation {
     private time: number = 0;
     private lastFrameTime: number = 0;
     private spatialGrid: Map<string, AnyParticle[]> = new Map();
-    private gridCellSize: number = 50;
+    private gridCellSize: number = 100;
     private eventHistory: SpacetimeEvent[] = [];
     private fieldVisualizationData: number[][] = [];
     private particleTrails: Map<AnyParticle, Vector2D[]> = new Map();
@@ -130,15 +131,15 @@ export class ParticleSimulation {
             initialParticleCount: initParticleCount,
             canvasWidth: windowSize.x,
             canvasHeight: windowSize.y,
-            gravitationalConstant: 6.674e-11,
-            electromagneticConstant: 8.99e9,
-            strongForceConstant: 1e2,
-            weakForceConstant: 1e-6,
+            gravitationalConstant: 6.674e-11 * 1e11, //e-11
+            electromagneticConstant: 8.99e9 * 1e-9,
+            strongForceConstant: 1e2 * 1e-2,
+            weakForceConstant: 1e-6 * 1e6, //e-6
             boundaryBehavior: 'bounce',
             quantumEffectsEnabled: true,
             temperatureKelvin: 293, // комнатная температура в Кельвинах
             timeScale: 1.0,
-            particleLimit: 500,
+            particleLimit: 100,
             energyConservation: true,
             visualizationMode: 'standard',
             showForceFields: false,
@@ -267,7 +268,8 @@ export class ParticleSimulation {
             const x = event.clientX - rect.left;
             const y = event.clientY - rect.top;
             // this.createRandomParticle(new Vector2D(x, y));
-            this.createProton(new Vector2D(x, y))
+            // this.createProton(new Vector2D(x, y))
+            this.createAtom(new Vector2D(x, y))
         });
 
         this.canvas.addEventListener('contextmenu', (event) => {
@@ -275,8 +277,8 @@ export class ParticleSimulation {
             const rect = this.canvas.getBoundingClientRect();
             const x = event.clientX - rect.left;
             const y = event.clientY - rect.top;
-            // this.createMolecule(new Vector2D(x, y));
-            this.createElectron(new Vector2D(x, y));
+            this.createMolecule(new Vector2D(x, y));
+            // this.createElectron(new Vector2D(x, y));
         });
 
         // Обработчик перетаскивания для добавления множества частиц
@@ -628,26 +630,41 @@ export class ParticleSimulation {
     }
 
     /**
-     * Обработка взаимодействий между частицами
+     * Обработка взаимодействий между частицами - оптимизированный вариант
      */
     private handleInteractions(deltaTime: number): void {
+        // Создаем кеш обработанных ячеек для избежания повторной проверки одних и тех же пар
+        const processedPairs = new Set<string>();
+
         // Для каждой ячейки в пространственной сетке
         for (const [cellKey, cellParticles] of this.spatialGrid.entries()) {
-            // Проверяем взаимодействия между частицами в одной ячейке
-            this.checkParticleInteractions(cellParticles, deltaTime);
+            // Проверяем взаимодействия между частицами в одной ячейке (внутренние)
+            if (cellParticles.length > 1) {
+                this.checkParticleInteractions(cellParticles, deltaTime);
+            }
 
             // Получаем соседние ячейки
             const [cellX, cellY] = cellKey.split(',').map(Number);
-            for (let dx = -1; dx <= 1; dx++) {
+
+            // Проверяем только правые, нижние и диагональные соседние ячейки
+            // для избежания двойной проверки одних и тех же пар ячеек
+            for (let dx = 0; dx <= 1; dx++) {
                 for (let dy = -1; dy <= 1; dy++) {
                     if (dx === 0 && dy === 0) continue; // Пропускаем текущую ячейку
+                    if (dx === 0 && dy < 0) continue;   // Проверяем нижнюю, но не верхнюю ячейку
 
                     const neighborKey = `${cellX + dx},${cellY + dy}`;
                     const neighborCell = this.spatialGrid.get(neighborKey);
 
-                    if (neighborCell) {
-                        // Проверяем взаимодействия между частицами текущей ячейки и соседней
-                        this.checkParticleInteractionsWithNeighbors(cellParticles, neighborCell, deltaTime);
+                    // Проверяем наличие соседней ячейки и частиц в обеих ячейках
+                    if (neighborCell?.length && cellParticles.length) {
+                        const pairKey = `${cellKey}-${neighborKey}`;
+                        // Если эта пара ячеек уже обработана - пропускаем
+                        if (!processedPairs.has(pairKey)) {
+                            processedPairs.add(pairKey);
+                            // Проверяем взаимодействия между частицами текущей ячейки и соседней
+                            this.checkParticleInteractionsWithNeighbors(cellParticles, neighborCell, deltaTime);
+                        }
                     }
                 }
             }
@@ -659,13 +676,19 @@ export class ParticleSimulation {
      */
     private checkParticleInteractions(particles: AnyParticle[], deltaTime: number): void {
         const n = particles.length;
-        for (let i = 0; i < n; i++) {
-            for (let j = i + 1; j < n; j++) {
-                const p1 = particles[i];
-                const p2 = particles[j];
+        // Используем быструю итерацию по массиву вместо for...of
+        for (let i = 0; i < n - 1; i++) {
+            const p1 = particles[i];
+            const pos1 = p1.getPosition();
+            const radius1 = (p1 as any).radius;
+            const type1 = this.getParticleTypeName(p1);
+            const interactions1 = this.interactionMatrix.get(type1);
 
-                // Проверяем, есть ли обработчик для взаимодействия между типами этих частиц
-                this.applyInteraction(p1, p2, deltaTime);
+            for (let j = i + 1; j < n; j++) {
+                const p2 = particles[j];
+                // Быстрая проверка взаимодействий
+                this.checkAndApplyInteraction(p1, p2, pos1, p2.getPosition(), radius1,
+                    (p2 as any).radius, type1, this.getParticleTypeName(p2), interactions1, deltaTime);
             }
         }
     }
@@ -678,42 +701,63 @@ export class ParticleSimulation {
         neighbors: AnyParticle[],
         deltaTime: number
     ): void {
-        for (const p1 of particles) {
-            for (const p2 of neighbors) {
-                // Применяем взаимодействие между частицами
-                this.applyInteraction(p1, p2, deltaTime);
+        // Создаем локальные переменные для эффективного доступа
+        const particlesLen = particles.length;
+        const neighborsLen = neighbors.length;
+
+        // Используем индексы для более быстрой итерации
+        for (let i = 0; i < particlesLen; i++) {
+            const p1 = particles[i];
+            const pos1 = p1.getPosition();
+            const radius1 = (p1 as any).radius;
+            const type1 = this.getParticleTypeName(p1);
+            const interactions1 = this.interactionMatrix.get(type1);
+
+            for (let j = 0; j < neighborsLen; j++) {
+                const p2 = neighbors[j];
+                // Быстрая проверка взаимодействий
+                this.checkAndApplyInteraction(p1, p2, pos1, p2.getPosition(), radius1,
+                    (p2 as any).radius, type1, this.getParticleTypeName(p2), interactions1, deltaTime);
             }
         }
     }
 
     /**
-     * Применение взаимодействия между двумя частицами
+     * Объединенная функция проверки и применения взаимодействия между двумя частицами
      */
-    private applyInteraction(p1: AnyParticle, p2: AnyParticle, deltaTime: number): void {
+    private checkAndApplyInteraction(
+        p1: AnyParticle,
+        p2: AnyParticle,
+        pos1: {x: number, y: number},
+        pos2: {x: number, y: number},
+        radius1: number,
+        radius2: number,
+        type1: string,
+        type2: string,
+        interactions1: Map<string, Function> | undefined,
+        deltaTime: number
+    ): void {
         // Проверяем расстояние между частицами
-        const pos1 = p1.getPosition();
-        const pos2 = p2.getPosition();
         const dx = pos2.x - pos1.x;
         const dy = pos2.y - pos1.y;
         const distanceSquared = dx * dx + dy * dy;
 
         // Проверяем столкновение
-        const collisionRadius = (p1 as any).radius + (p2 as any).radius;
-        if (distanceSquared <= collisionRadius * collisionRadius) {
-            // Обрабатываем столкновение
+        const collisionRadius = radius1 + radius2;
+        const collRadiusSquared = collisionRadius * collisionRadius;
+
+        // Обрабатываем столкновение если оно произошло
+        if (distanceSquared <= collRadiusSquared) {
             this.handleCollision(p1, p2, deltaTime);
         }
 
         // Применяем дальнодействующие силы
+        // Важно: не ограничиваем радиус действия сил, чтобы сохранить оригинальное поведение
         this.applyForces(p1, p2, distanceSquared, dx, dy, deltaTime);
 
         // Проверяем наличие специального обработчика для этой пары типов частиц
-        const type1 = this.getParticleTypeName(p1);
-        const type2 = this.getParticleTypeName(p2);
-
-        const interactions = this.interactionMatrix.get(type1);
-        if (interactions) {
-            const handler = interactions.get(type2);
+        if (interactions1) {
+            const handler = interactions1.get(type2);
             if (handler) {
                 handler(p1, p2);
 
@@ -777,7 +821,7 @@ export class ParticleSimulation {
             const lepton1 = p1 as Lepton;
             const lepton2 = p2 as Lepton;
 
-            if (lepton1.isAntiParticleOf && lepton1.isAntiParticleOf(lepton2)) {
+            if (lepton1.isAntiParticle() && lepton1.isAntiParticleOf(lepton2)) {
                 this.handleAnnihilation(lepton1, lepton2);
                 return;
             }
@@ -982,7 +1026,9 @@ export class ParticleSimulation {
         if (charge1 === 0 || charge2 === 0) return 0;
 
         // Закон Кулона (F = k * q1 * q2 / r^2)
-        const force = this.config.electromagneticConstant * charge1 * charge2 / (distance * distance);
+        const force = this.config.electromagneticConstant * -(charge1 * charge2) / (distance * distance);
+
+        once(`ch1: ${charge1}, ch2: ${charge2}`);
 
         // Сила может быть притягивающей (отрицательная) или отталкивающей (положительная)
         // в зависимости от знаков зарядов
@@ -1113,7 +1159,7 @@ export class ParticleSimulation {
      */
     private canFormHadron(quark1: Quark, quark2: Quark): boolean {
         // Простая проверка: можно сформировать мезон из кварка и антикварка
-        return (quark1.isAntiParticle() && quark1.isAntiParticle()) || //баг
+        return (quark1.isAntiParticle() && quark1.isAntiParticleOf(quark2)) ||
             // Или два кварка разного типа могут начать формировать барион
             (quark1.getQuarkType() !== quark2.getQuarkType());
     }
@@ -2131,17 +2177,15 @@ export class ParticleSimulation {
 
             // Отображаем заряд частицы, если он есть
             const charge = particle.charge;
-            if (charge !== 0) {
-                this.ctx.fillStyle = 'white';
-                this.ctx.font = '10px Arial';
-                const chargeSign = charge > 0 ? '+' : '-';
-                const chargeText = Math.abs(charge) === 1 ? chargeSign : `${chargeSign}${Math.abs(charge)}`;
-                this.ctx.fillText(chargeText, pos.x + radius + 2, pos.y - radius - 2);
-            } else {
-                this.ctx.fillStyle = 'white';
-                this.ctx.font = '10px Arial';
-                this.ctx.fillText(particle.constructor.name, pos.x + radius + 2, pos.y - radius - 2);
-            }
+            let txtToRender = particle.getName();
+            // if (charge !== 0) {
+            //     txtToRender = `${particle.getName()}(${(charge > 0 ? '+' : '-') + Math.abs(particle.charge)})`
+            // }
+            this.ctx.fillStyle = 'white';
+            this.ctx.font = '10px Arial';
+            this.ctx.textAlign = 'center';
+            this.ctx.textBaseline = 'middle';
+            this.ctx.fillText(txtToRender, pos.x + radius + 2, pos.y - radius - 2);
         }
     }
 
