@@ -3,9 +3,12 @@ import {SmallPotionOfHealing} from "../items/consumable/potions/smallPotionOfHea
 import {Slash} from "../skills/slash.ts";
 import {Actor} from "./actor.ts";
 import Item from "../items/item.ts";
-import {player} from "../../main.ts";
+import {entityManager, gameRTC, graphics, player} from "../../main.ts";
 import {calcDistance} from "../../../utils/math/2d.ts";
 import {scaledTileSize} from "../../../utils/math/general.ts";
+import {randomInt} from "../../../utils/math/random.ts";
+import {FloatText} from "../../graphics/floatText.ts";
+import {Skill} from "../skills/skill.ts";
 
 export interface Equipment {
     head: any;
@@ -145,7 +148,7 @@ export default class Player extends Actor {
         this.minDamage = 15;
         this.maxDamage = 35;
         this.criticalChance = 0.3;
-        this.moveSpeed = 1;
+        this.moveSpeed = 3;
         this._AA = true;
         this.image = setWerewolfHumanManager();
         this.name = "Георгий";
@@ -164,10 +167,6 @@ export default class Player extends Actor {
         }
 
         this.fearFactor = 10;
-
-        for (let i = 0; i < this._inventory.length / 10; i++) {
-            this._inventory[i] = new SmallPotionOfHealing();
-        }
 
         this.equipment = {
             head: null,
@@ -381,6 +380,17 @@ export default class Player extends Actor {
             this.y = previousY;
         }
 
+        if (collision.slide) {
+            // Если скольжение по X разрешено
+            if (collision.slide.x !== 0) {
+                this.x += collision.slide.x * this.moveSpeed;
+            }
+            // Если скольжение по Y разрешено
+            if (collision.slide.y !== 0) {
+                this.y += collision.slide.y * this.moveSpeed;
+            }
+        }
+
         // Рассчитываем смещение камеры
         this.offsetX = cameraDiff.x - this.x;
         this.offsetY = cameraDiff.y - this.y;
@@ -396,6 +406,34 @@ export default class Player extends Actor {
             x: this.offsetX,
             y: this.offsetY
         };
+    }
+
+
+    learn<T extends Skill>(spell: T): void {
+        this.spellBook.push(spell);
+    }
+
+    inRangeOfAttack(): boolean {
+        return calcDistance(this.target!, this) < scaledTileSize() * this.attackRange * 1.5;
+    }
+
+    attackEvents(): boolean {
+        if (this.target == null) {
+            return false
+        }
+
+        if (this.inRangeOfAttack()) {
+            this.autoAttack();
+            return true
+        }
+
+        return false
+    }
+
+    autoAttack(): void {
+        if (this.attackDelay.timeIsUp()) {
+            this.target!.takeDamage(randomInt(this.minDamage, this.maxDamage), this);
+        }
     }
 
     selectNearestTarget<T extends { x: number, y: number }, U extends {

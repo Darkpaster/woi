@@ -1,0 +1,96 @@
+// SCSS для TargetWidget
+
+.target-widget {
+  background-color: #1f2937; // bg-gray-800
+  border: 1px solid #374151; // border-gray-700
+  border-radius: 0.5rem; // rounded-lg
+  padding: 0.75rem; // p-3
+  color: white;
+  width: 16rem; // w-64
+  user-select: none; // select-none
+  // Добавим некоторые особенности для выделения вида таргета
+  border-left: 3px solid #ef4444; // Красная полоса слева для выделения цели
+
+  // Положение на экране (можно настроить по необходимости)
+  position: fixed;
+  top: 2rem; // Чтобы виджет цели был ниже виджета игрока
+  left: 30rem;
+  z-index: 10;
+}
+
+.target-header {
+  display: flex;
+  margin-bottom: 0.75rem; // mb-3
+}
+
+.avatar-container {
+  position: relative;
+  margin-right: 0.75rem; // mr-3
+
+  .avatar {
+    width: 4rem; // w-16
+    height: 4rem; // h-16
+    border-radius: 50%; // rounded-full
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #374151; // bg-gray-700
+    overflow: hidden;
+
+    img {
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .level-indicator {
+    position: absolute;
+    bottom: -0.25rem; // -bottom-1
+    right: -0.25rem; // -right-1
+    background-color: #dc2626; // bg-red-600 - для таргета используем красный цвет
+    border-radius: 50%; // rounded-full
+    width: 1.5rem; // w-6
+    height: 1.5rem; // h-6
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem; // text-xs
+    font-weight: bold;
+  }
+}
+
+.character-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  .character-name {
+    font-weight: bold;
+  }
+
+  .character-class {
+    font-size: 0.875rem; // text-sm
+    color: #9ca3af; // text-gray-400
+  }
+}
+
+.status-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem; // space-y-1
+}
+
+.status-indicators {
+  display: flex;
+  margin-top: 0.5rem; // mt-2
+  justify-content: flex-end;
+
+  .status-low-health {
+    color: #ef4444; // text-red-500
+    font-size: 0.75rem; // text-xs
+    margin-right: 0.5rem; // mr-2
+    display: flex;
+    align-items: center;
+  }
+}

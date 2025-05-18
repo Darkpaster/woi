@@ -1,10 +1,7 @@
-import {EntityUIInfo} from "../actors/actor.ts";
 import {AnimatedImageManager} from "../../graphics/image.ts";
-import * as console from "node:console";
 import {EquipmentType, RarityTypes} from "../../types.ts";
-import * as console from "node:console";
 
-export default class Item implements EntityUIInfo {
+export default class Item {
     get maxStackSize(): number {
         return this._maxStackSize;
     }
@@ -112,7 +109,7 @@ export default class Item implements EntityUIInfo {
         this._maxStackSize = 64;
         this._amount = 1;
         this._stackable = ids.length > 1;
-        this.amount = ids;
+        this.amount = ids; //вся херня в геттере
         this.equipmentType = "none";
     }
 

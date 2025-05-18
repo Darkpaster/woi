@@ -197,6 +197,9 @@ export function useKeyboard(canvasRef: RefObject<HTMLCanvasElement | null>) {
                 case bindings.particle:
                     actions.particles();
                     break;
+                case bindings.char:
+                    actions.charWindow();
+                    break;
             }
         };
 

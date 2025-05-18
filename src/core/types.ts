@@ -27,6 +27,7 @@ export interface EntityUIInfoType {
 
 export type ActorDTO = {
     actorId: number;
+    name: string,
     x: number;
     y: number;
     renderState: RenderStateType;

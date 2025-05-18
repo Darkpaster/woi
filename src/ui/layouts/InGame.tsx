@@ -9,6 +9,10 @@ import ChatWindow from "../components/game/static/ChatWindow.tsx";
 import InventoryWindow from "../components/game/dynamic/InventoryWindow.tsx";
 import InfoWindow from "../components/game/dynamic/InfoWindow.tsx";
 import LoadingScreen from "../components/game/dynamic/LoadingScreen.tsx";
+import PlayerWidget from "../components/game/static/PlayerWidget.tsx";
+import TargetWidget from "../components/game/static/TargetWidget.tsx";
+import CharacterWindow from "../components/game/dynamic/CharacterWindow.tsx";
+import {CharacterMenu} from "./CharacterMenu.tsx";
 
 const check = isMounted();
 
@@ -23,6 +27,7 @@ export const InGame = () => {
     const infoEntity = useMySelector((state: { ui: UIState }) => state.ui.infoEntity);
     const infoPosition = useMySelector((state: { ui: UIState }) => state.ui.infoPosition);
     const isInventoryOpen = useMySelector((state: { ui: UIState }) => state.ui.isInventoryOpen);
+    const isCharMenuOpen = useMySelector((state: { ui: UIState }) => state.ui.isCharMenuOpen);
 
 
     useEffect(() => {
@@ -41,7 +46,7 @@ export const InGame = () => {
             }
             if (player.x !== memoize.x || player.y !== memoize.y) {
                 // console.log(`x: ${player.x}, y: ${player.y}`)
-                gameRTC.sendPlayerPosition(player.id, player?.x, player?.y);
+                gameRTC.sendPlayerPosition();
                 [memoize.x, memoize.y] = [player.x, player.y];
             }
         }, 50);
@@ -56,14 +61,21 @@ export const InGame = () => {
     return (
         !loading ? (<div id="interface-layer">
             <div id="static-interface">
-                <CharWidget value={health} max={maxHealth} className={"stat-bar"}/>
+                {/*<CharWidget value={health} max={maxHealth} className={"stat-bar"}/>*/}
+                {/*{player!.target && (*/}
+                {/*    <CharWidget value={targetHealth} max={targetMaxHealth} className={"stat-bar-enemy"}/>*/}
+                {/*)}*/}
+
+                <PlayerWidget />
                 {player!.target && (
-                    <CharWidget value={targetHealth} max={targetMaxHealth} className={"stat-bar-enemy"}/>
+                    <TargetWidget />
                 )}
+
                 <Panel/>
                 <ChatWindow/>
             </div>
             {isInventoryOpen && <InventoryWindow/>}
+            {isCharMenuOpen && <CharacterWindow/>}
             {
                 infoEntity && infoPosition && (<InfoWindow entity={infoEntity} position={infoPosition}/>)
             }

@@ -54,8 +54,8 @@ type textList = {
     madBoarDescription: string;
     rabbit: string;
     rabbitDescription: string;
-    slime: string;
-    slimeDescription: string;
+    skime: string;
+    skimeDescription: string;
     bear: string;
     bearDescription: string;
 

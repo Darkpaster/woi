@@ -94,7 +94,7 @@ export class Graphics {
                 mobsAfter.push(mob);
             } else {
                 mob.image?.render(mob.renderState, ctx, mob.x, mob.y - (64 * settings.defaultTileScale), mob.direction);
-                ctx.fillText(mob.name, mob!.x + mob.image.currentAnimation.widthSize / 2, mob!.y);
+                ctx.fillText(mob.x + " "+mob.y, mob!.x + mob.image.currentAnimation.widthSize / 2, mob!.y);
             }
         })
 
@@ -102,7 +102,7 @@ export class Graphics {
 
         for (const mob of mobsAfter) {
             mob.image?.render(mob.renderState, ctx, mob.x, mob.y - (64 * settings.defaultTileScale), mob.direction);
-            ctx.fillText(mob.name, mob!.x + mob.image.currentAnimation.widthSize / 2, mob!.y);
+            ctx.fillText(mob.x + " "+mob.y, mob!.x + mob.image.currentAnimation.widthSize / 2, mob!.y);
         }
 
         entityManager.findPlayerAt(player.x, player.y).forEach((player, index) => {
@@ -122,10 +122,10 @@ export class Graphics {
         if (player!.target) {
             ctx.drawImage(this.selector1.tile, player!.target.x || 0, player!.target.y || 0, scaledTileSize(), scaledTileSize());
         }
-        ctx.fillText(player!.name, player!.x + player.image.currentAnimation.widthSize / 2, player!.y);
+        // ctx.fillText(player!.name, player!.x + player.image.currentAnimation.widthSize / 2, player!.y);
         ctx.fillText(`total mobs: ${entityManager.mobs.size}`, player!.x + player.image.currentAnimation.widthSize / 2 + 300, player!.y);
         ctx.fillText(`mobs in chunk: ${entityManager.findMobsAt(player.x, player.y).length}`, player!.x + player.image.currentAnimation.widthSize / 2 + 300, player!.y + 200);
-        // ctx.fillText(`x:${player.x}, y:${player.y}`, player!.x + player.image.currentAnimation.widthSize / 2, player!.y);
+        ctx.fillText(`x:${player.x}, y:${player.y}`, player!.x + player.image.currentAnimation.widthSize / 2, player!.y);
     }
 
     private renderEffects(): void {
@@ -151,12 +151,15 @@ export class Graphics {
 
     private renderTilemap(): void {
         this.ctx!.fillStyle = "black";
-        const map = worldMap.getIndexingChunks();
-        for (const layer of Object.values(map)) {
-            for (const chunk of layer) {
-                const chunkData = chunk.chunk;
-                const offsetX = chunk.startX;
-                const offsetY = chunk.startY;
+        // const map = worldMap.getIndexingChunks();
+        const background = worldMap.getScreenTileMatrix("background");
+        const foreground = worldMap.getScreenTileMatrix("foreground");
+        const animated = worldMap.getScreenTileMatrix("animated");
+        for (const screen of [background, foreground, animated]) {
+            // for (const chunk of layer) {
+                const chunkData = screen.matrix;
+                const offsetX = screen.startX;
+                const offsetY = screen.startY;
                 for (let i: number = 0; i < chunkData.length; i++) {
                     for (let j: number = 0; j < chunkData[i].length; j++) {
                         const tileIndex: number = chunkData[i][j];
@@ -183,8 +186,8 @@ export class Graphics {
                         }
                     }
                 }
-                this.ctx?.strokeRect(chunk.startX * scaledTileSize(), chunk.startY * scaledTileSize(), 32 * scaledTileSize(), 32 * scaledTileSize())
-            }
+                this.ctx?.strokeRect(screen.startX * scaledTileSize(), screen.startY * scaledTileSize(), chunkData[0].length * scaledTileSize(), chunkData.length * scaledTileSize())
+            // }
         }
     }
 }

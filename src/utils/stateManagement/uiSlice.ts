@@ -1,11 +1,9 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {Actor, EntityUIInfo} from "../../core/logic/actors/actor.ts";
-import {WritableDraft} from "immer";
 
-export interface ItemType extends EntityUIInfo {
+export interface ItemType  {
 }
 
-export interface SkillType extends EntityUIInfo {
+export interface SkillType {
     minDamage: number,
     maxDamage: number,
     cooldown: number,
@@ -13,6 +11,7 @@ export interface SkillType extends EntityUIInfo {
 
 export interface UIState {
     isInventoryOpen: boolean;
+    isCharMenuOpen: boolean;
     gameState: 'mainMenu' | 'paused' | 'inGame';
     infoEntity: ItemType|SkillType|null,
     infoPosition: { left: number; top: number } | null;
@@ -25,6 +24,7 @@ export interface UIState {
 
 const initialState: UIState = {
     isInventoryOpen: false,
+    isCharMenuOpen: false,
     gameState: "mainMenu",
     infoEntity: null,
     infoPosition: null,
@@ -45,6 +45,9 @@ const uiSlice = createSlice({
         toggleInventory(state) {
             state.isInventoryOpen = !state.isInventoryOpen;
         },
+        toggleCharMenu(state) {
+            state.isCharMenuOpen = !state.isCharMenuOpen;
+        },
         setInfoEntity(state, action: PayloadAction<ItemType | SkillType | null>) {
             state.infoEntity = action.payload;
         },
@@ -57,5 +60,5 @@ const uiSlice = createSlice({
     },
 });
 
-export const { toggleInventory, setInfoPosition, setInfoEntity } = uiSlice.actions;
+export const { toggleInventory, toggleCharMenu, setInfoPosition, setInfoEntity } = uiSlice.actions;
 export default uiSlice.reducer;

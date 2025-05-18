@@ -1,0 +1,50 @@
+// SCSS для StatusBar
+
+.status-bar-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 0.25rem; // mb-1
+
+  .status-label {
+    font-size: 0.75rem; // text-xs
+    margin-right: 0.5rem; // mr-2
+    width: 4rem; // w-16
+    color: #d1d5db; // text-gray-300
+  }
+
+  .status-bar-background {
+    flex-grow: 1;
+    height: 1rem; // h-4
+    background-color: #374151; // bg-gray-700
+    border-radius: 0.125rem; // rounded-sm
+    overflow: hidden;
+    position: relative;
+
+    .status-bar-fill {
+      height: 100%;
+      transition: width 0.3s ease-out;
+
+      &.health {
+        background-color: #dc2626; // bg-red-600
+      }
+
+      &.mana {
+        background-color: #2563eb; // bg-blue-600
+      }
+
+      &.stamina {
+        background-color: #16a34a; // bg-green-600
+      }
+    }
+
+    .status-bar-text {
+      position: absolute;
+      inset-x: 0;
+      text-align: center;
+      font-size: 0.75rem; // text-xs
+      color: white;
+      line-height: 1rem; // leading-4
+    }
+  }
+}

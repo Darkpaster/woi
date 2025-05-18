@@ -14,7 +14,7 @@ import {scaledTileSize} from "../../../utils/math/general.ts";
 import {RarityTypes} from "../../types.ts";
 
 
-export abstract class Actor implements EntityUIInfo {
+export abstract class Actor {
     get id(): number {
         return this._id;
     }
@@ -299,6 +299,8 @@ export abstract class Actor implements EntityUIInfo {
 
     private _x: number = 0;
     private _y: number = 0;
+    private lastPosX: number = 0;
+    private lastPosY: number = 0;
     // private readonly posX: number = Math.floor(this._x / scaledTileSize());
     // private readonly posY: number = Math.floor(this._y / scaledTileSize());
     private _offsetX: number = 0;
@@ -337,177 +339,167 @@ export abstract class Actor implements EntityUIInfo {
         return result
     }
 
-    autoAttack(): void {
-        if (this._attackDelay.timeIsUp()) {
-            this.target!.dealDamage(randomInt(this._minDamage, this._maxDamage), this);
-        }
-    }
-
-    public dealDamage(damage: number, source?: Actor | null): void {
+    public takeDamage(damage: number): void {
         let realDamage: number = damage;
         let crit: boolean = false;
 
-        const isPlayer = this instanceof Player;
-
-        if (source) {
-            if (source._criticalChance > Math.random()) {
-                realDamage *= source._criticalDamage;
-                crit = true;
-            }
+        if (player.criticalChance > Math.random()) {
+            realDamage *= player.criticalDamage;
+            crit = true;
         }
-        realDamage -= this._defense;
+        realDamage -= this.defense;
 
         if (realDamage < 0) {
             realDamage = 0;
         } else {
-            gameRTC.dealDamage( {value: realDamage, target: {targetId: this.id, targetType: isPlayer ? "player" : "mob"}} );
+            gameRTC.dealDamage( {value: realDamage, target: {targetId: this.id, targetType: this instanceof Player ? "player" : "mob"}} );
         }
 
-        this._HP -= realDamage;
+        this.HP -= realDamage;
         graphics?.floatTextList.push(new FloatText({
             text: realDamage,
-            x: this._x,
-            y: this._y,
-            color: isPlayer ? "red" : "orange",
+            x: this.x,
+            y: this.y,
+            color: "orange",
             crit: crit
         }));
 
-        if (this.HP <= 0 && !isPlayer) {
-            entityManager.removeMob(this.id);
+        if (this.HP <= 0) {
+            if (this instanceof Player) {
+                entityManager.removePlayer(this.id)
+            } else {
+                entityManager.removeMob(this.id);
+            }
             player!.target = null;
         }
     }
 
-    learn<T extends Skill>(spell: T): void {
-        this._spellBook.push(spell);
-    }
-
     heal(value: number): void {
-        const realValue: number = Math.min(value, this._HT - this._HP);
-        this._HP += realValue;
-        graphics?.floatTextList.push(new FloatText({text: value, x: this._x, y: this._y, color: "green", crit: false}));
-    }
-
-    inRangeOfAttack(): boolean {
-        return calcDistance(this.target!, this) < scaledTileSize() * this._attackRange * 1.5;
-    }
-
-    attackEvents(): boolean {
-        if (this.target == null) {
-            return false
+        const realValue: number = Math.min(value, this.HT - this.HP);
+        if (realValue > 0) {
+            gameRTC.dealDamage( {value: -realValue, target: {targetId: this.id, targetType: this instanceof Player ? "player" : "mob"}} );
         }
-
-        if (this.inRangeOfAttack()) {
-            this.autoAttack();
-            return true
-        }
-
-        return false
+        graphics?.floatTextList.push(new FloatText({text: realValue, x: this.x, y: this.y, color: "green", crit: false}));
     }
 
-    collision(): { x: boolean, y: boolean } {
-        const stop: { x: boolean, y: boolean } = {x: false, y: false};
+    collision(): { x: boolean, y: boolean, slide?: { x: number, y: number } } {
+        // Результат коллизии по осям X и Y
+        const result: { x: boolean, y: boolean, slide?: { x: number, y: number } } = { x: false, y: false };
 
         // Текущие координаты игрока
-        const pos = {x: Math.floor(this.posX), y: Math.floor(this.posY)};
+        const playerPosX = this.posX;
+        const playerPosY = this.posY;
 
-        // Получаем чанк по текущим координатам
-        const chunk = worldMap.getChunk(pos.x, pos.y, "foreground");
-        if (!chunk || !chunk.chunk) {
-            return stop; // Если чанк не существует, коллизии нет
-        }
+        // Предыдущие координаты игрока (для определения направления движения)
+        const lastPosX = this.lastPosX || playerPosX;
+        const lastPosY = this.lastPosY || playerPosY;
 
-        try {
-            const tile = worldMap.getTile(pos.x, pos.y, "foreground");
-            if (tile) {
-                // console.log(JSON.stringify(tile.props));
-                graphics.ctx?.strokeRect(pos.x * scaledTileSize(), pos.y * scaledTileSize(), scaledTileSize(), scaledTileSize());
-                graphics.ctx!.drawImage(tile.image.tile, pos.x * scaledTileSize(), pos.y * scaledTileSize(), scaledTileSize(), scaledTileSize());
-            }
-        } catch (e) {
-
-        }
-
-        // Для отладки
-        // console.log(`Player pos: ${pos.x.toFixed(2)},${pos.y.toFixed(2)}, Chunk start: ${chunk.startX},${chunk.startY}`);
+        // Направление движения
+        const moveX = playerPosX - lastPosX;
+        const moveY = playerPosY - lastPosY;
 
         // Радиус коллизии персонажа
-        const playerRadius = 0.4;
-        const checkRadius = 2;
+        const playerRadius = 0.5;
+        // Радиус проверки тайлов вокруг игрока
+        const checkRadius = 1;
 
-        // Проверяем тайлы вокруг игрока в глобальных координатах
-        const playerTileX = Math.floor(pos.x);
-        const playerTileY = Math.floor(pos.y);
+        // Получаем матрицу тайлов слоя переднего плана вокруг игрока
+        const screenTiles = worldMap.getScreenTileMatrix("foreground");
+        if (!screenTiles || !screenTiles.matrix.length) {
+            return result; // Если матрицы нет, коллизии нет
+        }
 
-        for (let offY = -checkRadius; offY <= checkRadius; offY++) {
-            for (let offX = -checkRadius; offX <= checkRadius; offX++) {
-                // Вычисляем глобальные координаты тайла напрямую
-                const tileGlobalX = playerTileX + offX;
-                const tileGlobalY = playerTileY + offY;
+        // Определяем область проверки в пределах матрицы тайлов
+        const startTileX = Math.max(Math.floor(playerPosX - checkRadius) - screenTiles.startX, 0);
+        const startTileY = Math.max(Math.floor(playerPosY - checkRadius) - screenTiles.startY, 0);
+        const endTileX = Math.min(Math.ceil(playerPosX + checkRadius) - screenTiles.startX, screenTiles.width - 1);
+        const endTileY = Math.min(Math.ceil(playerPosY + checkRadius) - screenTiles.startY, screenTiles.height - 1);
 
-                // Определяем, к какому чанку относится этот тайл
-                // const tileChunkKey = worldMap.getTilePosKey(tileGlobalX, tileGlobalY);
-                const tileChunk = worldMap.getChunk(tileGlobalX, tileGlobalY, "foreground");
+        // Информация о ближайшей коллизии
+        let nearestCollision = {
+            distance: Number.MAX_VALUE,
+            dx: 0,
+            dy: 0,
+            tile: null as any
+        };
 
-                if (!tileChunk || !tileChunk.chunk) {
-                    continue; // Если чанка нет, пропускаем
+        // Проверяем тайлы в области вокруг игрока
+        for (let localY = startTileY; localY <= endTileY; localY++) {
+            for (let localX = startTileX; localX <= endTileX; localX++) {
+                // Пропускаем, если выходим за границы матрицы
+                if (localY < 0 || localY >= screenTiles.matrix.length ||
+                    localX < 0 || localX >= screenTiles.matrix[localY].length) {
+                    continue;
                 }
 
-                // Вычисляем локальные координаты внутри чанка
-                const localX = ((tileGlobalX - tileChunk.startX) + MapManager.CHUNK_SIZE) % MapManager.CHUNK_SIZE;
-                const localY = ((tileGlobalY - tileChunk.startY) + MapManager.CHUNK_SIZE) % MapManager.CHUNK_SIZE;
+                // Получаем ID тайла
+                const tileId = screenTiles.matrix[localY][localX];
+                const tile = tileList[tileId];
 
-                // Проверяем границы массива
-                if (localY >= 0 && localY < tileChunk.chunk.length &&
-                    localX >= 0 && localX < tileChunk.chunk[0].length) {
+                // Если тайл существует и по нему нельзя ходить
+                if (tile && !tile.props.isWalkable) {
+                    // Вычисляем глобальные координаты тайла
+                    const tileGlobalX = screenTiles.startX + localX;
+                    const tileGlobalY = screenTiles.startY + localY;
 
-                    const tileId = tileChunk.chunk[localY][localX];
-                    const tile = tileList[tileId];
+                    // Расстояние между игроком и центром тайла
+                    const dx = playerPosX - (tileGlobalX + 0.5);
+                    const dy = playerPosY - (tileGlobalY + 0.5);
+                    const distanceSquared = dx * dx + dy * dy;
 
-                    if (tile && !tile.props.isWalkable) {
-                        // Расстояние между игроком и тайлом
-                        const dx = pos.x - (tileGlobalX + 0.5);
-                        const dy = pos.y - (tileGlobalY + 0.5);
-                        const distanceSquared = dx * dx + dy * dy;
+                    // Квадрат порога коллизии (сумма радиуса игрока и половины тайла)
+                    const thresholdSquared = (playerRadius + 0.5) * (playerRadius + 0.5);
 
-                        // Квадрат порога коллизии
-                        const thresholdSquared = (playerRadius + 0.5) * (playerRadius + 0.5);
-
-                        // Для отладки
-                        // console.log(`Checking tile at ${tileGlobalX},${tileGlobalY} (${localX},${localY} in chunk ${tileChunk.startX},${tileChunk.startY}), ID: ${tileId}, dist: ${Math.sqrt(distanceSquared).toFixed(2)}, threshold: ${Math.sqrt(thresholdSquared).toFixed(2)}`);
-
-                        if (distanceSquared < thresholdSquared) {
-                            // Определяем ось коллизии на основе направления движения и положения
-                            if (Math.abs(dx) > Math.abs(dy)) {
-                                stop.x = true;
-                            } else {
-                                stop.y = true;
-                            }
-
-                            // Для отладки
-                            // console.log(`Collision at ${tileGlobalX},${tileGlobalY} (tile ${tileId}), distance: ${Math.sqrt(distanceSquared).toFixed(2)}`);
-                            // if (player) {
-                            //     player.name = `Collision: ${tileId} at ${tileGlobalX},${tileGlobalY}`;
-                            // }
+                    // Если расстояние меньше порога, значит есть коллизия
+                    if (distanceSquared < thresholdSquared) {
+                        // Запоминаем информацию о ближайшей коллизии
+                        if (distanceSquared < nearestCollision.distance) {
+                            nearestCollision = {
+                                distance: distanceSquared,
+                                dx,
+                                dy,
+                                tile
+                            };
                         }
                     }
                 }
             }
         }
 
-        return stop;
-    }
+        // Если коллизия обнаружена
+        if (nearestCollision.tile) {
+            const { dx, dy } = nearestCollision;
 
-// Вспомогательный метод для вычисления координаты внутри чанка
-    private getPosInChunk(globalPos: number, chunkStart: number, chunkSize: number): number {
-        return Math.floor(globalPos - chunkStart);
-    }
+            // Определяем преобладающую ось коллизии
+            const isHorizontalCollision = Math.abs(dx) > Math.abs(dy);
 
-// Вспомогательный метод для вычисления расстояния между двумя точками
-    private calcDistance(point1: { x: number, y: number }, point2: { x: number, y: number }): number {
-        const dx = point1.x - point2.x;
-        const dy = point1.y - point2.y;
-        return Math.sqrt(dx * dx + dy * dy);
+            // Настраиваем флаги блокировки движения
+            if (isHorizontalCollision) {
+                result.x = true;
+            } else {
+                result.y = true;
+            }
+
+            // Реализация скольжения вдоль стены при диагональном движении
+            if (Math.abs(moveX) > 0.01 && Math.abs(moveY) > 0.01) {
+                // Если движение диагональное и есть коллизия
+                result.slide = { x: 0, y: 0 };
+
+                if (isHorizontalCollision) {
+                    // Если коллизия по горизонтали, разрешаем движение по вертикали
+                    result.slide.y = moveY;
+                } else {
+                    // Если коллизия по вертикали, разрешаем движение по горизонтали
+                    result.slide.x = moveX;
+                }
+            }
+        }
+
+        // Сохраняем текущую позицию как предыдущую для следующего кадра
+        this.lastPosX = playerPosX;
+        this.lastPosY = playerPosY;
+
+        return result;
     }
 
 

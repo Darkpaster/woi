@@ -44,6 +44,7 @@ export default class Mob extends Actor {
         this.fearFactor = 10;
     }
 
+
     get agroRadius(): number {
         return scaledTileSize() * this._agroRadius;
     }

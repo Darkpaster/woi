@@ -5,8 +5,8 @@ import UseInitAPI from "../service/hooks/initAPI.ts";
 import Wanderer from "../../core/logic/actors/characters/wanderer.ts";
 import axios from "axios";
 import {SmallPotionOfHealing} from "../../core/logic/items/consumable/potions/smallPotionOfHealing.ts";
-import BlueSlime from "../../core/logic/actors/mobs/enemies/blueSlime.ts";
 import LoadingScreen from "../components/game/dynamic/LoadingScreen.tsx";
+import {settings} from "../../core/config/settings.ts";
 
 
 export const CharacterMenu = ({onEnter, onBack}: { onEnter: () => void, onBack: () => void }) => {
@@ -17,6 +17,7 @@ export const CharacterMenu = ({onEnter, onBack}: { onEnter: () => void, onBack: 
     const [selected, setSelected] = useState<null | number>(null);
     const [name, setName] = useState("");
     const [lever, setLever] = useState(false);
+
 
     function requestType(): {
         url: string,
@@ -68,14 +69,15 @@ export const CharacterMenu = ({onEnter, onBack}: { onEnter: () => void, onBack: 
     });
 
     const handleCreateChar = () => {
-        if (!name) return
+        if (!name || loading) return
         setLever(!lever);
     }
 
     const handleEnter = async () => {
-        if (!selected) {
+        if (!selected || loading) {
             return
         }
+
 
         const target = characters?.filter(char => char.id === selected)[0];
         if (target) {
@@ -89,19 +91,14 @@ export const CharacterMenu = ({onEnter, onBack}: { onEnter: () => void, onBack: 
                     const mobList = await axios.request({url: "/mob/init", method: "get"});
                     // alert(JSON.stringify(mobList.data))
                     for (const item of itemList.data) {
-                        const newItem = new SmallPotionOfHealing();
-                        newItem.x = item.x;
-                        newItem.y = item.y;
-                        newItem.ids = [item.itemId];
+                        const newItem = new SmallPotionOfHealing([item.itemId]);
+                        newItem.x = item.x * settings.defaultTileScale;
+                        newItem.y = item.y * settings.defaultTileScale;
                         entityManager.addItem(item);
                     }
                     for (const mob of mobList.data) {
-                        const newMob = new BlueSlime();
-                        newMob.x = mob.x;
-                        newMob.y = mob.y;
-                        newMob.id = mob.id;
-                        newMob.HP = mob.health;
-                        entityManager.addMob(newMob);
+                        // console.log(JSON.stringify(mob))
+                        entityManager.addMob(mob);
                     }
                     onEnter()
                 }, 1000);

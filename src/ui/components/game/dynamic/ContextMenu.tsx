@@ -1,4 +1,5 @@
-import {useEffect, useRef} from "react";
+import { useEffect, useRef } from "react";
+import "../static/contextMenu.scss"
 
 interface ContextMenuProps {
     x: number;
@@ -25,34 +26,33 @@ const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose, playerName }) 
 
     // Действия в контекстном меню
     const menuItems = [
-        { icon: <Heart size={16} />, label: "Исцелить", action: () => console.log(`Healing ${playerName}`) },
-        { icon: <Shield size={16} />, label: "Защитить", action: () => console.log(`Buffing ${playerName}`) },
-        { icon: <Swords size={16} />, label: "Дуэль", action: () => console.log(`Dueling ${playerName}`) },
-        { icon: <Share size={16} />, label: "Поделиться опытом", action: () => console.log(`Sharing XP with ${playerName}`) },
-        { icon: <Maximize2 size={16} />, label: "Пригласить в группу", action: () => console.log(`Inviting ${playerName} to party`) },
-        { icon: <LogOut size={16} className="text-red-500" />, label: "Сообщить о нарушении", action: () => console.log(`Reporting ${playerName}`), danger: true }
+        { icon: "heart", label: "Осмотреть", action: () => console.log(`Healing ${playerName}`) },
+        { icon: "shield", label: "Добавить в друзья", action: () => console.log(`Buffing ${playerName}`) },
+        { icon: "swords", label: "Дуэль", action: () => console.log(`Dueling ${playerName}`) },
+        { icon: "share", label: "Поделиться опытом", action: () => console.log(`Sharing XP with ${playerName}`) },
+        { icon: "maximize", label: "Пригласить в группу", action: () => console.log(`Inviting ${playerName} to party`) },
+        { icon: "logout", label: "Сообщить о нарушении", action: () => console.log(`Reporting ${playerName}`), danger: true }
     ];
 
     return (
         <div
             ref={menuRef}
-            className="absolute bg-gray-800 border border-gray-700 rounded shadow-lg py-1 w-56"
+            className="context-menu"
             style={{
                 left: `${x}px`,
-                top: `${y}px`,
-                zIndex: 1000
+                top: `${y}px`
             }}
         >
             {menuItems.map((item, index) => (
                 <div
                     key={index}
-                    className={`flex items-center px-4 py-2 hover:bg-gray-700 cursor-pointer ${item.danger ? 'text-red-500' : ''}`}
+                    className={`menu-item ${item.danger ? 'danger' : ''}`}
                     onClick={() => {
                         item.action();
                         onClose();
                     }}
                 >
-                    <span className="mr-2">{item.icon}</span>
+                    <span className={`menu-icon ${item.icon}`}></span>
                     {item.label}
                 </div>
             ))}

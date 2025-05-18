@@ -5,7 +5,6 @@ import {scaledTileSize} from "../../utils/math/general.ts";
 export function update(): void {
     camera!.update(player!.updatePlayer(), player!.x, player!.y);
     entityManager.findMobsAt(player.x, player.y).forEach((mob, index) => {
-        mob.update();
         entityManager.updateMob(mob);
     })
     if (graphics.debugMode) {
@@ -26,7 +25,7 @@ export function update(): void {
 export function updateZoom(zoomIn: boolean): void {
     const prevPosX: number = player!.posX;
     const prevPosY: number = player!.posY;
-    const prevPos: Array<{ x: number; y: number }> = [];
+    // const prevPos: Array<{ x: number; y: number }> = [];
 
     // for (const mob of Mob.mobList) {
     //     prevPos.push({ x: mob.posX, y: mob.posY });

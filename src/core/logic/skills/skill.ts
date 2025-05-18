@@ -2,7 +2,6 @@ import { defaultSkill } from "../../graphics/static/paths.ts";
 import { CallbackTimer } from "../../../utils/general/time.ts";
 import Mob from "../actors/mobs/mob.ts";
 import Player from "../actors/player.ts";
-import {EntityUIInfo} from "../actors/actor.ts";
 import {AnimatedEffect, AnimatedImageManager} from "../../graphics/image.ts";
 import {calcDistance} from "../../../utils/math/2d.ts";
 import {randomInt} from "../../../utils/math/random.ts";
@@ -10,7 +9,7 @@ import {scaledTileSize} from "../../../utils/math/general.ts";
 import {RarityTypes} from "../../types.ts";
 // import {v4 as uuidv4} from "uuid";
 
-export class Skill implements EntityUIInfo {
+export class Skill {
     get icon(): string | null | undefined {
         return this._sprite;
     }
@@ -136,6 +135,9 @@ export class Skill implements EntityUIInfo {
      }
 
      execute(): void {
+        if (!this.owner.target) {
+            return;
+        }
          let realDamage: number = randomInt(this.minDamage, this.maxDamage);
          
          if (this.owner.target.defenseType === this.damageType) {

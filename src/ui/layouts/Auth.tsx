@@ -74,6 +74,10 @@ const Auth: React.FC<props> = ({onLogin}: props) => {
     }
 
     const handleSubmit = (e: React.FormEvent) => {
+        if (loading) {
+            return
+        }
+
         e.preventDefault();
         setLever(!lever);
     };

@@ -50,8 +50,8 @@ export default {
     madBoarDescription: "A raging boar that attacks anything that moves.",
     rabbit: "Rabbit",
     rabbitDescription: "A small, fast creature that prefers to flee rather than fight.",
-    slime: "Slime",
-    slimeDescription: "A jelly-like creature that slowly moves in search of food.",
+    skime: "Skime",
+    skimeDescription: "A jelly-like creature that slowly moves in search of food.",
     bear: "Bear",
     bearDescription: "A massive beast capable of tearing enemies apart with its claws.",
 

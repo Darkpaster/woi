@@ -3,6 +3,10 @@ import Item from "./items/item.ts";
 import Player from "./actors/player.ts";
 import {MapManager} from "./world/mapManager.ts";
 import {scaledTileSize} from "../../utils/math/general.ts";
+import BlueSlime from "./actors/mobs/enemies/blueSlime.ts";
+import {settings} from "../config/settings.ts";
+import {entityManager} from "../main.ts";
+import {ActorDTO} from "../types.ts";
 
 export class EntityManager {
     get items(): Map<number, Item> {
@@ -80,14 +84,21 @@ export class EntityManager {
         }
     }
 
-    public addMob<M extends Mob>(mob: M) {
-        this._mobs.set(mob.id, mob);
-        const key = this.getChunkPosKey(mob.x, mob.y);
+    public addMob(mobData: ActorDTO) {
+        const newMob = new BlueSlime();
+        newMob.x = mobData.x * settings.defaultTileScale;
+        newMob.y = mobData.y * settings.defaultTileScale;
+        newMob.id = mobData.actorId;
+        newMob.HP = newMob.HT = mobData.health;
+        newMob.name = mobData.name;
+        this._mobs.set(newMob.id, newMob);
+        const key = this.getChunkPosKey(newMob.x, newMob.y);
         if (!this.mobStorage.has(key)) {
             this.mobStorage.set(key, new Set());
         }
-        this.mobStorage.get(key)!.add(mob.id);
+        this.mobStorage.get(key)!.add(newMob.id);
     }
+
 
     public removeMob(mobId: number) {
         const mob = this.mobs.get(mobId);
@@ -115,21 +126,28 @@ export class EntityManager {
         this._players.set(player.id, player);
     }
 
-    public updateMob<M extends Mob>(mob: M) {
-        const oldEntity = this.mobs.get(mob.id);
+    public updateMob(mob: ActorDTO) {
+        const oldEntity = this.mobs.get(mob.actorId);
         if (!oldEntity) {
+            console.log("respawned: " + mob.actorId);
+            this.addMob(mob);
             return
         }
+
         const oldKey = this.getChunkPosKey(oldEntity.x, oldEntity.y);
-        const newKey = this.getChunkPosKey(mob.x, mob.y);
+        oldEntity.x = mob.x * settings.defaultTileScale;
+        oldEntity.y = mob.y * settings.defaultTileScale;
+        oldEntity.HP = mob.health;
+        oldEntity.renderState = mob.renderState;
+        const newKey = this.getChunkPosKey(oldEntity.x, oldEntity.y);
         if (oldKey !== newKey) {
-            this.mobStorage.get(oldKey)?.delete(mob.id);
+            this.mobStorage.get(oldKey)?.delete(mob.actorId);
             if (!this.mobStorage.has(newKey)) {
                 this.mobStorage.set(newKey, new Set());
             }
-            this.mobStorage.get(newKey)!.add(mob.id);
+            this.mobStorage.get(newKey)!.add(mob.actorId);
         }
-        this.mobs.set(mob.id, mob);
+        this.mobs.set(mob.actorId, oldEntity);
     }
 
     // updateAllEntities() {

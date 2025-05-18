@@ -49,6 +49,7 @@ const CharWidget: React.FC<CharWidgetProps> = ({
     };
 
     return (
+
         <div
             className="bg-gray-800 border border-gray-700 rounded-lg p-3 text-white w-64 select-none"
             onContextMenu={handleContextMenu}
@@ -60,7 +61,7 @@ const CharWidget: React.FC<CharWidgetProps> = ({
                         {avatarUrl ? (
                             <img src={avatarUrl} alt={name} className="h-full w-full object-cover" />
                         ) : (
-                            <User size={32} />
+                            <div />
                         )}
                     </div>
                     <div className="absolute -bottom-1 -right-1 bg-blue-600 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
@@ -101,13 +102,13 @@ const CharWidget: React.FC<CharWidgetProps> = ({
             <div className="flex mt-2 justify-end">
                 {health < maxHealth / 3 && (
                     <div className="text-red-500 text-xs mr-2 flex items-center">
-                        <Heart size={12} className="mr-1" />
+                        {/*<Heart size={12} className="mr-1" />*/}
                         Низкое здоровье
                     </div>
                 )}
                 {mana < maxMana / 4 && (
                     <div className="text-blue-500 text-xs flex items-center">
-                        <Droplet size={12} className="mr-1" />
+                        {/*<Droplet size={12} className="mr-1" />*/}
                         Мало маны
                     </div>
                 )}

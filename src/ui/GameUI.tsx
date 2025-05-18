@@ -3,7 +3,7 @@ import {pauseMusic, playMusic, resumeMusic} from '../core/audio/music.ts';
 import {MainMenu} from "./layouts/MainMenu.tsx";
 import {init, pauseLoop, player, startLoop} from "../core/main.ts";
 import {actions, useKeyboard} from "./input/input.ts";
-import uiSlice, {toggleInventory} from "../utils/stateManagement/uiSlice.ts";
+import uiSlice, {toggleCharMenu, toggleInventory} from "../utils/stateManagement/uiSlice.ts";
 import {useMyDispatch, useMySelector} from "../utils/stateManagement/store.ts";
 import Auth from "./layouts/Auth.tsx";
 import {InGame} from "./layouts/InGame.tsx";
@@ -65,6 +65,10 @@ export const GameUI: React.FC = () => {
 
             actions.inventory = () => {
                 dispatch(toggleInventory());
+            }
+
+            actions.charWindow = () => {
+                dispatch(toggleCharMenu());
             }
 
             actions.pause = () => {

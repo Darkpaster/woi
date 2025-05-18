@@ -6,9 +6,8 @@ import {setBlueSlimeManager} from "../../../../graphics/static/managers.ts";
 export default class BlueSlime extends Mob {
     constructor() {
         super();
-        this.name = txtList().slime;
+        this.name = txtList().skime;
+        this.description = txtList().skimeDescription;
         this.image = setBlueSlimeManager();
-        this.minDamage = 5;
-        this.maxDamage = 15;
     }
 }
