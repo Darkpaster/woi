@@ -9,7 +9,7 @@ import {
     updatePosition,
     updateStamina
 } from "./playerSlice.ts";
-import {Position} from "../../core/logic/education/chemistry/types.ts";
+import {Position} from "../../game/core/logic/education/chemistry/types.ts";
 
 // Fetch player data
 export const fetchPlayerData = createAsyncThunk(

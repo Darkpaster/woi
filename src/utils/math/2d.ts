@@ -2,7 +2,7 @@
  * 2d.ts — набор утилитарных математических моделей для работы с объектами на плоскости.
  */
 import {RenderOptions, Visualizable} from "./graphics.ts";
-import {CoordinateSystem} from "../../core/logic/education/math/visualization/coordinateSystem.ts";
+import {CoordinateSystem} from "../../game/core/logic/education/math/visualization/coordinateSystem.ts";
 import {MathObject} from "./general.ts";
 
 export class Vector2D extends MathObject implements Visualizable {

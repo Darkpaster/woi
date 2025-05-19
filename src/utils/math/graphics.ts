@@ -1,6 +1,6 @@
-import {CoordinateSystem} from "../../core/logic/education/math/visualization/coordinateSystem.ts";
+import {CoordinateSystem} from "../../game/core/logic/education/math/visualization/coordinateSystem.ts";
 import {Point} from "./2d.ts";
-import {VisualizationOptions} from "../../core/logic/education/music/visualization/visualizer.ts";
+import {VisualizationOptions} from "../../game/core/logic/education/music/visualization/visualizer.ts";
 
 export class AnimatedPoint extends Point implements Animatable {
     private targetX: number;

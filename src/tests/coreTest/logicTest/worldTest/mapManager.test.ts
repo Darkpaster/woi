@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import sinon from "sinon";
-import {MapManager} from "../../../../core/logic/world/mapManager.ts";
-import {player, worldMap} from "../../../../core/main.ts";
+import {MapManager} from "../../../../game/core/logic/world/mapManager.ts";
+import {player, worldMap} from "../../../../game/core/main.ts";
 import {scaledTileSize} from "../../../../utils/math/general.ts";
 
 // const main = await import("../../../../core/main.ts");

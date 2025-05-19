@@ -1,5 +1,5 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import useAuthAPI from "../../ui/service/hooks/authAPI.ts";
+import useAuthAPI from "../../game/ui/service/hooks/authAPI.ts";
 
 export interface AuthState {
     user: { password: string, email: string } | null,

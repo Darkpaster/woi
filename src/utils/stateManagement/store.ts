@@ -16,7 +16,7 @@ export const store = configureStore({
         // combat: ,
         ui: uiReducer,
         // chat: chatReducer,
-        // quests: quest,
+        // quests: quests,
     },
 });
 
