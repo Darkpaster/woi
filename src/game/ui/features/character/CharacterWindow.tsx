@@ -1,8 +1,52 @@
-import { useEffect, useState } from "react";
-import "./characterWindow.scss";
-import {player} from "../../../core/main.ts";
+import { useState, useEffect } from 'react';
+import './characterWindow.scss';
 
-// Тип для персонажа
+// Mock player data - replace with actual import
+const player = { id: '1' };
+
+// Icon component
+interface IconProps {
+    icon?: string;
+    count?: number;
+    displayText?: string;
+    fontSize?: string;
+    textAlign?: string;
+}
+
+const Icon: React.FC<IconProps> = ({
+                                       icon,
+                                       count,
+                                       displayText = '',
+                                       fontSize = '15px',
+                                       textAlign = 'end'
+                                   }) => {
+    return (
+        <div
+            className="item-icon"
+            style={{
+                backgroundImage: icon ? `url(${icon})` : "",
+            }}
+        >
+            {displayText && (
+                <div
+                    className="item-icon__text"
+                    style={{
+                        textAlign: textAlign as any,
+                        fontSize,
+                    }}
+                >
+                    {displayText}
+                </div>
+            )}
+            {count && count > 1 && (
+                <div className="item-icon__count">
+                    {count}
+                </div>
+            )}
+        </div>
+    );
+};
+
 type CharacterType = {
     id: number;
     username: string;
@@ -18,15 +62,27 @@ type CharacterType = {
         dexterity: number;
         intelligence: number;
         vitality: number;
+        health: number;
+        rage: number;
+        itemLevel: number;
+        speed: number;
     };
     equipment: {
-        head: string;
-        chest: string;
-        hands: string;
-        legs: string;
-        feet: string;
-        mainHand: string;
-        offHand: string;
+        head: { name: string; icon?: string };
+        neck: { name: string; icon?: string };
+        shoulder: { name: string; icon?: string };
+        chest: { name: string; icon?: string };
+        waist: { name: string; icon?: string };
+        legs: { name: string; icon?: string };
+        feet: { name: string; icon?: string };
+        wrists: { name: string; icon?: string };
+        hands: { name: string; icon?: string };
+        finger1: { name: string; icon?: string };
+        finger2: { name: string; icon?: string };
+        trinket1: { name: string; icon?: string };
+        trinket2: { name: string; icon?: string };
+        mainHand: { name: string; icon?: string };
+        offHand: { name: string; icon?: string };
     };
     skills: Array<{
         id: number;
@@ -49,22 +105,45 @@ type CharacterType = {
         rank: string;
         memberSince: string;
     };
+    playerScore: {
+        gearScore: number;
+        raidScore: number;
+        pvpGearScore: number;
+        pvpScore: number;
+        playerRating: number;
+    };
+    defense: {
+        armor: number;
+        dodge: number;
+        parry: number;
+        block: number;
+        resilience: number;
+        mastery: number;
+        totalAvoidance: number;
+        critImmunity: number;
+    };
+    melee: {
+        damage: string;
+        dps: number;
+        attackPower: number;
+        hitRating: number;
+        critChance: number;
+        expertise: number;
+        haste: number;
+    };
 };
 
-// Тип для статуса дружбы
 type FriendStatus = 'none' | 'friend' | 'pending' | 'incoming';
 
-// Мок функция получения данных персонажа
 const getCharacter = async (id: number): Promise<CharacterType> => {
-    // Имитация запроса к API
     return new Promise(resolve => {
         setTimeout(() => {
             resolve({
                 id,
                 username: "player123",
-                characterName: "Eldric Shadowblade",
-                level: 42,
-                class: "Nightblade",
+                characterName: "Abrams",
+                level: 85,
+                class: "Protection Warrior",
                 online: true,
                 lastOnline: Date.now(),
                 avatar: "/character-avatar.png",
@@ -73,73 +152,95 @@ const getCharacter = async (id: number): Promise<CharacterType> => {
                     strength: 68,
                     dexterity: 120,
                     intelligence: 75,
-                    vitality: 82
+                    vitality: 82,
+                    health: 197417,
+                    rage: 100,
+                    itemLevel: 395,
+                    speed: 118
                 },
                 equipment: {
-                    head: "Shadowy Hood",
-                    chest: "Assassin's Tunic",
-                    hands: "Gloves of Silence",
-                    legs: "Pants of Shadows",
-                    feet: "Swift Boots",
-                    mainHand: "Dagger of Night",
-                    offHand: "Obsidian Dagger"
+                    head: { name: "Helmet of Shadows", icon: "/icons/helmet.png" },
+                    neck: { name: "Necklace of Power", icon: "/icons/necklace.png" },
+                    shoulder: { name: "Shoulder Guards", icon: "/icons/shoulder.png" },
+                    chest: { name: "Breastplate of Valor", icon: "/icons/chest.png" },
+                    waist: { name: "Belt of Strength", icon: "/icons/belt.png" },
+                    legs: { name: "Legguards of Might", icon: "/icons/legs.png" },
+                    feet: { name: "Boots of Speed", icon: "/icons/boots.png" },
+                    wrists: { name: "Bracers of Defense", icon: "/icons/wrists.png" },
+                    hands: { name: "Gauntlets of Power", icon: "/icons/gloves.png" },
+                    finger1: { name: "Ring of Wisdom", icon: "/icons/ring.png" },
+                    finger2: { name: "Band of Courage", icon: "/icons/ring.png" },
+                    trinket1: { name: "Trinket of Might", icon: "/icons/trinket.png" },
+                    trinket2: { name: "Charm of Fortune", icon: "/icons/trinket.png" },
+                    mainHand: { name: "Sword of Kings", icon: "/icons/sword.png" },
+                    offHand: { name: "Shield of Heroes", icon: "/icons/shield.png" }
                 },
                 skills: [
                     {
                         id: 1,
-                        name: "Shadow Strike",
+                        name: "Shield Slam",
                         level: 3,
-                        description: "Strike from the shadows dealing 150% weapon damage and applying Bleeding for 5s",
-                        icon: "/skill-icons/shadow-strike.png"
+                        description: "Strike with your shield dealing damage and generating threat",
+                        icon: "/skill-icons/shield-slam.png"
                     },
                     {
                         id: 2,
-                        name: "Vanish",
+                        name: "Heroic Strike",
                         level: 2,
-                        description: "Become invisible for 5s and gain 40% movement speed",
-                        icon: "/skill-icons/vanish.png"
-                    },
-                    {
-                        id: 3,
-                        name: "Poison Blade",
-                        level: 4,
-                        description: "Coat your blades with poison, causing your attacks to deal additional poison damage for 10s",
-                        icon: "/skill-icons/poison-blade.png"
+                        description: "A powerful weapon strike that increases damage",
+                        icon: "/skill-icons/heroic-strike.png"
                     }
                 ],
                 achievements: [
                     {
                         id: 1,
-                        name: "Shadow Master",
-                        description: "Kill 100 enemies while stealthed",
+                        name: "Tank Master",
+                        description: "Successfully tank 100 dungeons",
                         completed: true,
                         progress: 100,
                         totalRequired: 100
-                    },
-                    {
-                        id: 2,
-                        name: "Dungeon Delver",
-                        description: "Complete 50 dungeons",
-                        completed: false,
-                        progress: 32,
-                        totalRequired: 50
                     }
                 ],
                 guild: {
                     id: 1,
-                    name: "Crimson Shadows",
-                    rank: "Lieutenant",
+                    name: "Crimson Legion",
+                    rank: "Officer",
                     memberSince: "2024-03-15"
+                },
+                playerScore: {
+                    gearScore: 10660,
+                    raidScore: 1930,
+                    pvpGearScore: 8729,
+                    pvpScore: 1361,
+                    playerRating: 1071
+                },
+                defense: {
+                    armor: 30486,
+                    dodge: 15.12,
+                    parry: 17.24,
+                    block: 63.35,
+                    resilience: 0,
+                    mastery: 28.90,
+                    totalAvoidance: 32.36,
+                    critImmunity: 100.71
+                },
+                melee: {
+                    damage: "2712-3676",
+                    dps: 1228.4,
+                    attackPower: 8557,
+                    hitRating: 258,
+                    critChance: 6.84,
+                    expertise: 26,
+                    haste: 3.20
                 }
             });
         }, 300);
     });
 };
 
-const CharacterWindow: React.FC = () => {
-    // const { id } = useParams<{ id: string }>();
+const CharacterWindow = () => {
     const characterId = parseInt(player.id || '0');
-    const currentUserId = 1; // Здесь должен быть ID текущего пользователя из контекста/стора
+    const currentUserId = 1;
 
     const [character, setCharacter] = useState<CharacterType | null>(null);
     const [loading, setLoading] = useState(true);
@@ -152,32 +253,8 @@ const CharacterWindow: React.FC = () => {
             setError(null);
 
             try {
-                // Получаем данные персонажа
                 const characterData = await getCharacter(characterId);
                 setCharacter(characterData);
-
-                // Проверяем статус дружбы, если это не текущий пользователь
-                if (characterId !== currentUserId) {
-                    const [friends, incomingRequests, outgoingRequests] = await Promise.all([
-                        // friendService.getFriends(currentUserId),
-                        // friendService.getIncomingRequests(currentUserId),
-                        // friendService.getOutgoingRequests(currentUserId)
-                    ]);
-
-                    const isFriend = friends.some(friend => friend.id === characterId);
-                    const isIncoming = incomingRequests.some(request => request.sender.id === characterId);
-                    const isOutgoing = outgoingRequests.some(request => request.receiver.id === characterId);
-
-                    if (isFriend) {
-                        setFriendStatus('friend');
-                    } else if (isIncoming) {
-                        setFriendStatus('incoming');
-                    } else if (isOutgoing) {
-                        setFriendStatus('pending');
-                    } else {
-                        setFriendStatus('none');
-                    }
-                }
             } catch (error) {
                 console.error('Error fetching character data:', error);
                 setError('Failed to load character data. Please try again later.');
@@ -191,319 +268,269 @@ const CharacterWindow: React.FC = () => {
         }
     }, [characterId, currentUserId]);
 
-    // Отправка запроса в друзья
-    const handleSendFriendRequest = async () => {
-        // try {
-        //     await friendService.sendFriendRequest(currentUserId, characterId);
-        //     setFriendStatus('pending');
-        // } catch (error) {
-        //     console.error('Error sending friend request:', error);
-        //     setError('Failed to send friend request. Please try again.');
-        // }
-    };
-
-    // Принятие запроса в друзья
-    const handleAcceptFriendRequest = async () => {
-        // try {
-        //     const incomingRequests = await friendService.getIncomingRequests(currentUserId);
-        //     const request = incomingRequests.find(req => req.sender.id === characterId);
-        //
-        //     if (request) {
-        //         await friendService.acceptFriendRequest(currentUserId, request.id);
-        //         setFriendStatus('friend');
-        //     }
-        // } catch (error) {
-        //     console.error('Error accepting friend request:', error);
-        //     setError('Failed to accept friend request. Please try again.');
-        // }
-    };
-
-    // Отклонение запроса в друзья
-    const handleRejectFriendRequest = async () => {
-        // try {
-        //     const incomingRequests = await friendService.getIncomingRequests(currentUserId);
-        //     const request = incomingRequests.find(req => req.sender.id === characterId);
-        //
-        //     if (request) {
-        //         await friendService.rejectFriendRequest(currentUserId, request.id);
-        //         setFriendStatus('none');
-        //     }
-        // } catch (error) {
-        //     console.error('Error rejecting friend request:', error);
-        //     setError('Failed to reject friend request. Please try again.');
-        // }
-    };
-
-    // Удаление из друзей
-    const handleRemoveFriend = async () => {
-        // try {
-        //     await friendService.removeFriend(currentUserId, characterId);
-        //     setFriendStatus('none');
-        // } catch (error) {
-        //     console.error('Error removing friend:', error);
-        //     setError('Failed to remove friend. Please try again.');
-        // }
-    };
-
-    // Рендер действий для дружбы
-    const renderFriendActions = () => {
-        // Не показываем действия, если это профиль текущего пользователя
-        if (characterId === currentUserId) {
-            return null;
-        }
-
-        switch (friendStatus) {
-            case 'friend':
-                return (
-                    <button
-                        onClick={handleRemoveFriend}
-                        className="character-window__button character-window__button--red"
-                    >
-                        Remove Friend
-                    </button>
-                );
-            case 'pending':
-                return (
-                    <button
-                        className="character-window__button character-window__button--gray"
-                        disabled
-                    >
-                        Friend Request Sent
-                    </button>
-                );
-            case 'incoming':
-                return (
-                    <div className="character-window__button-group">
-                        <button
-                            onClick={handleAcceptFriendRequest}
-                            className="character-window__button character-window__button--green"
-                        >
-                            Accept
-                        </button>
-                        <button
-                            onClick={handleRejectFriendRequest}
-                            className="character-window__button character-window__button--red"
-                        >
-                            Decline
-                        </button>
-                    </div>
-                );
-            default:
-                return (
-                    <button
-                        onClick={handleSendFriendRequest}
-                        className="character-window__button character-window__button--blue"
-                    >
-                        Add Friend
-                    </button>
-                );
-        }
-    };
-
-    // Расчет процента прогресса для достижений
-    const calculateProgress = (current: number, total: number): number => {
-        return Math.floor((current / total) * 100);
-    };
-
-    // Форматирование названия слота экипировки
-    const formatSlotName = (slot: string): string => {
-        return slot.replace(/([A-Z])/g, ' $1').trim().charAt(0).toUpperCase() +
-            slot.replace(/([A-Z])/g, ' $1').trim().slice(1);
-    };
-
-    // Отображение состояния загрузки
     if (loading) {
         return (
             <div className="character-window__loading">
-                <div className="text-white">Loading character...</div>
+                <div>Loading character...</div>
             </div>
         );
     }
 
-    // Отображение ошибки
-    if (error) {
+    if (error || !character) {
         return (
-            <div className="character-window__not-found">
-                <div className="text-white">{error}</div>
+            <div className="character-window__error">
+                <div>{error || 'Character not found'}</div>
             </div>
         );
     }
 
-    // Если персонаж не найден
-    if (!character) {
-        return (
-            <div className="character-window__not-found">
-                <div className="text-white">Character not found</div>
-            </div>
-        );
-    }
+    // Equipment layout - left side, character model, right side
+    const leftEquipment = ['head', 'neck', 'shoulder', 'chest', 'waist', 'legs', 'feet'];
+    const rightEquipment = ['wrists', 'hands', 'finger1', 'finger2', 'trinket1', 'trinket2'];
+    const bottomEquipment = ['mainHand', 'offHand'];
 
     return (
         <div className="character-window">
-            <div className="character-window__container">
-                {/* Шапка персонажа */}
-                <div className="character-window__header">
-                    <div className="character-window__header-content">
-                        <div className="character-window__header-flex">
-                            {/* Аватар и базовая информация */}
-                            <div className="character-window__header-avatar">
-                                <div className="character-window__header-avatar-container">
-                                    <img
-                                        src={character.avatar || "/default-avatar.png"}
-                                        alt={character.characterName}
-                                        className="character-window__header-avatar-image"
-                                    />
-                                    <span
-                                        className={`character-window__header-avatar-status ${
-                                            character.online
-                                                ? 'character-window__header-avatar-status--online'
-                                                : 'character-window__header-avatar-status--offline'
-                                        }`}
-                                    />
-                                </div>
+            {/* Header with close button */}
+            <div className="character-header">
+                <div className="character-header__content">
+                    <h1 className="character-header__name">{character.characterName}</h1>
+                    <div className="character-header__level">Level {character.level} {character.class}</div>
+                </div>
+                <button className="character-header__close-btn">
+                    ×
+                </button>
+            </div>
+
+            <div className="character-main">
+                {/* Left Panel - Character Model and Equipment */}
+                <div className="character-equipment">
+                    {/* Equipment and Character Layout */}
+                    <div className="character-equipment__layout">
+                        {/* Left Equipment Slots */}
+                        <div className="character-equipment__slots">
+                            {leftEquipment.map((slot) => {
+                                const item = character.equipment[slot as keyof typeof character.equipment];
+                                return (
+                                    <div
+                                        key={slot}
+                                        className="character-equipment__slot"
+                                        title={item.name}
+                                    >
+                                        <Icon icon={item.icon} />
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        {/* Character Model */}
+                        <div className="character-equipment__model">
+                            <div className="character-equipment__model-display">
+                                <div>🛡️</div>
                             </div>
 
-                            {/* Основная информация о персонаже */}
-                            <div className="character-window__header-info">
-                                <div className="character-window__header-info-main">
-                                    <div>
-                                        <h1 className="character-window__header-info-name">{character.characterName}</h1>
-                                        <div className="character-window__header-info-meta">
-                                            <span>Level {character.level}</span>
-                                            <span>•</span>
-                                            <span>{character.class}</span>
-                                            {character.guild && (
-                                                <>
-                                                    <span>•</span>
-                                                    <span>
-                            <span className="character-window__header-info-guild">{character.guild.name}</span> [{character.guild.rank}]
-                          </span>
-                                                </>
-                                            )}
+                            {/* Weapon Slots */}
+                            <div className="character-equipment__model-weapons">
+                                {bottomEquipment.map((slot) => {
+                                    const item = character.equipment[slot as keyof typeof character.equipment];
+                                    return (
+                                        <div
+                                            key={slot}
+                                            className="character-equipment__slot"
+                                            title={item.name}
+                                        >
+                                            <Icon icon={item.icon} />
                                         </div>
-                                        <div className="character-window__header-info-status">
-                                            {character.online
-                                                ? 'Online now'
-                                                : `Last seen ${new Date(character.lastOnline).toLocaleDateString()}`}
-                                        </div>
-                                    </div>
-
-                                    {/* Кнопки действий */}
-                                    <div className="character-window__button-group">
-                                        {renderFriendActions()}
-                                        <button className="character-window__button character-window__button--purple">
-                                            Invite to Party
-                                        </button>
-                                    </div>
-                                </div>
+                                    );
+                                })}
                             </div>
                         </div>
+
+                        {/* Right Equipment Slots */}
+                        <div className="character-equipment__slots">
+                            {rightEquipment.map((slot) => {
+                                const item = character.equipment[slot as keyof typeof character.equipment];
+                                return (
+                                    <div
+                                        key={slot}
+                                        className="character-equipment__slot"
+                                        title={item.name}
+                                    >
+                                        <Icon icon={item.icon} />
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="character-equipment__actions">
+                        <button className="inspect">
+                            Inspect
+                        </button>
+                        <button className="invite">
+                            Invite
+                        </button>
                     </div>
                 </div>
 
-                {/* Основной контент */}
-                <div className="character-window__content">
-                    {/* Левая колонка - статы и экипировка */}
-                    <div>
-                        {/* Статы */}
-                        <div className="character-window__panel">
-                            <div className="character-window__panel-header">Stats</div>
-                            <div className="character-window__panel-content">
-                                <div className="character-window__stats">
-                                    <div className="character-window__stats-item">
-                                        <span className="character-window__stats-item-label">Strength</span>
-                                        <span className="character-window__stats-item-value">{character.stats.strength}</span>
-                                    </div>
-                                    <div className="character-window__stats-item">
-                                        <span className="character-window__stats-item-label">Dexterity</span>
-                                        <span className="character-window__stats-item-value">{character.stats.dexterity}</span>
-                                    </div>
-                                    <div className="character-window__stats-item">
-                                        <span className="character-window__stats-item-label">Intelligence</span>
-                                        <span className="character-window__stats-item-value">{character.stats.intelligence}</span>
-                                    </div>
-                                    <div className="character-window__stats-item">
-                                        <span className="character-window__stats-item-label">Vitality</span>
-                                        <span className="character-window__stats-item-value">{character.stats.vitality}</span>
-                                    </div>
+                {/* Right Panel - Stats with Scroll */}
+                <div className="character-stats">
+                    <div className="character-stats__container">
+                        {/* PlayerScore Section */}
+                        <div className="character-stats__section">
+                            <h3 className="character-stats__title">PlayerScore</h3>
+                            <div className="character-stats__list">
+                                <div className="character-stats__item">
+                                    <span className="character-stats__item-label">GearScore:</span>
+                                    <span className="character-stats__item-value">{character.playerScore.gearScore}</span>
+                                </div>
+                                <div className="character-stats__item">
+                                    <span className="character-stats__item-label">Raid Score:</span>
+                                    <span className="character-stats__item-value">{character.playerScore.raidScore}</span>
+                                </div>
+                                <div className="character-stats__item">
+                                    <span className="character-stats__item-label">PvP GearScore:</span>
+                                    <span className="character-stats__item-value">{character.playerScore.pvpGearScore}</span>
+                                </div>
+                                <div className="character-stats__item">
+                                    <span className="character-stats__item-label">PvP Score:</span>
+                                    <span className="character-stats__item-value">{character.playerScore.pvpScore}</span>
+                                </div>
+                                <div className="character-stats__item">
+                                    <span className="character-stats__item-label">Player Rating:</span>
+                                    <span className="character-stats__item-value character-stats__item-value--positive">{character.playerScore.playerRating}</span>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Экипировка */}
-                        <div className="character-window__panel">
-                            <div className="character-window__panel-header">Equipment</div>
-                            <div className="character-window__panel-content">
-                                <div className="character-window__equipment">
-                                    {Object.entries(character.equipment).map(([slot, item]) => (
-                                        <div key={slot} className="character-window__equipment-item">
-                                            <span className="character-window__equipment-item-slot">{formatSlotName(slot)}</span>
-                                            <span className="character-window__equipment-item-name">{item}</span>
-                                        </div>
-                                    ))}
+                        {/* General Section */}
+                        <div className="character-stats__section">
+                            <h3 className="character-stats__title">General</h3>
+                            <div className="character-stats__list">
+                                <div className="character-stats__item">
+                                    <span className="character-stats__item-label">Health:</span>
+                                    <span className="character-stats__item-value">{character.stats.health}</span>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Правая колонка - навыки и достижения */}
-                    <div>
-                        {/* Навыки */}
-                        <div className="character-window__panel">
-                            <div className="character-window__panel-header">Skills</div>
-                            <div className="character-window__panel-content">
-                                <div className="character-window__skills">
-                                    {character.skills.map(skill => (
-                                        <div key={skill.id} className="character-window__skills-item">
-                                            <div className="character-window__skills-item-icon">
-                                                <img
-                                                    src={skill.icon || "/default-skill-icon.png"}
-                                                    alt={skill.name}
-                                                />
-                                            </div>
-                                            <div className="character-window__skills-item-content">
-                                                <div className="character-window__skills-item-header">
-                                                    <h3 className="character-window__skills-item-name">{skill.name}</h3>
-                                                    <span className="character-window__skills-item-level">Lvl {skill.level}</span>
-                                                </div>
-                                                <p className="character-window__skills-item-description">{skill.description}</p>
-                                            </div>
-                                        </div>
-                                    ))}
+                                <div className="character-stats__item">
+                                    <span className="character-stats__item-label">Rage:</span>
+                                    <span className="character-stats__item-value">{character.stats.rage}</span>
+                                </div>
+                                <div className="character-stats__item">
+                                    <span className="character-stats__item-label">Item Level:</span>
+                                    <span className="character-stats__item-value">{character.stats.itemLevel} / 396</span>
+                                </div>
+                                <div className="character-stats__item">
+                                    <span className="character-stats__item-label">Speed:</span>
+                                    <span className="character-stats__item-value">{character.stats.speed}%</span>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Достижения */}
-                        <div className="character-window__panel">
-                            <div className="character-window__panel-header">Achievements</div>
-                            <div className="character-window__panel-content">
-                                <div className="character-window__achievements">
-                                    {character.achievements.map(achievement => (
-                                        <div key={achievement.id} className="character-window__achievements-item">
-                                            <div className="character-window__achievements-item-header">
-                                                <h3 className={`character-window__achievements-item-name ${
-                                                    achievement.completed ? 'character-window__achievements-item-name--completed' : ''
-                                                }`}>
-                                                    {achievement.name}
-                                                </h3>
-                                                <span className="character-window__achievements-item-progress">
-                          {achievement.progress}/{achievement.totalRequired}
-                        </span>
-                                            </div>
-                                            <p className="character-window__achievements-item-description">{achievement.description}</p>
-                                            <div className="character-window__achievements-item-bar">
-                                                <div
-                                                    className={`character-window__achievements-item-bar-fill ${
-                                                        achievement.completed
-                                                            ? 'character-window__achievements-item-bar-fill--completed'
-                                                            : 'character-window__achievements-item-bar-fill--progress'
-                                                    }`}
-                                                    style={{ width: `${calculateProgress(achievement.progress, achievement.totalRequired)}%` }}
-                                                />
-                                            </div>
-                                        </div>
-                                    ))}
+                        {/* Defense Section */}
+                        <div className="character-stats__section">
+                            <h3 className="character-stats__title">Defense</h3>
+                            <div className="character-stats__list">
+                                <div className="character-stats__item">
+                                    <span className="character-stats__item-label">Armor:</span>
+                                    <span className="character-stats__item-value">{character.defense.armor}</span>
+                                </div>
+                                <div className="character-stats__item">
+                                    <span className="character-stats__item-label">Dodge:</span>
+                                    <span className="character-stats__item-value">{character.defense.dodge}%</span>
+                                </div>
+                                <div className="character-stats__item">
+                                    <span className="character-stats__item-label">Parry:</span>
+                                    <span className="character-stats__item-value">{character.defense.parry}%</span>
+                                </div>
+                                <div className="character-stats__item">
+                                    <span className="character-stats__item-label">Block:</span>
+                                    <span className="character-stats__item-value">{character.defense.block}%</span>
+                                </div>
+                                <div className="character-stats__item">
+                                    <span className="character-stats__item-label">Resilience:</span>
+                                    <span className="character-stats__item-value">{character.defense.resilience}</span>
+                                </div>
+                                <div className="character-stats__item">
+                                    <span className="character-stats__item-label">Mastery:</span>
+                                    <span className="character-stats__item-value">{character.defense.mastery}%</span>
+                                </div>
+                                <div className="character-stats__item">
+                                    <span className="character-stats__item-label">Total Avoidance:</span>
+                                    <span className="character-stats__item-value">{character.defense.totalAvoidance}%</span>
+                                </div>
+                                <div className="character-stats__item">
+                                    <span className="character-stats__item-label">Crit Immunity:</span>
+                                    <span className="character-stats__item-value">{character.defense.critImmunity}%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Melee Section */}
+                        <div className="character-stats__section">
+                            <h3 className="character-stats__title">Melee</h3>
+                            <div className="character-stats__list">
+                                <div className="character-stats__item">
+                                    <span className="character-stats__item-label">Damage:</span>
+                                    <span className="character-stats__item-value">{character.melee.damage}</span>
+                                </div>
+                                <div className="character-stats__item">
+                                    <span className="character-stats__item-label">DPS:</span>
+                                    <span className="character-stats__item-value">{character.melee.dps}</span>
+                                </div>
+                                <div className="character-stats__item">
+                                    <span className="character-stats__item-label">Attack Power:</span>
+                                    <span className="character-stats__item-value">{character.melee.attackPower}</span>
+                                </div>
+                                <div className="character-stats__item">
+                                    <span className="character-stats__item-label">Hit Rating:</span>
+                                    <span className="character-stats__item-value">{character.melee.hitRating}</span>
+                                </div>
+                                <div className="character-stats__item">
+                                    <span className="character-stats__item-label">Crit Chance:</span>
+                                    <span className="character-stats__item-value">{character.melee.critChance}%</span>
+                                </div>
+                                <div className="character-stats__item">
+                                    <span className="character-stats__item-label">Expertise:</span>
+                                    <span className="character-stats__item-value">{character.melee.expertise}</span>
+                                </div>
+                                <div className="character-stats__item">
+                                    <span className="character-stats__item-label">Haste:</span>
+                                    <span className="character-stats__item-value">{character.melee.haste}%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Ranged Section */}
+                        <div className="character-stats__section">
+                            <h3 className="character-stats__title">Ranged</h3>
+                            <div className="character-stats__list">
+                                <div className="character-stats__item">
+                                    <span className="character-stats__item-label">Ranged Attack:</span>
+                                    <span className="character-stats__item-value character-stats__item-value--na">N/A</span>
+                                </div>
+                                <div className="character-stats__item">
+                                    <span className="character-stats__item-label">Ranged Speed:</span>
+                                    <span className="character-stats__item-value character-stats__item-value--na">N/A</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Spell Section */}
+                        <div className="character-stats__section">
+                            <h3 className="character-stats__title">Spell</h3>
+                            <div className="character-stats__list">
+                                <div className="character-stats__item">
+                                    <span className="character-stats__item-label">Spell Power:</span>
+                                    <span className="character-stats__item-value">156</span>
+                                </div>
+                                <div className="character-stats__item">
+                                    <span className="character-stats__item-label">Spell Hit:</span>
+                                    <span className="character-stats__item-value">3.2%</span>
+                                </div>
+                                <div className="character-stats__item">
+                                    <span className="character-stats__item-label">Spell Crit:</span>
+                                    <span className="character-stats__item-value">8.45%</span>
                                 </div>
                             </div>
                         </div>

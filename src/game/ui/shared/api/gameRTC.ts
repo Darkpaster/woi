@@ -1,14 +1,15 @@
 import {io, Socket} from "socket.io-client";
 import Player from "../../../core/logic/actors/player.ts";
-import {entityManager, player} from "../../../core/main.ts";
+import {entityManager, graphics, player} from "../../../core/main.ts";
 import {settings} from "../../../core/config/settings.ts";
 import {SmallPotionOfHealing} from "../../../core/logic/items/consumable/potions/smallPotionOfHealing.ts";
 import Item from "../../../core/logic/items/item.ts";
 import BlueSlime from "../../../core/logic/actors/mobs/enemies/blueSlime.ts";
 import {ActorDTO, DamageDTOType, ItemDTO} from "../../../core/types.ts";
+import {FloatText} from "../../../core/graphics/floatText.ts";
 
 export type CharacterInit = {
-    nickname: string,
+    name: string,
     characterId: number,
     roomId: string,
     characterType: "wanderer" | "samurai" | "knight" | "werewolf" | "mage"
@@ -69,7 +70,7 @@ export class GameRTC {
 
     private createPlayer(character: CharacterInit) {
         const newPlayer = new Player();
-        newPlayer.name = character.nickname;
+        newPlayer.name = character.name;
         newPlayer.id = character.characterId;
         return newPlayer;
     }
@@ -115,6 +116,9 @@ export class GameRTC {
         });
 
         this.socket.on("receivePlayerPosition", (position: ActorDTO) => {
+            if (position.actorId === player?.id) {
+                return
+            }
             if (entityManager.hasPlayer(position.actorId)) {
                 const pl = entityManager.getPlayer(position.actorId);
                 pl!.x = position.x * settings.defaultTileScale;
@@ -176,8 +180,32 @@ export class GameRTC {
             console.log(`sendToInitUser: ${requestId}`)
             this.socket.emit("initUserResponse", {
                 requestId: requestId, characterData:
-                    {nickname: player.name, characterId: player.id, characterType: "wanderer", roomId: this.roomId}
+                    {name: player.name, characterId: player.id, characterType: "wanderer", roomId: this.roomId}
             });
+        })
+
+
+        this.socket.on("updatePlayerHealth", (health: number) => {
+            console.log(`updatePlayerHealth: ${health}`);
+            const diff = player.HP - health;
+            player.HP = health;
+            if (diff >= 0) {
+                graphics?.floatTextList.push(new FloatText({
+                    text: diff,
+                    x: player.x,
+                    y: player.y,
+                    color: "red",
+                    crit: false
+                }));
+            } else {
+                graphics?.floatTextList.push(new FloatText({
+                    text: -diff,
+                    x: player.x,
+                    y: player.y,
+                    color: "green",
+                    crit: false
+                }));
+            }
         })
 
 
@@ -213,7 +241,7 @@ export class GameRTC {
         }
     }
 
-    public createRoom(id = "public")
+    public createRoom(id = "global")
         :
         void {
         this._socket.emit('createRoom', id);
@@ -229,7 +257,7 @@ export class GameRTC {
         this.roomId = roomId;
         // alert(`player.id: ${player.id}`)
         this._socket.timeout(1000).emit("joinRoom", {
-            nickname: player.name,
+            name: player.name,
             characterId: player.id,
             characterType: "wanderer",
             roomId: roomId
@@ -245,7 +273,7 @@ export class GameRTC {
                      Player
     ) {
         this._socket.timeout(3000).emit("initUsers", {
-            nickname: player.name,
+            name: player.name,
             characterId: player.id,
             characterType: "wanderer",
             roomId: this.roomId

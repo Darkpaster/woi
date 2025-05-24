@@ -9,8 +9,8 @@ export type messageType = {
     senderId: number,
     sender: string,
     content: string,
-    type: 'DEFAULT' | 'ADMIN',
-    roomId: 'public' | 'private'
+    type: 'DEFAULT' | 'ADMIN' | 'SYSTEM',
+    roomId: 'global' | 'private'
 }
 
 const check = isMounted();
@@ -55,8 +55,13 @@ const Chat: React.FC = () => {
 
         gameRTC.socket.on("receiveMessage", (msg: messageType) => {
             setMessages(prev => [...prev, msg]);
-            setBubbles(prev => prev.set(msg.senderId, msg.content))
-            setTimeout(() => setBubbles(prev => prev.set(msg.senderId, "")), Math.sqrt(msg.content.length) * 500 + 1500);
+            if (msg.type === "DEFAULT") {
+                setBubbles(prev => prev.set(msg.senderId, msg.content))
+                setTimeout(() => setBubbles(prev => prev.set(msg.senderId, "")), Math.sqrt(msg.content.length) * 500 + 1500);
+            } else {
+                console.log("no default message found");
+                // если покинул сервер то надо удалить из entitiesManager
+            }
         })
 
         return () => {
@@ -74,7 +79,7 @@ const Chat: React.FC = () => {
                 sender: username,
                 content: messageInput,
                 type: 'DEFAULT',
-                roomId: 'public'
+                roomId: 'global'
             };
 
             // @ts-ignore

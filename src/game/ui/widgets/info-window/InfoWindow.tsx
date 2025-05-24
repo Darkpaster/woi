@@ -3,10 +3,10 @@ import React, {
     useRef
 } from "react";
 import {Skill} from "../../../core/logic/skills/skill.ts";
-import {EntityType} from "../../game/GameUI.tsx";
+import {EntityType} from "../../../core/types.ts";
 
 interface InfoWindowProps {
-    entity: EntityType;
+    entity: EntityType; //Item, Actor or Skill (also Tile later)
     position: { left: number; top: number };
 }
 

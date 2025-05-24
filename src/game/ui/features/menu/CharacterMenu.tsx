@@ -1,12 +1,13 @@
 import React, {useEffect, useState} from "react";
 import Player from "../../../core/logic/actors/player.ts";
-import {entityManager, init} from "../../../core/main.ts";
+import {camera, entityManager, init, initCamera, player} from "../../../core/main.ts";
 import UseInitAPI from "../../service/hooks/initAPI.ts";
 import Wanderer from "../../../core/logic/actors/characters/wanderer.ts";
 import axios from "axios";
 import {SmallPotionOfHealing} from "../../../core/logic/items/consumable/potions/smallPotionOfHealing.ts";
 import LoadingScreen from "./LoadingScreen.tsx";
 import {settings} from "../../../core/config/settings.ts";
+import {Camera} from "../../../core/logic/camera.ts";
 
 
 export const CharacterMenu = ({onEnter, onBack}: { onEnter: () => void, onBack: () => void }) => {
@@ -22,13 +23,13 @@ export const CharacterMenu = ({onEnter, onBack}: { onEnter: () => void, onBack: 
     function requestType(): {
         url: string,
         method: 'POST' | 'GET',
-        body?: { nickname: string, characterType: string }
+        body?: { name: string, characterType: string }
     } {
         return mode === "create" ? {
                 url: "/createChar",
                 method: "POST",
                 body: {
-                    nickname: name,
+                    name: name,
                     characterType: charType,
                 },
             } :
@@ -47,7 +48,7 @@ export const CharacterMenu = ({onEnter, onBack}: { onEnter: () => void, onBack: 
                     try {
                         for (const char of response) {
                             const player = new Player();
-                            player.name = char.nickname;
+                            player.name = char.name;
                             player.id = char.id;
                             setCharacters(prev => [...prev, player]);
                         }
@@ -89,6 +90,7 @@ export const CharacterMenu = ({onEnter, onBack}: { onEnter: () => void, onBack: 
                     // const inventory = await axios.request({url: "/item/initInventory", method: "get"});
                     // const stats = await axios.request({url: "/player/initStats", method: "get"});
                     const mobList = await axios.request({url: "/mob/init", method: "get"});
+                    const playerData = (await axios.request({url: "/player/getCharData?characterId="+target.id, method: "get"})).data;
                     // alert(JSON.stringify(mobList.data))
                     for (const item of itemList.data) {
                         const newItem = new SmallPotionOfHealing([item.itemId]);
@@ -100,6 +102,16 @@ export const CharacterMenu = ({onEnter, onBack}: { onEnter: () => void, onBack: 
                         // console.log(JSON.stringify(mob))
                         entityManager.addMob(mob);
                     }
+                    player.HP = playerData.health;
+                    player.HT = player.HP;
+                    player.name = playerData.name;
+                    player.id = playerData.id;
+                    player.x = playerData.x;
+                    player.y = playerData.y;
+                    initCamera();
+                    player!.experience = playerData.experience;
+                    player.level = playerData.level;
+                    player!.gold = playerData.gold;
                     onEnter()
                 }, 1000);
             });

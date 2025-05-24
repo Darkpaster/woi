@@ -1,3 +1,16 @@
+import React from 'react';
+
+interface User {
+    id: number;
+    characterName: string;
+    avatar?: string;
+    online: boolean;
+    lastOnline: Date;
+    level: number;
+    class: string;
+    friendCount?: number;
+}
+
 interface SearchUserItemProps {
     user: User;
     onSendRequest: (userId: number) => void;
@@ -7,7 +20,7 @@ interface SearchUserItemProps {
     isPending: boolean;
 }
 
-const SearchUserItem: React.FC<SearchUserItemProps> = ({
+const SearchPlayerItem: React.FC<SearchUserItemProps> = ({
                                                            user,
                                                            onSendRequest,
                                                            onViewProfile,
@@ -19,44 +32,38 @@ const SearchUserItem: React.FC<SearchUserItemProps> = ({
     if (user.id === currentUserId) return null;
 
     return (
-        <div className="flex items-center justify-between p-3 border-b border-gray-700 hover:bg-gray-800 transition-colors">
-            <div className="flex items-center space-x-3">
-                <div className="relative">
+        <div className="search-user-item">
+            <div className="search-user-item__content">
+                <div className="search-user-item__avatar-container">
                     <img
                         src={user.avatar || '/default-avatar.png'}
                         alt={user.characterName}
-                        className="w-12 h-12 rounded-full cursor-pointer"
+                        className="search-user-item__avatar"
                         onClick={() => onViewProfile(user.id)}
                     />
-                    <span
-                        className={`absolute bottom-0 right-0 w-3 h-3 rounded-full ${user.online ? 'bg-green-500' : 'bg-gray-500'}`}
-                    />
+                    <span className={`search-user-item__status ${user.online ? 'search-user-item__status--online' : 'search-user-item__status--offline'}`} />
                 </div>
 
-                <div>
-                    <h3 className="font-medium text-white">{user.characterName}</h3>
-                    <p className="text-sm text-gray-400">
+                <div className="search-user-item__info">
+                    <h3 className="search-user-item__name">{user.characterName}</h3>
+                    <p className="search-user-item__details">
                         Lvl {user.level} {user.class}
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="search-user-item__friends">
                         {user.friendCount} {user.friendCount === 1 ? 'friend' : 'friends'}
                     </p>
                 </div>
             </div>
 
-            <div>
+            <div className="search-user-item__actions">
                 {isFriend ? (
-                    <span className="px-3 py-1 bg-gray-700 text-gray-300 text-sm rounded">
-            Friend
-          </span>
-                ) : isPending ? (
-                    <span className="px-3 py-1 bg-yellow-600 text-white text-sm rounded">
-            Pending
-          </span>
+                    <span className="search-user-item__status-badge search-user-item__status-badge--pending">
+                        Pending
+                    </span>
                 ) : (
                     <button
                         onClick={() => onSendRequest(user.id)}
-                        className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+                        className="search-user-item__button search-user-item__button--add"
                     >
                         Add Friend
                     </button>
@@ -66,4 +73,4 @@ const SearchUserItem: React.FC<SearchUserItemProps> = ({
     );
 };
 
-export default SearchUserItem;
+export default SearchPlayerItem;

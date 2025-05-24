@@ -1,4 +1,22 @@
-import {FriendRequest} from "../../service/friendService.ts";
+import React from 'react';
+import { formatDistanceToNow } from 'date-fns';
+
+interface User {
+    id: number;
+    characterName: string;
+    avatar?: string;
+    online: boolean;
+    lastOnline: Date;
+    level: number;
+    class: string;
+}
+
+interface FriendRequest {
+    id: number;
+    sender: User;
+    receiver: User;
+    createdAt: string;
+}
 
 interface FriendRequestItemProps {
     request: FriendRequest;
@@ -10,53 +28,50 @@ interface FriendRequestItemProps {
 }
 
 const FriendRequestItem: React.FC<FriendRequestItemProps> = ({
-                                                                        request,
-                                                                        incoming = true,
-                                                                        onAccept,
-                                                                        onReject,
-                                                                        onCancel,
-                                                                        onViewProfile
-                                                                    }) => {
+                                                                 request,
+                                                                 incoming = true,
+                                                                 onAccept,
+                                                                 onReject,
+                                                                 onCancel,
+                                                                 onViewProfile
+                                                             }) => {
     const user = incoming ? request.sender : request.receiver;
     const createdAtText = `Sent ${formatDistanceToNow(new Date(request.createdAt))} ago`;
 
     return (
-        <div
-            className="flex items-center justify-between p-3 border-b border-gray-700 hover:bg-gray-800 transition-colors">
-            <div className="flex items-center space-x-3">
-                <div className="relative">
+        <div className="friend-request-item">
+            <div className="friend-request-item__content">
+                <div className="friend-request-item__avatar-container">
                     <img
                         src={user.avatar || '/default-avatar.png'}
                         alt={user.characterName}
-                        className="w-12 h-12 rounded-full"
+                        className="friend-request-item__avatar"
                         onClick={() => onViewProfile(user.id)}
                     />
-                    <span
-                        className={`absolute bottom-0 right-0 w-3 h-3 rounded-full ${user.online ? 'bg-green-500' : 'bg-gray-500'}`}
-                    />
+                    <span className={`friend-request-item__status ${user.online ? 'friend-request-item__status--online' : 'friend-request-item__status--offline'}`} />
                 </div>
 
-                <div>
-                    <h3 className="font-medium text-white">{user.characterName}</h3>
-                    <p className="text-sm text-gray-400">
+                <div className="friend-request-item__info">
+                    <h3 className="friend-request-item__name">{user.characterName}</h3>
+                    <p className="friend-request-item__details">
                         Lvl {user.level} {user.class}
                     </p>
-                    <p className="text-xs text-gray-500">{createdAtText}</p>
+                    <p className="friend-request-item__time">{createdAtText}</p>
                 </div>
             </div>
 
-            <div className="flex space-x-2">
+            <div className="friend-request-item__actions">
                 {incoming ? (
                     <>
                         <button
                             onClick={() => onAccept && onAccept(request.id)}
-                            className="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700"
+                            className="friend-request-item__button friend-request-item__button--accept"
                         >
                             Accept
                         </button>
                         <button
                             onClick={() => onReject && onReject(request.id)}
-                            className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700"
+                            className="friend-request-item__button friend-request-item__button--reject"
                         >
                             Reject
                         </button>
@@ -64,7 +79,7 @@ const FriendRequestItem: React.FC<FriendRequestItemProps> = ({
                 ) : (
                     <button
                         onClick={() => onCancel && onCancel(request.id)}
-                        className="px-3 py-1 bg-gray-600 text-white text-sm rounded hover:bg-gray-700"
+                        className="friend-request-item__button friend-request-item__button--cancel"
                     >
                         Cancel
                     </button>

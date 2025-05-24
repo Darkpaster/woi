@@ -1,4 +1,3 @@
-import "./statusBar.scss"
 
 interface StatusBarProps {
     value: number;

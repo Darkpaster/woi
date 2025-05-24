@@ -27,7 +27,6 @@ export async function init(pl: Player|Wanderer) {
         worldMap.initWorld().then((map) => {
             graphics = new Graphics(document.getElementById("canvas") as HTMLCanvasElement);
             entityManager = new EntityManager();
-            camera = new Camera({x: player.x, y: player.y});
             resolve("result");
         });
     })
@@ -35,9 +34,13 @@ export async function init(pl: Player|Wanderer) {
 
 export function initWS() {
     gameRTC = new GameRTC();
-    gameRTC.createRoom("public");
-    gameRTC.joinRoom("public", (player as Player));
+    gameRTC.createRoom("global");
+    gameRTC.joinRoom("global", (player as Player));
     gameRTC.initUsers((player as Player));
+}
+
+export function initCamera() {
+    camera = new Camera({x: player.x, y: player.y})
 }
 
 let mainLoop = false;

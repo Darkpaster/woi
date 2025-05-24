@@ -67,7 +67,7 @@ export class Graphics {
             this.renderEffects();
             this.renderText();
             // if (this._debugMode) {
-                this.debugRender();
+            //     this.debugRender();
             // }
         }
     }
@@ -93,16 +93,16 @@ export class Graphics {
             if (mob.y > player.y + 32 * settings.defaultTileScale) {
                 mobsAfter.push(mob);
             } else {
-                mob.image?.render(mob.renderState, ctx, mob.x, mob.y - (64 * settings.defaultTileScale), mob.direction);
-                ctx.fillText(mob.x + " "+mob.y, mob!.x + mob.image.currentAnimation.widthSize / 2, mob!.y);
+                mob.image?.render(mob.renderState, ctx, mob.x - (32 * settings.defaultTileScale), mob.y - (64 * settings.defaultTileScale), mob.direction);
+                // ctx.fillText(mob.x + " "+mob.y, mob!.x + mob.image.currentAnimation.widthSize / 2, mob!.y);
             }
         })
 
         player!.image!.render(player!.renderState, ctx, player!.x - player?.image?.currentAnimation.widthSize / 2, player!.y - player?.image?.currentAnimation.heightSize / 2, player!.direction);
 
         for (const mob of mobsAfter) {
-            mob.image?.render(mob.renderState, ctx, mob.x, mob.y - (64 * settings.defaultTileScale), mob.direction);
-            ctx.fillText(mob.x + " "+mob.y, mob!.x + mob.image.currentAnimation.widthSize / 2, mob!.y);
+            mob.image?.render(mob.renderState, ctx, mob.x - (32 * settings.defaultTileScale), mob.y - (64 * settings.defaultTileScale), mob.direction);
+            // ctx.fillText(mob.x + " "+mob.y, mob!.x + mob.image.currentAnimation.widthSize / 2, mob!.y);
         }
 
         entityManager.findPlayerAt(player.x, player.y).forEach((player, index) => {
@@ -122,10 +122,10 @@ export class Graphics {
         if (player!.target) {
             ctx.drawImage(this.selector1.tile, player!.target.x || 0, player!.target.y || 0, scaledTileSize(), scaledTileSize());
         }
-        // ctx.fillText(player!.name, player!.x + player.image.currentAnimation.widthSize / 2, player!.y);
+        ctx.fillText(player!.HP, player!.x + player.image.currentAnimation.widthSize / 2, player!.y);
         ctx.fillText(`total mobs: ${entityManager.mobs.size}`, player!.x + player.image.currentAnimation.widthSize / 2 + 300, player!.y);
         ctx.fillText(`mobs in chunk: ${entityManager.findMobsAt(player.x, player.y).length}`, player!.x + player.image.currentAnimation.widthSize / 2 + 300, player!.y + 200);
-        ctx.fillText(`x:${player.x}, y:${player.y}`, player!.x + player.image.currentAnimation.widthSize / 2, player!.y);
+        // ctx.fillText(`x:${player.x}, y:${player.y}`, player!.x + player.image.currentAnimation.widthSize / 2, player!.y);
     }
 
     private renderEffects(): void {

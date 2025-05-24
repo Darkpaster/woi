@@ -1,3 +1,7 @@
+import React, { useState } from 'react';
+import { MessageCircle, X } from 'lucide-react';
+import Tab from "../../shared/ui/Tab.tsx";
+
 type Quest = {
     id: string;
     title: string;
@@ -68,10 +72,10 @@ const QuestWindow: React.FC = () => {
     const currentQuest = quests.find(quest => quest.id === selectedQuest);
 
     return (
-        <div className="w-full max-w-4xl bg-gray-800 text-white rounded-lg shadow-lg flex h-96">
+        <div className="quest-window">
             {/* Левая часть - список квестов */}
-            <div className="w-1/3 border-r border-gray-700">
-                <div className="flex border-b border-gray-700">
+            <div className="quest-window__sidebar">
+                <div className="quest-window__tabs">
                     <Tab
                         title="Активные"
                         isActive={activeTab === 'active'}
@@ -89,18 +93,18 @@ const QuestWindow: React.FC = () => {
                     />
                 </div>
 
-                <div className="overflow-y-auto h-full">
+                <div className="quest-window__quest-list">
                     {filteredQuests.map(quest => (
                         <div
                             key={quest.id}
-                            className={`p-3 border-b border-gray-700 cursor-pointer ${selectedQuest === quest.id ? 'bg-gray-700' : 'hover:bg-gray-700'}`}
+                            className={`quest-item ${selectedQuest === quest.id ? 'quest-item--selected' : ''}`}
                             onClick={() => {
                                 setSelectedQuest(quest.id);
                                 setShowDialog(false);
                             }}
                         >
-                            <div className="font-bold">{quest.title}</div>
-                            <div className="text-sm text-gray-400">Уровень: {quest.level}</div>
+                            <div className="quest-item__title">{quest.title}</div>
+                            <div className="quest-item__level">Уровень: {quest.level}</div>
                         </div>
                     ))}
                 </div>
@@ -108,62 +112,62 @@ const QuestWindow: React.FC = () => {
 
             {/* Правая часть - детали квеста */}
             {currentQuest && (
-                <div className="w-2/3 p-4 flex flex-col">
-                    <div className="flex justify-between">
-                        <h2 className="text-xl font-bold">{currentQuest.title}</h2>
-                        <div className="flex space-x-2">
+                <div className="quest-window__content">
+                    <div className="quest-window__header">
+                        <h2 className="quest-window__title">{currentQuest.title}</h2>
+                        <div className="quest-window__controls">
                             {currentQuest.dialogHistory && (
                                 <button
-                                    className={`px-3 py-1 rounded ${showDialog ? 'bg-blue-600' : 'bg-gray-700'}`}
+                                    className={`quest-window__dialog-btn ${showDialog ? 'quest-window__dialog-btn--active' : ''}`}
                                     onClick={() => setShowDialog(!showDialog)}
                                 >
-                                    <MessageCircle size={16} className="inline mr-1" />
+                                    <MessageCircle size={16} />
                                     Диалог
                                 </button>
                             )}
-                            <button className="bg-gray-700 p-1 rounded">
+                            <button className="quest-window__close-btn">
                                 <X size={16} />
                             </button>
                         </div>
                     </div>
 
                     {showDialog && currentQuest.dialogHistory ? (
-                        <div className="mt-4 flex-grow overflow-y-auto bg-gray-900 p-3 rounded">
+                        <div className="quest-window__dialog">
                             {currentQuest.dialogHistory.map((entry, index) => (
-                                <div key={index} className="mb-3">
-                                    <div className={`font-bold ${entry.speaker === 'Игрок' ? 'text-blue-400' : 'text-yellow-400'}`}>
+                                <div key={index} className="dialog-entry">
+                                    <div className={`dialog-entry__speaker ${entry.speaker === 'Игрок' ? 'dialog-entry__speaker--player' : 'dialog-entry__speaker--npc'}`}>
                                         {entry.speaker}:
                                     </div>
-                                    <div className="pl-3">{entry.text}</div>
+                                    <div className="dialog-entry__text">{entry.text}</div>
                                 </div>
                             ))}
                         </div>
                     ) : (
                         <>
-                            <div className="text-gray-300 mt-2">{currentQuest.description}</div>
+                            <div className="quest-window__description">{currentQuest.description}</div>
 
-                            <div className="mt-4">
-                                <h3 className="font-bold border-b border-gray-700 pb-1 mb-2">Задачи:</h3>
+                            <div className="quest-window__section">
+                                <h3 className="quest-window__section-title">Задачи:</h3>
                                 {currentQuest.objectives.map((objective, idx) => (
-                                    <div key={idx} className="flex items-center mb-1">
+                                    <div key={idx} className="objective">
                                         <input
                                             type="checkbox"
                                             checked={objective.completed}
                                             readOnly
-                                            className="mr-2"
+                                            className="objective__checkbox"
                                         />
-                                        <span className={objective.completed ? 'line-through text-gray-500' : ''}>
-                      {objective.text}
-                    </span>
+                                        <span className={`objective__text ${objective.completed ? 'objective__text--completed' : ''}`}>
+                                            {objective.text}
+                                        </span>
                                     </div>
                                 ))}
                             </div>
 
-                            <div className="mt-4">
-                                <h3 className="font-bold border-b border-gray-700 pb-1 mb-2">Награды:</h3>
-                                <ul className="list-disc pl-5">
+                            <div className="quest-window__section">
+                                <h3 className="quest-window__section-title">Награды:</h3>
+                                <ul className="rewards-list">
                                     {currentQuest.rewards.map((reward, idx) => (
-                                        <li key={idx}>{reward}</li>
+                                        <li key={idx} className="rewards-list__item">{reward}</li>
                                     ))}
                                 </ul>
                             </div>

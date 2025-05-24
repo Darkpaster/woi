@@ -1,4 +1,5 @@
-import {useState} from "react";
+import React, { useState } from 'react';
+import { X } from 'lucide-react';
 
 type TalentNode = {
     id: string;
@@ -25,7 +26,6 @@ type TalentCategory = {
 };
 
 const TalentWindow: React.FC = () => {
-    // Две основные категории талантов
     const [categories] = useState<TalentCategory[]>([
         {
             id: 'combat',
@@ -250,6 +250,7 @@ const TalentWindow: React.FC = () => {
 
     const [activeCategory, setActiveCategory] = useState(categories[0].id);
     const [activeTree, setActiveTree] = useState(categories[0].trees[0].id);
+    const [selectedNode, setSelectedNode] = useState<TalentNode | null>(null);
 
     const currentCategory = categories.find(c => c.id === activeCategory)!;
     const currentTree = currentCategory.trees.find(t => t.id === activeTree)!;
@@ -262,6 +263,7 @@ const TalentWindow: React.FC = () => {
 
         return (
             <line
+                key={`${from.id}-${to.id}`}
                 x1={fromX}
                 y1={fromY}
                 x2={toX}
@@ -273,67 +275,45 @@ const TalentWindow: React.FC = () => {
     };
 
     const increaseRank = (nodeId: string) => {
-        const updatedCategories = categories.map(category => ({
-            ...category,
-            trees: category.trees.map(tree => ({
-                ...tree,
-                nodes: tree.nodes.map(node =>
-                    node.id === nodeId && node.currentRank < node.maxRank ?
-                        { ...node, currentRank: node.currentRank + 1 } :
-                        node
-                )
-            }))
-        }));
-
-        // Обычно тут был бы setState, но для примера мы не обновляем состояние
+        // Функция для увеличения ранга таланта
+        console.log(`Увеличить ранг таланта ${nodeId}`);
     };
 
     const decreaseRank = (nodeId: string) => {
-        const updatedCategories = categories.map(category => ({
-            ...category,
-            trees: category.trees.map(tree => ({
-                ...tree,
-                nodes: tree.nodes.map(node =>
-                    node.id === nodeId && node.currentRank > 0 ?
-                        { ...node, currentRank: node.currentRank - 1 } :
-                        node
-                )
-            }))
-        }));
-
-        // Обычно тут был бы setState, но для примера мы не обновляем состояние
+        // Функция для уменьшения ранга таланта
+        console.log(`Уменьшить ранг таланта ${nodeId}`);
     };
 
-    const [selectedNode, setSelectedNode] = useState<TalentNode | null>(null);
-
     return (
-        <div className="w-full max-w-4xl bg-gray-800 text-white rounded-lg shadow-lg flex flex-col h-96">
+        <div className="talent-window">
             {/* Верхние вкладки (категории) */}
-            <div className="flex border-b border-gray-700">
-                {categories.map(category => (
-                    <Tab
-                        key={category.id}
-                        title={category.name}
-                        isActive={activeCategory === category.id}
-                        onClick={() => {
-                            setActiveCategory(category.id);
-                            setActiveTree(category.trees[0].id);
-                            setSelectedNode(null);
-                        }}
-                    />
-                ))}
-                <div className="ml-auto p-2">
+            <div className="talent-window__header">
+                <div className="talent-window__tabs">
+                    {categories.map(category => (
+                        <Tab
+                            key={category.id}
+                            title={category.name}
+                            isActive={activeCategory === category.id}
+                            onClick={() => {
+                                setActiveCategory(category.id);
+                                setActiveTree(category.trees[0].id);
+                                setSelectedNode(null);
+                            }}
+                        />
+                    ))}
+                </div>
+                <div className="talent-window__close">
                     <X size={16} />
                 </div>
             </div>
 
-            <div className="flex flex-grow">
+            <div className="talent-window__body">
                 {/* Боковые вкладки (деревья) */}
-                <div className="w-28 bg-gray-900 border-r border-gray-700">
+                <div className="talent-window__sidebar">
                     {currentCategory.trees.map(tree => (
                         <div
                             key={tree.id}
-                            className={`p-3 text-center cursor-pointer ${activeTree === tree.id ? 'bg-gray-700' : 'hover:bg-gray-700'}`}
+                            className={`tree-tab ${activeTree === tree.id ? 'tree-tab--active' : ''}`}
                             onClick={() => {
                                 setActiveTree(tree.id);
                                 setSelectedNode(null);
@@ -345,35 +325,36 @@ const TalentWindow: React.FC = () => {
                 </div>
 
                 {/* Дерево талантов */}
-                <div className="flex-grow relative p-4 overflow-auto">
-                    <svg width="100%" height="100%" className="absolute top-0 left-0">
+                <div className="talent-window__tree">
+                    <svg className="talent-window__connections">
                         {currentTree.nodes.map(node =>
                             node.requires.map(reqId => {
                                 const requiredNode = currentTree.nodes.find(n => n.id === reqId);
                                 if (requiredNode) {
-                                    return <React.Fragment key={`${node.id}-${reqId}`}>
-                                        {drawArrow(requiredNode, node)}
-                                    </React.Fragment>;
+                                    return drawArrow(requiredNode, node);
                                 }
                                 return null;
                             })
                         )}
                     </svg>
 
-                    <div className="relative">
+                    <div className="talent-window__nodes">
                         {currentTree.nodes.map(node => (
                             <div
                                 key={node.id}
-                                className={`absolute w-16 h-16 rounded-full flex items-center justify-center cursor-pointer
-                  ${node.unlocked ? (node.currentRank > 0 ? 'bg-green-700' : 'bg-gray-700') : 'bg-gray-900 opacity-50'}`}
+                                className={`talent-node ${
+                                    node.unlocked
+                                        ? (node.currentRank > 0 ? 'talent-node--active' : 'talent-node--available')
+                                        : 'talent-node--locked'
+                                }`}
                                 style={{
                                     left: `${node.position.x * 80}px`,
                                     top: `${node.position.y * 80}px`
                                 }}
                                 onClick={() => setSelectedNode(node)}
                             >
-                                <div className="text-2xl">{node.icon}</div>
-                                <div className="absolute bottom-0 right-0 bg-gray-900 rounded-full w-6 h-6 flex items-center justify-center">
+                                <div className="talent-node__icon">{node.icon}</div>
+                                <div className="talent-node__rank">
                                     {node.currentRank}/{node.maxRank}
                                 </div>
                             </div>
@@ -383,39 +364,43 @@ const TalentWindow: React.FC = () => {
 
                 {/* Детали выбранного таланта */}
                 {selectedNode && (
-                    <div className="w-64 bg-gray-900 border-l border-gray-700 p-4">
-                        <div className="font-bold text-lg mb-2">{selectedNode.name}</div>
-                        <div className="flex items-center mb-4">
-                            <div className="text-2xl mr-2">{selectedNode.icon}</div>
-                            <div>
-                                Ранг: {selectedNode.currentRank}/{selectedNode.maxRank}
+                    <div className="talent-window__details">
+                        <div className="talent-details">
+                            <div className="talent-details__header">
+                                <div className="talent-details__name">{selectedNode.name}</div>
+                                <div className="talent-details__info">
+                                    <div className="talent-details__icon">{selectedNode.icon}</div>
+                                    <div className="talent-details__rank">
+                                        Ранг: {selectedNode.currentRank}/{selectedNode.maxRank}
+                                    </div>
+                                </div>
                             </div>
-                        </div>
 
-                        <div className="text-sm mb-4">
-                            {selectedNode.description}
-                        </div>
+                            <div className="talent-details__description">
+                                {selectedNode.description}
+                            </div>
 
-                        <div className="flex justify-between">
-                            <button
-                                className={`px-4 py-1 rounded ${
-                                    selectedNode.currentRank > 0 ? 'bg-red-700 hover:bg-red-600' : 'bg-gray-700 cursor-not-allowed'
-                                }`}
-                                onClick={() => decreaseRank(selectedNode.id)}
-                                disabled={selectedNode.currentRank === 0}
-                            >
-                                -
-                            </button>
-                            <button
-                                className={`px-4 py-1 rounded ${
-                                    selectedNode.currentRank < selectedNode.maxRank && selectedNode.unlocked ?
-                                        'bg-green-700 hover:bg-green-600' : 'bg-gray-700 cursor-not-allowed'
-                                }`}
-                                onClick={() => increaseRank(selectedNode.id)}
-                                disabled={selectedNode.currentRank === selectedNode.maxRank || !selectedNode.unlocked}
-                            >
-                                +
-                            </button>
+                            <div className="talent-details__controls">
+                                <button
+                                    className={`talent-btn talent-btn--decrease ${
+                                        selectedNode.currentRank > 0 ? '' : 'talent-btn--disabled'
+                                    }`}
+                                    onClick={() => decreaseRank(selectedNode.id)}
+                                    disabled={selectedNode.currentRank === 0}
+                                >
+                                    -
+                                </button>
+                                <button
+                                    className={`talent-btn talent-btn--increase ${
+                                        selectedNode.currentRank < selectedNode.maxRank && selectedNode.unlocked
+                                            ? '' : 'talent-btn--disabled'
+                                    }`}
+                                    onClick={() => increaseRank(selectedNode.id)}
+                                    disabled={selectedNode.currentRank === selectedNode.maxRank || !selectedNode.unlocked}
+                                >
+                                    +
+                                </button>
+                            </div>
                         </div>
                     </div>
                 )}

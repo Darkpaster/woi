@@ -1,7 +1,37 @@
-import {useState} from "react";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import FriendItem from './FriendItem';
+import FriendRequestItem from './FriendRequestItem';
+import SearchUserItem from './SearchUserItem';
+import { friendService } from '../../service/friendService';
 
 interface FriendsPageProps {
     currentUserId: number;
+}
+
+enum FriendTab {
+    FRIENDS = 'friends',
+    INCOMING = 'incoming',
+    OUTGOING = 'outgoing',
+    SEARCH = 'search'
+}
+
+interface User {
+    id: number;
+    characterName: string;
+    avatar?: string;
+    online: boolean;
+    lastOnline: Date;
+    level: number;
+    class: string;
+    friendCount?: number;
+}
+
+interface FriendRequest {
+    id: number;
+    sender: User;
+    receiver: User;
+    createdAt: string;
 }
 
 const FriendsWindow: React.FC<FriendsPageProps> = ({ currentUserId }) => {
@@ -115,7 +145,7 @@ const FriendsWindow: React.FC<FriendsPageProps> = ({ currentUserId }) => {
         }
     };
 
-    // Обработчик отмены исходящей заявки (используем тот же метод, что и для отклонения)
+    // Обработчик отмены исходящей заявки
     const handleCancelRequest = async (requestId: number) => {
         try {
             await friendService.rejectFriendRequest(currentUserId, requestId);
@@ -147,7 +177,7 @@ const FriendsWindow: React.FC<FriendsPageProps> = ({ currentUserId }) => {
     // Рендер контента в зависимости от активной вкладки
     const renderTabContent = () => {
         if (loading) {
-            return <div className="text-center p-5 text-gray-400">Loading...</div>;
+            return <div className="friends-window__loading">Loading...</div>;
         }
 
         switch (activeTab) {
@@ -162,7 +192,7 @@ const FriendsWindow: React.FC<FriendsPageProps> = ({ currentUserId }) => {
                         />
                     ))
                 ) : (
-                    <div className="text-center p-5 text-gray-400">You don't have any friends yet</div>
+                    <div className="friends-window__empty">You don't have any friends yet</div>
                 );
 
             case FriendTab.INCOMING:
@@ -178,7 +208,7 @@ const FriendsWindow: React.FC<FriendsPageProps> = ({ currentUserId }) => {
                         />
                     ))
                 ) : (
-                    <div className="text-center p-5 text-gray-400">No incoming friend requests</div>
+                    <div className="friends-window__empty">No incoming friend requests</div>
                 );
 
             case FriendTab.OUTGOING:
@@ -193,25 +223,25 @@ const FriendsWindow: React.FC<FriendsPageProps> = ({ currentUserId }) => {
                         />
                     ))
                 ) : (
-                    <div className="text-center p-5 text-gray-400">No outgoing friend requests</div>
+                    <div className="friends-window__empty">No outgoing friend requests</div>
                 );
 
             case FriendTab.SEARCH:
                 return (
                     <>
-                        <div className="p-3 bg-gray-900">
-                            <div className="flex">
+                        <div className="friends-window__search">
+                            <div className="friends-window__search-form">
                                 <input
                                     type="text"
                                     placeholder="Search for players..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="flex-1 p-2 bg-gray-800 text-white border border-gray-700 rounded-l focus:outline-none focus:border-blue-500"
+                                    className="friends-window__search-input"
                                     onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                                 />
                                 <button
                                     onClick={handleSearch}
-                                    className="p-2 bg-blue-600 text-white rounded-r hover:bg-blue-700"
+                                    className="friends-window__search-button"
                                 >
                                     Search
                                 </button>
@@ -230,7 +260,7 @@ const FriendsWindow: React.FC<FriendsPageProps> = ({ currentUserId }) => {
                                 />
                             ))
                         ) : searchQuery ? (
-                            <div className="text-center p-5 text-gray-400">No users found</div>
+                            <div className="friends-window__empty">No users found</div>
                         ) : null}
                     </>
                 );
@@ -252,31 +282,31 @@ const FriendsWindow: React.FC<FriendsPageProps> = ({ currentUserId }) => {
     };
 
     return (
-        <div className="bg-gray-900 rounded-lg overflow-hidden shadow-lg max-w-md w-full mx-auto border border-gray-700">
-            <div className="bg-gray-800 p-4 border-b border-gray-700">
-                <h2 className="text-xl text-white font-semibold">Friends</h2>
+        <div className="friends-window">
+            <div className="friends-window__header">
+                <h2 className="friends-window__title">Friends</h2>
             </div>
 
             {/* Навигационные вкладки */}
-            <div className="flex border-b border-gray-700">
+            <div className="friends-window__tabs">
                 {Object.values(FriendTab).map(tab => (
                     <button
                         key={tab}
-                        className={`flex-1 py-3 relative ${activeTab === tab ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-400 hover:text-gray-300'}`}
+                        className={`friends-window__tab ${activeTab === tab ? 'friends-window__tab--active' : ''}`}
                         onClick={() => setActiveTab(tab)}
                     >
                         {tab.charAt(0).toUpperCase() + tab.slice(1)}
                         {renderTabCounter(tab) && (
-                            <span className="absolute top-1 right-1 bg-blue-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                {renderTabCounter(tab)}
-              </span>
+                            <span className="friends-window__tab-counter">
+                                {renderTabCounter(tab)}
+                            </span>
                         )}
                     </button>
                 ))}
             </div>
 
             {/* Контент активной вкладки */}
-            <div className="h-96 overflow-y-auto">
+            <div className="friends-window__content">
                 {renderTabContent()}
             </div>
         </div>

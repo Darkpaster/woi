@@ -1,5 +1,4 @@
 import { useEffect, useRef } from "react";
-import "./contextMenu.scss"
 
 interface ContextMenuProps {
     x: number;
@@ -25,7 +24,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose, playerName }) 
     }, [onClose]);
 
     // Действия в контекстном меню
-    const menuItems = [
+    const menuItems = [ //через пропсы чтобы сделать для инвентаря и т.п
         { icon: "heart", label: "Осмотреть", action: () => console.log(`Healing ${playerName}`) },
         { icon: "shield", label: "Добавить в друзья", action: () => console.log(`Buffing ${playerName}`) },
         { icon: "swords", label: "Дуэль", action: () => console.log(`Dueling ${playerName}`) },

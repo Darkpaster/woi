@@ -2,10 +2,11 @@ import Item from "./logic/items/item.ts";
 import {Actor} from "./logic/actors/actor.ts";
 import {Skill} from "./logic/skills/skill.ts";
 import {AnimatedImageManager} from "./graphics/image.ts";
+import {Buff} from "../ui/widgets/target/BuffsList.tsx";
 
 export type RarityTypes = "none" | "common" | "uncommon" | "rare" | "epic" | "legendary" | "godlike";
 
-export type EntityType = Item | Actor | Skill;
+export type EntityType = Item | Actor | Skill | Buff;
 
 export type RenderStateType = "idle"|"walk"|"run"|"jump"|"hurt"|"death"|"attack1"|"attack2"|"attack3";
 

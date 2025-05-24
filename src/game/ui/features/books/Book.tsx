@@ -1,6 +1,5 @@
 // BookWindow.tsx
-import { useState, useEffect, useRef } from "react";
-import "./bookWindow.scss"
+import {useState, useEffect, useRef, useLayoutEffect} from "react";
 
 // Типы данных
 type Page = {
@@ -15,7 +14,7 @@ type BookWindowProps = {
     img?: string;
 };
 
-const Book = ({ content = "", title = "Интерактивная книга", fetchUrl, img }: BookWindowProps) => {
+export const Book = ({ content = "Проверка", title = "Интерактивная книга", fetchUrl, img }: BookWindowProps) => {
     // Состояние для страниц
     const [pages, setPages] = useState<Page[]>([]);
     // Текущий разворот
@@ -38,97 +37,96 @@ const Book = ({ content = "", title = "Интерактивная книга", f
 
     // Функция для разбиения текста на страницы с учетом вместимости
     const splitContentIntoPages = (contentText: string) => {
+        if (!pageRef.current) {
+            console.error("Page ref is not available");
+            return;
+        }
+
         setIsLoading(true);
 
-        // Используем setTimeout для отрисовки DOM перед измерениями
-        setTimeout(() => {
-            if (!pageRef.current) {
-                setIsLoading(false);
-                return;
-            }
+        const pageHeight = pageRef.current.clientHeight - 48;
+        const pageWidth = pageRef.current.clientWidth - 48;
 
-            // Параметры страницы
-            const pageHeight = pageRef.current.clientHeight - 48; // Высота минус padding и место для номера
-            const pageWidth = pageRef.current.clientWidth - 48; // Ширина минус padding
+        console.log(`Page dimensions: ${pageWidth}x${pageHeight}px`); // Добавьте лог
 
-            // Создаем временный элемент для расчета
-            const tempDiv = document.createElement("div");
-            tempDiv.style.position = "absolute";
-            tempDiv.style.visibility = "hidden";
-            tempDiv.style.width = pageWidth + "px";
-            tempDiv.style.fontFamily = "serif";
-            tempDiv.style.fontSize = "14px";
-            tempDiv.style.lineHeight = "1.5";
-            document.body.appendChild(tempDiv);
+        // Создаем временный элемент для расчета
+        const tempDiv = document.createElement("div");
+        tempDiv.style.position = "absolute";
+        tempDiv.style.visibility = "hidden";
+        tempDiv.style.width = `${pageWidth}px`;
+        tempDiv.style.fontFamily = "serif";
+        tempDiv.style.fontSize = "14px";
+        tempDiv.style.lineHeight = "1.5";
+        document.body.appendChild(tempDiv);
 
-            // Разбиваем текст на параграфы
-            const paragraphs = contentText.split("\n").filter(p => p.trim() !== "");
+        const paragraphs = contentText.split("\n").filter(p => p.trim() !== "");
+        const formattedPages: Page[] = [];
+        let currentPageContent = "";
+        let pageId = 1;
 
-            const formattedPages: Page[] = [];
-            let currentPageContent = "";
-            let pageId = 1;
+        paragraphs.forEach(paragraph => {
+            tempDiv.textContent = currentPageContent + (currentPageContent ? "\n\n" : "") + paragraph;
 
-            // Обрабатываем каждый параграф
-            paragraphs.forEach(paragraph => {
-                // Добавляем параграф к временному элементу
-                tempDiv.textContent = currentPageContent + (currentPageContent ? "\n\n" : "") + paragraph;
-
-                // Если содержимое не умещается на странице, создаем новую страницу
-                if (tempDiv.scrollHeight > pageHeight) {
-                    // Если текущее содержимое страницы уже заполнено
-                    if (currentPageContent) {
-                        formattedPages.push({ id: pageId, content: currentPageContent });
-                        pageId++;
-                        currentPageContent = paragraph;
-                    } else {
-                        // Если параграф слишком большой, разбиваем его по словам
-                        const words = paragraph.split(" ");
-                        let partialParagraph = "";
-
-                        for (const word of words) {
-                            tempDiv.textContent = partialParagraph + (partialParagraph ? " " : "") + word;
-
-                            if (tempDiv.scrollHeight > pageHeight) {
-                                if (partialParagraph) {
-                                    formattedPages.push({ id: pageId, content: partialParagraph });
-                                    pageId++;
-                                    partialParagraph = word;
-                                } else {
-                                    // Слово слишком длинное, добавляем его частично
-                                    formattedPages.push({ id: pageId, content: word });
-                                    pageId++;
-                                    partialParagraph = "";
-                                }
-                            } else {
-                                partialParagraph += (partialParagraph ? " " : "") + word;
-                            }
-                        }
-
-                        currentPageContent = partialParagraph;
-                    }
+            if (tempDiv.scrollHeight > pageHeight) {
+                if (currentPageContent) {
+                    formattedPages.push({ id: pageId, content: currentPageContent });
+                    pageId++;
+                    currentPageContent = paragraph;
                 } else {
-                    // Добавляем параграф к текущей странице
-                    currentPageContent += (currentPageContent ? "\n\n" : "") + paragraph;
+                    const words = paragraph.split(" ");
+                    let partialParagraph = "";
+
+                    for (const word of words) {
+                        tempDiv.textContent = partialParagraph + (partialParagraph ? " " : "") + word;
+
+                        if (tempDiv.scrollHeight > pageHeight) {
+                            if (partialParagraph) {
+                                formattedPages.push({ id: pageId, content: partialParagraph });
+                                pageId++;
+                                partialParagraph = word;
+                            } else {
+                                formattedPages.push({ id: pageId, content: word });
+                                pageId++;
+                                partialParagraph = "";
+                            }
+                        } else {
+                            partialParagraph += (partialParagraph ? " " : "") + word;
+                        }
+                    }
+                    currentPageContent = partialParagraph;
                 }
-            });
-
-            // Добавляем последнюю страницу, если она не пуста
-            if (currentPageContent) {
-                formattedPages.push({ id: pageId, content: currentPageContent });
+            } else {
+                currentPageContent += (currentPageContent ? "\n\n" : "") + paragraph;
             }
+        });
 
-            // Удаляем временный элемент
-            document.body.removeChild(tempDiv);
+        if (currentPageContent) {
+            formattedPages.push({ id: pageId, content: currentPageContent });
+        }
 
-            // Обновляем состояние страниц
-            setPages(formattedPages);
-            setCurrentSpread(0);
-            setIsLoading(false);
-        }, 0);
+        document.body.removeChild(tempDiv);
+
+        console.log("Formatted pages:", formattedPages); // Добавьте лог
+
+        setPages(formattedPages);
+        setCurrentSpread(0);
+        setIsLoading(false);
     };
 
     // Эффект для загрузки контента при монтировании или изменении props
-    useEffect(() => {
+    useLayoutEffect(() => {
+        if (content && content.trim() === "") {
+            // Обработка пустого контента
+            return;
+        }
+        if (pageRef.current) {
+            console.log("Current page size:", {
+                width: pageRef.current.clientWidth,
+                height: pageRef.current.clientHeight
+            });
+        }
+        console.log('Content received:', content); // Проверьте что контент приходит
+        console.log('Pages state:', pages); // Проверьте состояние страниц
         if (fetchUrl) {
             setIsLoading(true);
             fetch(fetchUrl)
@@ -230,23 +228,22 @@ const Book = ({ content = "", title = "Интерактивная книга", f
                         <div
                             className={getPageClass('left')}
                             onClick={flipToPreviousSpread}
-                            ref={leftPageIndex === 0 ? null : pageRef}
+                            ref={pageRef}
+                            key={`left-${leftPageIndex}`} // Добавьте key
                         >
                             {/* Содержимое левой страницы */}
                             <div className="book__page-content">
-                                {currentSpread > 0 ? (
+                                {leftPageIndex < pages.length ? (
                                     <>
                                         <div className="page-text">
-                                            {formatTextWithLineBreaks(pages[leftPageIndex]?.content || "Пустая страница")}
+                                            {formatTextWithLineBreaks(pages[leftPageIndex]?.content)}
                                         </div>
                                         <div className="page-number page-number--left">
-                                            Страница {pages[leftPageIndex]?.id || ""}
+                                            Страница {pages[leftPageIndex]?.id}
                                         </div>
                                     </>
                                 ) : (
-                                    <div className="book-cover"
-                                    style={{backgroundImage: `url(${img})`, backgroundPosition: "center", backgroundSize: "cover"}}>
-                                    </div>
+                                    <div className="book-cover">Обложка</div>
                                 )}
                             </div>
                             {/* Край для перелистывания */}
@@ -264,15 +261,15 @@ const Book = ({ content = "", title = "Интерактивная книга", f
                                 {rightPageIndex < pages.length ? (
                                     <>
                                         <div className="page-text">
-                                            {formatTextWithLineBreaks(pages[rightPageIndex]?.content || "Пустая страница")}
+                                            {formatTextWithLineBreaks(pages[rightPageIndex]?.content)}
                                         </div>
                                         <div className="page-number page-number--right">
-                                            Страница {pages[rightPageIndex]?.id || ""}
+                                            Страница {pages[rightPageIndex]?.id}
                                         </div>
                                     </>
                                 ) : (
                                     <div className="book-cover">
-                                        Конец книги
+                                        {pages.length > 0 ? "Конец книги" : "Загрузка..."}
                                     </div>
                                 )}
                             </div>

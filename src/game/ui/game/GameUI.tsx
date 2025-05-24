@@ -9,6 +9,12 @@ import Auth from "../features/auth/Auth.tsx";
 import {InGame} from "./InGame.tsx";
 import {ParticleSimulationWindow} from "../features/education/physics/ParticleSimulationWindow.tsx";
 
+import "../styles/uiComponents.scss"
+import "../styles/gameUI.scss"
+import "../styles/authMenu.scss"
+import "../styles/widgets.scss"
+import "../styles/windows.scss"
+
 let canvas: HTMLCanvasElement | null;
 
 
@@ -139,6 +145,6 @@ export const GameUI: React.FC = () => {
     }
 
     return (
-        particle ? (<ParticleSimulationWindow></ParticleSimulationWindow>) : (anotherModule())
+        anotherModule()
     );
 };

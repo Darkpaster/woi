@@ -2,7 +2,6 @@ import { useState } from "react";
 import StatusBar from "../status-bar/StatusBar.tsx";
 import ContextMenu from "../context-menu/ContextMenu.tsx";
 import { player } from "../../../core/main.ts";
-import "./playerWidget.scss";
 
 const PlayerWidget: React.FC = () => {
     const [contextMenu, setContextMenu] = useState<{ visible: boolean, x: number, y: number }>({
@@ -36,7 +35,7 @@ const PlayerWidget: React.FC = () => {
                 <div className="avatar-container">
                     <div className="avatar">
                         {player?.AA ? (
-                            <img src={"src/assets/icons/Icon_09.png"} alt={player.name} />
+                            <img src={"src/assets/raw.png"} alt={player.name} />
                         ) : (
                             <div />
                         )}
@@ -49,7 +48,7 @@ const PlayerWidget: React.FC = () => {
                 {/* Информация о персонаже */}
                 <div className="character-info">
                     <div className="character-name">{player.name}</div>
-                    <div className="character-class">{player.name}</div>
+                    <div className="character-class">{"воин"}</div>
                 </div>
             </div>
 
@@ -68,8 +67,8 @@ const PlayerWidget: React.FC = () => {
                     label="Мана"
                 />
                 <StatusBar
-                    value={player.MP}
-                    max={player.MT}
+                    value={999999}
+                    max={999999}
                     color="stamina"
                     label="Выносливость"
                 />

@@ -3,12 +3,13 @@ import {SmallPotionOfHealing} from "../items/consumable/potions/smallPotionOfHea
 import {Slash} from "../skills/slash.ts";
 import {Actor} from "./actor.ts";
 import Item from "../items/item.ts";
-import {entityManager, gameRTC, graphics, player} from "../../main.ts";
+import {entityManager, gameRTC, graphics, player, worldMap} from "../../main.ts";
 import {calcDistance} from "../../../../utils/math/2d.ts";
 import {scaledTileSize} from "../../../../utils/math/general.ts";
 import {randomInt} from "../../../../utils/math/random.ts";
 import {FloatText} from "../../graphics/floatText.ts";
 import {Skill} from "../skills/skill.ts";
+import {tileList} from "../../graphics/tilesGenerator.ts";
 
 export interface Equipment {
     head: any;
@@ -104,14 +105,6 @@ export default class Player extends Actor {
         this._level = value;
     }
 
-    get experience(): number {
-        return this._experience;
-    }
-
-    set experience(value: number) {
-        this._experience = value;
-    }
-
     static characterType: { [key: string]: string } = {
         WANDERER: "wanderer"
     }
@@ -126,7 +119,7 @@ export default class Player extends Actor {
     private _AA: boolean;
     private _inventory: Array<Item>;
     readonly equipment: Equipment;
-    private _experience: number;
+    public experience: number;
     private _level: number;
     private _gold: number;
     private _inventorySize: number;
@@ -182,7 +175,7 @@ export default class Player extends Actor {
         };
 
 
-        this._experience = 0
+        this.experience = 0
         this._level = 1
         this._gold = 0
         this._skillPoints = 0
@@ -409,6 +402,7 @@ export default class Player extends Actor {
     }
 
 
+
     learn<T extends Skill>(spell: T): void {
         this.spellBook.push(spell);
     }
@@ -462,5 +456,126 @@ export default class Player extends Actor {
             return;
         }
         this.target = nearest;
+    }
+
+
+    collision(): { x: boolean, y: boolean, slide?: { x: number, y: number } } {
+        // Результат коллизии по осям X и Y
+        const result: { x: boolean, y: boolean, slide?: { x: number, y: number } } = { x: false, y: false };
+
+        // Текущие координаты игрока
+        const playerPosX = this.posX;
+        const playerPosY = this.posY;
+
+        // Предыдущие координаты игрока (для определения направления движения)
+        const lastPosX = this.lastPosX || playerPosX;
+        const lastPosY = this.lastPosY || playerPosY;
+
+        // Направление движения
+        const moveX = playerPosX - lastPosX;
+        const moveY = playerPosY - lastPosY;
+
+        // Радиус коллизии персонажа
+        const playerRadius = 0.7;
+        // Радиус проверки тайлов вокруг игрока
+        const checkRadius = 1;
+
+        // Получаем матрицу тайлов слоя переднего плана вокруг игрока
+        const screenTiles = worldMap.getScreenTileMatrix("foreground");
+        if (!screenTiles || !screenTiles.matrix.length) {
+            return result; // Если матрицы нет, коллизии нет
+        }
+
+        // Определяем область проверки в пределах матрицы тайлов
+        const startTileX = Math.max(Math.floor(playerPosX - checkRadius) - screenTiles.startX, 0);
+        const startTileY = Math.max(Math.floor(playerPosY - checkRadius) - screenTiles.startY, 0);
+        const endTileX = Math.min(Math.ceil(playerPosX + checkRadius) - screenTiles.startX, screenTiles.width - 1);
+        const endTileY = Math.min(Math.ceil(playerPosY + checkRadius) - screenTiles.startY, screenTiles.height - 1);
+
+        // Информация о ближайшей коллизии
+        let nearestCollision = {
+            distance: Number.MAX_VALUE,
+            dx: 0,
+            dy: 0,
+            tile: null as any
+        };
+
+        // Проверяем тайлы в области вокруг игрока
+        for (let localY = startTileY; localY <= endTileY; localY++) {
+            for (let localX = startTileX; localX <= endTileX; localX++) {
+                // Пропускаем, если выходим за границы матрицы
+                if (localY < 0 || localY >= screenTiles.matrix.length ||
+                    localX < 0 || localX >= screenTiles.matrix[localY].length) {
+                    continue;
+                }
+
+                // Получаем ID тайла
+                const tileId = screenTiles.matrix[localY][localX];
+                const tile = tileList[tileId];
+
+                // Если тайл существует и по нему нельзя ходить
+                if (tile && !tile.props.isWalkable) {
+                    // Вычисляем глобальные координаты тайла
+                    const tileGlobalX = screenTiles.startX + localX;
+                    const tileGlobalY = screenTiles.startY + localY;
+
+                    // Расстояние между игроком и центром тайла
+                    const dx = playerPosX - (tileGlobalX + 0.5);
+                    const dy = playerPosY - (tileGlobalY + 0.5);
+                    const distanceSquared = dx * dx + dy * dy;
+
+                    // Квадрат порога коллизии (сумма радиуса игрока и половины тайла)
+                    const thresholdSquared = (playerRadius + 0.5) * (playerRadius + 0.5);
+
+                    // Если расстояние меньше порога, значит есть коллизия
+                    if (distanceSquared < thresholdSquared) {
+                        // Запоминаем информацию о ближайшей коллизии
+                        if (distanceSquared < nearestCollision.distance) {
+                            nearestCollision = {
+                                distance: distanceSquared,
+                                dx,
+                                dy,
+                                tile
+                            };
+                        }
+                    }
+                }
+            }
+        }
+
+        // Если коллизия обнаружена
+        if (nearestCollision.tile) {
+            const { dx, dy } = nearestCollision;
+
+            // Определяем преобладающую ось коллизии
+            const isHorizontalCollision = Math.abs(dx) > Math.abs(dy);
+
+            // Настраиваем флаги блокировки движения
+            if (isHorizontalCollision) {
+                result.x = true;
+            } else {
+                result.y = true;
+            }
+
+            // Реализация скольжения вдоль стены при диагональном движении
+            if (Math.abs(moveX) > 0.01 && Math.abs(moveY) > 0.01) {
+                // Если движение диагональное и есть коллизия
+                result.slide = { x: 0, y: 0 };
+
+                if (isHorizontalCollision) {
+                    // Если коллизия по горизонтали, разрешаем движение по вертикали
+                    result.slide.y = moveY;
+                } else {
+                    // Если коллизия по вертикали, разрешаем движение по горизонтали
+                    result.slide.x = moveX;
+                }
+            }
+        }
+
+        // Сохраняем текущую позицию как предыдущую для следующего кадра
+        this.lastPosX = playerPosX;
+        this.lastPosY = playerPosY;
+
+        return result;
     }
 }

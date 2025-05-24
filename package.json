@@ -15,6 +15,7 @@
     "axios": "^1.8.1",
     "immer": "^10.1.1",
     "katex": "^0.16.22",
+    "lucide-react": "^0.511.0",
     "mhchemparser": "^4.2.1",
     "react": "^19.0.0",
     "react-cookie": "^7.2.2",

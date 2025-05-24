@@ -1,0 +1,273 @@
+// ui-components.scss - компоненты пользовательского интерфейса
+
+@import 'globalStyles';
+
+// Context Menu
+.context-menu {
+  position: absolute;
+  @include ui-element;
+  padding: 0.25rem 0;
+  width: 14rem;
+  z-index: 1000;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+  .menu-item {
+    @include flex(row, flex-start, center);
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    @include transition;
+
+    &:hover {
+      background-color: map-get($colors, hud);
+    }
+
+    &.danger {
+      color: #ef4444;
+    }
+
+    .menu-icon {
+      margin-right: 0.5rem;
+      width: 1rem;
+      height: 1rem;
+      display: inline-block;
+
+      &.heart:before {
+        content: "♥";
+      }
+
+      &.shield:before {
+        content: "🛡";
+      }
+
+      &.swords:before {
+        content: "⚔";
+      }
+
+      &.share:before {
+        content: "↗";
+      }
+
+      &.maximize:before {
+        content: "➕";
+      }
+
+      &.logout:before {
+        content: "!";
+        color: #ef4444;
+      }
+    }
+  }
+}
+
+// Status Bar
+.status-bar-container {
+  @include flex(row, flex-start, center);
+  width: 100%;
+  margin-bottom: 0.25rem;
+
+  .status-label {
+    font-size: 0.75rem;
+    margin-right: 0.5rem;
+    width: 4rem;
+    color: map-get($colors, secondary);
+  }
+
+  .status-bar-background {
+    flex-grow: 1;
+    height: 1rem;
+    background-color: map-get($colors, non-active);
+    border-radius: 0.125rem;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid map-get($colors, black);
+
+    .status-bar-fill {
+      height: 100%;
+      @include transition(width);
+      box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.3);
+
+      &.health {
+        background: linear-gradient(to bottom, #f00, #900);
+      }
+
+      &.mana {
+        background: linear-gradient(to bottom, #09f, #06c);
+      }
+
+      &.stamina {
+        background: linear-gradient(to bottom, #fc0, #c90);
+      }
+    }
+
+    .status-bar-text {
+      position: absolute;
+      inset: 0;
+      @include flex;
+      font-size: 0.65rem;
+      color: map-get($colors, font);
+      font-weight: bold;
+      text-shadow: 1px 1px 1px map-get($colors, black);
+      padding: 0 0.25rem;
+    }
+  }
+}
+
+// Tab Component
+.tab {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  @include transition;
+  color: map-get($colors, font);
+
+  &:hover {
+    background-color: rgba(map-get($colors, font), 0.1);
+  }
+
+  &--active {
+    border-bottom-color: map-get($colors, primary);
+    font-weight: bold;
+    color: map-get($colors, active);
+  }
+}
+
+// Button Components
+.ui-button {
+  cursor: pointer;
+  font-size: 1em;
+  padding: 0.6em 0.8em;
+  @include transition;
+  @include ui-element;
+  border: 1px solid map-get($colors, font);
+
+  &:hover:not(&--disabled) {
+    background-color: map-get($colors, hud);
+  }
+
+  &--primary {
+    background-color: map-get($colors, primary);
+    color: map-get($colors, font);
+
+    &:hover:not(.ui-button--disabled) {
+      background-color: map-get($colors, secondary-alt);
+    }
+  }
+
+  &--danger {
+    background-color: #dc2626;
+    color: map-get($colors, font);
+
+    &:hover:not(.ui-button--disabled) {
+      background-color: #b91c1c;
+    }
+  }
+
+  &--success {
+    background-color: map-get($colors, primary);
+    color: map-get($colors, font);
+
+    &:hover:not(.ui-button--disabled) {
+      background-color: #16a34a;
+    }
+  }
+
+  &--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: map-get($colors, non-active);
+  }
+}
+
+// Loading Spinner
+.loading-spinner {
+  @include grid-center;
+  width: 100%;
+  height: 16rem;
+
+  &__element {
+    height: 3rem;
+    width: 3rem;
+    border-radius: 50%;
+    border: 0.25rem solid rgba(map-get($colors, primary), 0.3);
+    border-top-color: map-get($colors, primary);
+    animation: spin 1s linear infinite;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Error Container
+.error-container {
+  @include grid-center;
+  width: 100%;
+  height: 16rem;
+  background-color: rgba(#dc2626, 0.1);
+  color: #dc2626;
+  border-radius: 0.5rem;
+  border: 1px solid #dc2626;
+  padding: 1rem;
+  text-align: center;
+}
+
+// Modal Overlay
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(map-get($colors, black), 0.8);
+  @include grid-center;
+  z-index: 1000;
+
+  .modal-content {
+    @include ui-element;
+    padding: 2rem;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+}
+
+// Tooltip
+.tooltip {
+  position: absolute;
+  @include ui-element;
+  padding: 0.5rem;
+  font-size: 0.875rem;
+  max-width: 20rem;
+  z-index: 1001;
+  pointer-events: none;
+  white-space: pre-wrap;
+}
+
+// Progress Bar
+.progress-bar {
+  width: 100%;
+  height: 1rem;
+  background-color: map-get($colors, non-active);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  border: 1px solid map-get($colors, font);
+
+  &__fill {
+    height: 100%;
+    background: linear-gradient(to right, map-get($colors, primary), map-get($colors, secondary-alt));
+    @include transition(width);
+    border-radius: 0.5rem;
+  }
+
+  &__text {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: map-get($colors, font);
+    text-shadow: 1px 1px 1px map-get($colors, black);
+    line-height: 1rem;
+  }
+}
