@@ -1,0 +1,108 @@
+@use '../../game/globalStyles';
+@use "buffsList";
+
+%widget-base {
+  background: url("src/assets/icons/worldmapicon.png") repeat;
+  border-radius: 8px;
+  padding: 0.5rem;
+  color: map-get(globalStyles.$colors, white);
+  width: 15rem;
+  user-select: none;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+  border: 2px solid map-get(globalStyles.$colors, hud);
+  outline: 1px solid map-get(globalStyles.$colors, black);
+  position: fixed;
+  top: 1rem;
+  z-index: 10;
+}
+
+%avatar-base {
+  position: relative;
+  margin-right: 0.5rem;
+
+  .avatar {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 4px;
+    @include globalStyles.flex;
+    background-color: map-get(globalStyles.$colors, black);
+    overflow: hidden;
+    border: 2px solid map-get(globalStyles.$colors, hud);
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.8);
+
+    img {
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .level-indicator {
+    position: absolute;
+    bottom: -0.25rem;
+    right: -0.25rem;
+    background-color: map-get(globalStyles.$colors, gray-900);
+    border: 1px solid map-get(globalStyles.$colors, hud);
+    border-radius: 3px;
+    width: 1.5rem;
+    height: 1.25rem;
+    @include globalStyles.flex;
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: map-get(globalStyles.$colors, yellow);
+    text-shadow: 1px 1px 1px map-get(globalStyles.$colors, black);
+  }
+}
+
+%character-info-base {
+  @include globalStyles.flex(column, center, flex-start);
+
+  .character-name {
+    font-weight: bold;
+    font-size: 1rem;
+    text-shadow: 1px 1px 1px map-get(globalStyles.$colors, black);
+  }
+
+  .character-class {
+    font-size: 0.8rem;
+    color: #bbb;
+    text-shadow: 1px 1px 1px map-get(globalStyles.$colors, black);
+  }
+}
+
+%status-bars-base {
+  @include globalStyles.flex(column);
+  gap: 0.2rem;
+
+  .status-bar {
+    height: 1rem;
+    border-radius: 2px;
+    overflow: hidden;
+    border: 1px solid map-get(globalStyles.$colors, black);
+    background-color: map-get(globalStyles.$colors, gray-900);
+
+    .status-bar-fill {
+      box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.3);
+      border-right: 1px solid rgba(0, 0, 0, 0.3);
+
+      &.health {
+        background: linear-gradient(to bottom, #f00, #900);
+      }
+
+      &.mana {
+        background: linear-gradient(to bottom, #09f, #06c);
+      }
+
+      &.stamina {
+        background: linear-gradient(to bottom, #fc0, #c90);
+      }
+    }
+
+    .status-bar-text {
+      font-size: 0.65rem;
+      font-weight: bold;
+      text-shadow: 1px 1px 1px map-get(globalStyles.$colors, black);
+      padding: 0 0.25rem;
+    }
+  }
+}

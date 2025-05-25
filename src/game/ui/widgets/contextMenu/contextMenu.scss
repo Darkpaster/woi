@@ -1,0 +1,107 @@
+// Context menu
+@use "../../game/globalStyles";
+
+//.contextMenu { //duplicate
+//  position: absolute;
+//  background-color: map-get($colors, background);
+//  border: 1px solid map-get($colors, font);
+//  border-radius: 0.25rem;
+//  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+//  padding: 0.25rem 0;
+//  width: 14rem;
+//  z-index: 1000;
+//
+//  .menu-item {
+//    display: flex;
+//    align-items: center;
+//    padding: 0.5rem 1rem;
+//    cursor: pointer;
+//    color: map-get($colors, font);
+//    @include transition;
+//
+//    &:hover {
+//      background-color: map-get($colors, active);
+//    }
+//
+//    &.danger {
+//      color: map-get($colors, red);
+//    }
+//
+//    .menu-icon {
+//      margin-right: 0.5rem;
+//      width: 1rem;
+//      height: 1rem;
+//      display: inline-block;
+//
+//      &.heart:before { content: "♥"; }
+//      &.shield:before { content: "🛡"; }
+//      &.swords:before { content: "⚔"; }
+//      &.share:before { content: "↗"; }
+//      &.maximize:before { content: "➕"; }
+//      &.logout:before {
+//        content: "!";
+//        color: map-get($colors, red);
+//      }
+//    }
+//  }
+//}
+//
+
+
+
+// Context Menu
+.context-menu {
+  position: absolute;
+  @include globalStyles.ui-element;
+  padding: 0.25rem 0;
+  width: 14rem;
+  z-index: 1000;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+  .menu-item {
+    @include globalStyles.flex(row, flex-start, center);
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    @include globalStyles.transition;
+
+    &:hover {
+      background-color: map-get(globalStyles.$colors, hud);
+    }
+
+    &.danger {
+      color: #ef4444;
+    }
+
+    .menu-icon {
+      margin-right: 0.5rem;
+      width: 1rem;
+      height: 1rem;
+      display: inline-block;
+
+      &.heart:before {
+        content: "♥";
+      }
+
+      &.shield:before {
+        content: "🛡";
+      }
+
+      &.swords:before {
+        content: "⚔";
+      }
+
+      &.share:before {
+        content: "↗";
+      }
+
+      &.maximize:before {
+        content: "➕";
+      }
+
+      &.logout:before {
+        content: "!";
+        color: #ef4444;
+      }
+    }
+  }
+}

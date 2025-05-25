@@ -1,0 +1,27 @@
+@import "../../../game/globalStyles";
+
+.quest-item {
+  padding: 0.75rem;
+  border-bottom: 1px solid map-get($colors, font);
+  cursor: pointer;
+  @include transition;
+
+  &:hover {
+    background-color: map-get($colors, hud);
+  }
+
+  &--selected {
+    background-color: map-get($colors, hud);
+  }
+
+  &__title {
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+    color: map-get($colors, font);
+  }
+
+  &__level {
+    font-size: 0.875rem;
+    color: map-get($colors, secondary);
+  }
+}

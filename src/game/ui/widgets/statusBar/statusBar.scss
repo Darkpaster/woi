@@ -1,0 +1,54 @@
+@use "../../game/globalStyles";
+
+// Status Bar
+.status-bar-container {
+  @include globalStyles.flex(row, flex-start, center);
+  width: 100%;
+  margin-bottom: 0.25rem;
+
+  .status-label {
+    font-size: 0.75rem;
+    margin-right: 0.5rem;
+    width: 4rem;
+    color: map-get(globalStyles.$colors, secondary);
+  }
+
+  .status-bar-background {
+    flex-grow: 1;
+    height: 1rem;
+    background-color: map-get(globalStyles.$colors, non-active);
+    border-radius: 0.125rem;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid map-get(globalStyles.$colors, black);
+
+    .status-bar-fill {
+      height: 100%;
+      @include globalStyles.transition(width);
+      box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.3);
+
+      &.health {
+        background: linear-gradient(to bottom, #f00, #900);
+      }
+
+      &.mana {
+        background: linear-gradient(to bottom, #09f, #06c);
+      }
+
+      &.stamina {
+        background: linear-gradient(to bottom, #fc0, #c90);
+      }
+    }
+
+    .status-bar-text {
+      position: absolute;
+      inset: 0;
+      @include globalStyles.flex;
+      font-size: 0.65rem;
+      color: map-get(globalStyles.$colors, font);
+      font-weight: bold;
+      text-shadow: 1px 1px 1px map-get(globalStyles.$colors, black);
+      padding: 0 0.25rem;
+    }
+  }
+}

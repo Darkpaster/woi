@@ -1,0 +1,16 @@
+//menu general css
+@import '../../../game/globalStyles';
+
+%full-height-panel {
+  width: 20vw;
+  height: 60vh;
+  display: flex;
+}
+
+// Menu layout
+.menu-div {
+  @extend %full-height-panel;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+}

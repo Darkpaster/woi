@@ -1,0 +1,290 @@
+// TalentWindow.scss
+@import '../../../game/globalStyles';
+
+.talent-window {
+  @include ui-element;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 900px;
+  height: 700px;
+  display: flex;
+  flex-direction: column;
+  font-family: "PixelFont";
+
+  &__header {
+    @include flex(row, space-between, center);
+    padding: 1rem;
+    border-bottom: 1px solid map-get($colors, font);
+    background-color: rgba(map-get($colors, hud), 0.3);
+  }
+
+  &__tabs {
+    @include flex(row, flex-start, center);
+    gap: 0.5rem;
+  }
+
+  &__close {
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    @include transition;
+
+    &:hover {
+      background-color: map-get($colors, red);
+    }
+  }
+
+  &__body {
+    @include flex(row, flex-start, stretch);
+    flex: 1;
+    overflow: hidden;
+  }
+
+  &__sidebar {
+    width: 200px;
+    background-color: rgba(map-get($colors, hud), 0.2);
+    border-right: 1px solid map-get($colors, font);
+    @include flex(column, flex-start, stretch);
+    gap: 0.25rem;
+    padding: 1rem 0.5rem;
+    @include scrollbar;
+    overflow-y: auto;
+  }
+
+  &__tree {
+    flex: 1;
+    position: relative;
+    background-color: rgba(map-get($colors, background), 0.5);
+    overflow: hidden;
+    min-height: 500px;
+  }
+
+  &__connections {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  &__nodes {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+  }
+
+  &__details {
+    width: 300px;
+    background-color: rgba(map-get($colors, hud), 0.2);
+    border-left: 1px solid map-get($colors, font);
+    padding: 1rem;
+    @include flex(column, flex-start, stretch);
+  }
+}
+
+// Боковые вкладки деревьев
+.tree-tab {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  @include transition;
+  text-align: center;
+  border: 1px solid transparent;
+
+  &:hover {
+    background-color: rgba(map-get($colors, active), 0.3);
+  }
+
+  &--active {
+    background-color: map-get($colors, active);
+    color: map-get($colors, black);
+    border-color: map-get($colors, font);
+  }
+}
+
+// Узлы талантов
+.talent-node {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  @include flex(column, center, center);
+  @include transition;
+  border: 2px solid;
+  margin: 10px;
+
+  &__icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+  }
+
+  &__rank {
+    font-size: 0.75rem;
+    font-weight: bold;
+  }
+
+  &--locked {
+    background-color: rgba(map-get($colors, gray-600), 0.5);
+    border-color: map-get($colors, gray-500);
+    color: map-get($colors, gray-400);
+    cursor: not-allowed;
+
+    .talent-node__icon {
+      opacity: 0.5;
+    }
+  }
+
+  &--available {
+    background-color: rgba(map-get($colors, blue), 0.3);
+    border-color: map-get($colors, blue-400);
+    color: map-get($colors, font);
+
+    &:hover {
+      background-color: rgba(map-get($colors, blue), 0.5);
+      border-color: map-get($colors, blue);
+      transform: scale(1.05);
+    }
+  }
+
+  &--active {
+    background-color: rgba(map-get($colors, green), 0.4);
+    border-color: map-get($colors, green);
+    color: map-get($colors, font);
+    box-shadow: 0 0 10px rgba(map-get($colors, green), 0.5);
+
+    &:hover {
+      background-color: rgba(map-get($colors, green), 0.6);
+      transform: scale(1.05);
+    }
+  }
+}
+
+// Детали таланта
+.talent-details {
+  @include flex(column, flex-start, stretch);
+  gap: 1rem;
+
+  &__header {
+    @include flex(column, flex-start, stretch);
+    gap: 0.5rem;
+    border-bottom: 1px solid rgba(map-get($colors, font), 0.3);
+    padding-bottom: 1rem;
+  }
+
+  &__name {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: map-get($colors, active);
+  }
+
+  &__info {
+    @include flex(row, space-between, center);
+  }
+
+  &__icon {
+    font-size: 2rem;
+    padding: 0.5rem;
+    background-color: rgba(map-get($colors, active), 0.2);
+    border-radius: 0.5rem;
+  }
+
+  &__rank {
+    font-size: 1rem;
+    color: map-get($colors, font);
+  }
+
+  &__description {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: rgba(map-get($colors, font), 0.9);
+    padding: 1rem;
+    background-color: rgba(map-get($colors, background), 0.5);
+    border-radius: 0.5rem;
+    border-left: 3px solid map-get($colors, active);
+  }
+
+  &__controls {
+    @include flex(row, center, center);
+    gap: 1rem;
+  }
+}
+
+// Кнопки управления талантами
+.talent-btn {
+  @include button-base;
+  width: 40px;
+  height: 40px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  @include flex(row, center, center);
+
+  &--increase {
+    background-color: map-get($colors, green);
+    color: map-get($colors, white);
+
+    &:hover:not(:disabled) {
+      background-color: map-get($colors, green-600);
+    }
+  }
+
+  &--decrease {
+    background-color: map-get($colors, red);
+    color: map-get($colors, white);
+
+    &:hover:not(:disabled) {
+      background-color: map-get($colors, red-600);
+    }
+  }
+
+  &--disabled {
+    background-color: map-get($colors, gray-600) !important;
+    color: map-get($colors, gray-400) !important;
+    cursor: not-allowed !important;
+
+    &:hover {
+      background-color: map-get($colors, gray-600) !important;
+    }
+  }
+}
+
+// Анимации подключений между узлами
+.talent-window__connections {
+  line {
+    @include transition(stroke, 0.3s);
+  }
+}
+
+// Адаптивность для меньших экранов
+@media (max-width: 1024px) {
+  .talent-window {
+    width: 90vw;
+    height: 90vh;
+
+    &__sidebar {
+      width: 150px;
+    }
+
+    &__details {
+      width: 250px;
+    }
+  }
+
+  .talent-node {
+    width: 50px;
+    height: 50px;
+
+    &__icon {
+      font-size: 1.25rem;
+    }
+
+    &__rank {
+      font-size: 0.6rem;
+    }
+  }
+}

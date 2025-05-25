@@ -2,7 +2,7 @@ import Item from "./logic/items/item.ts";
 import {Actor} from "./logic/actors/actor.ts";
 import {Skill} from "./logic/skills/skill.ts";
 import {AnimatedImageManager} from "./graphics/image.ts";
-import {Buff} from "../ui/widgets/target/BuffsList.tsx";
+import {Buff} from "../ui/widgets/actor/target/BuffsList.tsx";
 
 export type RarityTypes = "none" | "common" | "uncommon" | "rare" | "epic" | "legendary" | "godlike";
 

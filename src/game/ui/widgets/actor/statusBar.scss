@@ -1,0 +1,91 @@
+// Status bars base
+@use "../../game/globalStyles";
+
+%stat-bar-base {
+  width: 15vw;
+  height: 3vh;
+  position: fixed;
+  margin: 30px;
+  left: 0;
+  top: 0;
+  z-index: 10;
+
+  progress {
+    border-radius: 10px;
+    width: 100%;
+    height: 100%;
+    accent-color: green;
+    background-color: grey;
+  }
+
+  span {
+    left: 0;
+    position: absolute;
+    width: 100%;
+    line-height: 3.5vh;
+    text-align: center;
+    font-size: large;
+    pointer-events: none;
+    user-select: none;
+  }
+}
+
+
+.stat-bar {
+  @extend %stat-bar-base;
+}
+
+.stat-bar-enemy {
+  @extend %stat-bar-base;
+  left: 20%;
+}
+
+// Status bar component
+.status-bar-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 0.25rem;
+
+  .status-label {
+    font-size: 0.75rem;
+    margin-right: 0.5rem;
+    width: 4rem;
+    color: map-get(globalStyles.$colors, gray-300);
+  }
+
+  .status-bar-background {
+    flex-grow: 1;
+    height: 1rem;
+    background-color: map-get(globalStyles.$colors, gray-700);
+    border-radius: 0.125rem;
+    overflow: hidden;
+    position: relative;
+
+    .status-bar-fill {
+      height: 100%;
+      @include globalStyles.transition(width, 0.3s);
+
+      &.health {
+        background: linear-gradient(to bottom, #f00, #900);
+      }
+
+      &.mana {
+        background: linear-gradient(to bottom, #09f, #06c);
+      }
+
+      &.stamina {
+        background: linear-gradient(to bottom, #fc0, #c90);
+      }
+    }
+
+    .status-bar-text {
+      position: absolute;
+      inset-x: 0;
+      text-align: center;
+      font-size: 0.75rem;
+      color: map-get(globalStyles.$colors, white);
+      line-height: 1rem;
+    }
+  }
+}

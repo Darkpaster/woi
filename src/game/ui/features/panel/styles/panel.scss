@@ -1,0 +1,195 @@
+// styles/Panel.scss
+@import '../../../game/globalStyles';
+
+.panel-container {
+  @include ui-element;
+  position: absolute;
+  z-index: 10;
+  overflow: hidden;
+
+  &--horizontal {
+    display: flex;
+    flex-direction: row;
+    height: $cell-size;
+    width: fit-content;
+  }
+
+  &--vertical {
+    display: flex;
+    flex-direction: column;
+    width: $cell-size;
+    height: fit-content;
+  }
+
+  // Positioning variants
+  &--bottom-center {
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  &--bottom-left {
+    bottom: 0;
+    left: 0;
+    margin: 10px;
+  }
+
+  &--bottom-right {
+    bottom: 0;
+    right: 0;
+    margin: 10px;
+  }
+
+  &--top-center {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 10px;
+  }
+
+  &--left-center {
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: 10px;
+  }
+
+  &--right-center {
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-right: 10px;
+  }
+}
+
+.panel-slot {
+  width: $cell-size;
+  height: $cell-size;
+  background-size: cover;
+  background-position: center;
+  border: 1px solid map-get($colors, font);
+  cursor: pointer;
+  position: relative;
+  @include transition;
+
+  &:hover {
+    background-color: map-get($colors, active);
+    border-color: map-get($colors, active);
+  }
+
+  &--empty {
+    cursor: default;
+    opacity: 0.6;
+
+    &:hover {
+      background-color: transparent;
+      border-color: map-get($colors, font);
+    }
+  }
+
+  &--dragging {
+    opacity: 0.5;
+    transform: scale(0.95);
+  }
+
+  &--drag-over {
+    border-color: map-get($colors, active);
+    box-shadow: 0 0 8px map-get($colors, active);
+  }
+
+  // Cooldown overlay
+  &__cooldown {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    @include flex;
+    color: map-get($colors, font);
+    font-weight: bold;
+    font-size: 18px;
+    pointer-events: none;
+  }
+
+  // Hotkey indicator
+  &__hotkey {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    background: rgba(0, 0, 0, 0.8);
+    color: map-get($colors, font);
+    padding: 1px 4px;
+    border-radius: 2px;
+    font-size: 10px;
+    font-weight: bold;
+    pointer-events: none;
+  }
+}
+
+.window-panel {
+  .panel-slot {
+    &--guild {
+      border-color: map-get($colors, blue);
+
+      &:hover {
+        border-color: map-get($colors, blue-400);
+        box-shadow: 0 0 4px map-get($colors, blue-400);
+      }
+    }
+
+    &--profession {
+      border-color: map-get($colors, green);
+
+      &:hover {
+        border-color: map-get($colors, green-600);
+        box-shadow: 0 0 4px map-get($colors, green-600);
+      }
+    }
+
+    &--settings {
+      border-color: map-get($colors, gray-500);
+
+      &:hover {
+        border-color: map-get($colors, gray-300);
+        box-shadow: 0 0 4px map-get($colors, gray-300);
+      }
+    }
+
+    &--inventory {
+      border-color: map-get($colors, yellow);
+
+      &:hover {
+        border-color: map-get($colors, yellow-500);
+        box-shadow: 0 0 4px map-get($colors, yellow-500);
+      }
+    }
+
+    &--character {
+      border-color: map-get($colors, purple);
+
+      &:hover {
+        border-color: map-get($colors, purple-700);
+        box-shadow: 0 0 4px map-get($colors, purple-700);
+      }
+    }
+
+    &--map {
+      border-color: map-get($colors, secondary);
+
+      &:hover {
+        border-color: lighten(map-get($colors, secondary), 20%);
+        box-shadow: 0 0 4px lighten(map-get($colors, secondary), 20%);
+      }
+    }
+
+    &--quest {
+      border-color: map-get($colors, red);
+
+      &:hover {
+        border-color: map-get($colors, red-600);
+        box-shadow: 0 0 4px map-get($colors, red-600);
+      }
+    }
+  }
+}

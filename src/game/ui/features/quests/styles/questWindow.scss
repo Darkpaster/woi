@@ -1,0 +1,183 @@
+
+@import "../../../game/globalStyles";
+
+// Базовые миксины для окон
+%window-base {
+  @include ui-element;
+  width: 100%;
+  max-width: 100rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+%window-header {
+  @include flex(row, space-between, center);
+  background-color: map-get($colors, hud);
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid map-get($colors, font);
+  font-weight: 600;
+}
+
+
+
+// Quest Window
+.quest-window {
+  @extend %window-base;
+  @include flex(row);
+  height: 24rem;
+  position: relative;
+
+  z-index: 1000;
+
+  &__sidebar {
+    width: 33.333333%;
+    border-right: 1px solid map-get($colors, font);
+  }
+
+  &__tabs {
+    @include flex(row);
+    border-bottom: 1px solid map-get($colors, font);
+  }
+
+  &__quest-list {
+    overflow-y: auto;
+    height: calc(100% - 60px);
+  }
+
+  &__content {
+    width: 66.666667%;
+    padding: 1rem;
+    @include flex(column);
+  }
+
+  &__header {
+    @include flex(row, space-between, flex-start);
+    margin-bottom: 1rem;
+  }
+
+  &__title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin: 0;
+    color: map-get($colors, active);
+  }
+
+  &__controls {
+    @include flex(row, flex-start, center);
+    gap: 0.5rem;
+  }
+
+  &__dialog-btn {
+    @include flex(row, center, center);
+    gap: 0.25rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.25rem;
+    border: none;
+    background-color: map-get($colors, non-active);
+    color: map-get($colors, font);
+    cursor: pointer;
+    @include transition;
+
+    &:hover {
+      background-color: map-get($colors, hud);
+    }
+
+    &--active {
+      background-color: map-get($colors, primary);
+    }
+  }
+
+  &__close-btn {
+    background-color: map-get($colors, non-active);
+    color: map-get($colors, font);
+    padding: 0.25rem;
+    border-radius: 0.25rem;
+    border: none;
+    cursor: pointer;
+    @include transition;
+
+    &:hover {
+      background-color: map-get($colors, hud);
+    }
+  }
+
+  &__dialog {
+    margin-top: 1rem;
+    flex-grow: 1;
+    overflow-y: auto;
+    background-color: map-get($colors, black);
+    padding: 0.75rem;
+    border-radius: 0.25rem;
+    border: 1px solid map-get($colors, font);
+  }
+
+  &__description {
+    color: map-get($colors, secondary);
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  &__section {
+    margin-top: 1rem;
+
+    &-title {
+      font-weight: bold;
+      border-bottom: 1px solid map-get($colors, font);
+      padding-bottom: 0.25rem;
+      margin-bottom: 0.5rem;
+      margin-top: 0;
+      color: map-get($colors, active);
+    }
+  }
+}
+
+
+
+.dialog-entry {
+  margin-bottom: 0.75rem;
+
+  &__speaker {
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+
+    &--player {
+      color: map-get($colors, primary);
+    }
+
+    &--npc {
+      color: map-get($colors, active);
+    }
+  }
+
+  &__text {
+    padding-left: 0.75rem;
+    color: map-get($colors, font);
+    z-index: 1000;
+  }
+}
+
+.objective {
+  @include flex(row, flex-start, center);
+  margin-bottom: 0.25rem;
+
+  &__checkbox {
+    margin-right: 0.5rem;
+  }
+
+  &__text {
+    z-index: 1000;
+    &--completed {
+      text-decoration: line-through;
+      color: map-get($colors, secondary);
+    }
+  }
+}
+
+.rewards-list {
+  list-style-type: disc;
+  padding-left: 1.25rem;
+
+  &__item {
+    margin-bottom: 0.25rem;
+    color: map-get($colors, font);
+  }
+}

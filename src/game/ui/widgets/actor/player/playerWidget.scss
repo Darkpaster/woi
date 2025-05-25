@@ -1,0 +1,51 @@
+// Player widget
+@use "../widgetBase";
+@use '../../../game/globalStyles';
+
+.player-widget {
+  @extend %widget-base;
+  left: 1rem;
+}
+
+.player-header {
+  display: flex;
+  margin-bottom: 0.5rem;
+}
+
+.player-widget .avatar-container {
+  @extend %avatar-base;
+}
+
+.player-widget .character-info {
+  @extend %character-info-base;
+
+  .character-name {
+    color: map-get(globalStyles.$colors, yellow);
+  }
+}
+
+.player-widget .status-bars {
+  @extend %status-bars-base;
+}
+
+.player-widget .status-indicators {
+  display: flex;
+  margin-top: 0.3rem;
+  justify-content: flex-end;
+
+  .status-low-health {
+    color: #f66;
+    font-size: 0.65rem;
+    margin-right: 0.5rem;
+    @include globalStyles.flex;
+    text-shadow: 1px 1px 1px map-get(globalStyles.$colors, black);
+    animation: pulse 1s infinite;
+  }
+
+  .status-low-mana {
+    color: #6cf;
+    font-size: 0.65rem;
+    @include globalStyles.flex;
+    text-shadow: 1px 1px 1px map-get(globalStyles.$colors, black);
+  }
+}

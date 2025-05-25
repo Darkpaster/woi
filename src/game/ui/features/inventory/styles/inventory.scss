@@ -1,0 +1,11 @@
+// Inventory
+@import '../../../game/globalStyles';
+
+.inventory-div {
+  height: fit-content;
+  margin: 30px;
+  right: 0;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  @include scrollbar;
+}

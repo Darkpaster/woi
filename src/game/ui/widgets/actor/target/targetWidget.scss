@@ -1,0 +1,80 @@
+// Target widget
+@use "../widgetBase";
+@use '../../../game/globalStyles';
+
+.target-widget {
+  @extend %widget-base;
+  left: 20rem;
+
+  &.enemy {
+    border-color: #c00;
+
+    .avatar {
+      border-color: #c00;
+    }
+
+    .level-indicator {
+      border-color: #c00;
+      color: #f66;
+    }
+
+    .character-name {
+      color: #f66;
+    }
+  }
+
+  &.friendly {
+    border-color: #0c0;
+
+    .avatar {
+      border-color: #0c0;
+    }
+
+    .level-indicator {
+      border-color: #0c0;
+      color: #6f6;
+    }
+
+    .character-name {
+      color: #6f6;
+    }
+  }
+}
+
+.target-header {
+  display: flex;
+  margin-bottom: 0.5rem;
+}
+
+.target-widget .avatar-container {
+  @extend %avatar-base;
+}
+
+.target-widget .character-info {
+  @extend %character-info-base;
+}
+
+.target-widget .status-bars {
+  @extend %status-bars-base;
+}
+
+.target-widget .status-indicators {
+  display: flex;
+  margin-top: 0.3rem;
+  justify-content: flex-end;
+
+  .status-low-health {
+    color: #f66;
+    font-size: 0.65rem;
+    margin-right: 0.5rem;
+    @include globalStyles.flex;
+    text-shadow: 1px 1px 1px map-get(globalStyles.$colors, black);
+    animation: pulse 1s infinite;
+  }
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}

@@ -1,0 +1,231 @@
+
+@import "../../../game/globalStyles";
+
+// BookWindow Window
+.book-window {
+  @include flex(column);
+  width: 100%;
+  height: 100%;
+  background-color: map-get($colors, background);
+  padding: 2rem;
+  overflow: hidden;
+
+  &__title {
+    font-size: 1.875rem;
+    z-index: 1000;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    color: map-get($colors, active);
+    text-align: center;
+  }
+}
+
+.book {
+  position: relative;
+  width: 50vw;
+  max-width: 100rem;
+  height: 60vh;
+  background-color: #fff8e1;
+  border-radius: 0.5rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  @include flex(row);
+
+  perspective: 1000px; // Добавьте это для 3D-эффектов
+
+  &__spine {
+    position: absolute;
+    height: 100%;
+    width: 1rem;
+    background-color: map-get($colors, hud);
+    left: 50%;
+    transform: translateX(-0.5rem);
+    border-radius: 0.125rem;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+
+  &__page {
+    width: 100%;
+    height: 100%;
+    background-color: #fff8dc;
+    @include flex;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    @include transition(transform, 500ms);
+
+    backface-visibility: hidden; // Добавьте это
+    transform-style: preserve-3d; // Добавьте это
+
+    &--left {
+      border-right: 1px solid darken(map-get($colors, hud), 10%);
+      border-top-left-radius: 0.5rem;
+      border-bottom-left-radius: 0.5rem;
+      transform-origin: right center;
+    }
+
+    &--right {
+      border-top-right-radius: 0.5rem;
+      border-bottom-right-radius: 0.5rem;
+      transform-origin: left center;
+    }
+
+    &--flipping-backward {
+      transform: rotateY(-180deg);
+    }
+
+    &--flipping-forward {
+      transform: rotateY(180deg);
+    }
+  }
+
+  &__page-content {
+    position: relative; // Добавьте это
+    z-index: 100; // Гарантирует, что контент будет поверх других элементов
+    background-color: #fff8dc; // Явно задайте фон
+    width: 100%;
+    height: 100%;
+    padding: 1.5rem;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 0.25rem;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: rgba(#fff8dc, 0.5);
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(map-get($colors, hud), 0.5);
+      border-radius: 0.25rem;
+    }
+  }
+}
+
+.page-text {
+  position: relative;
+  z-index: 500;
+  color: #333; // Явно задайте цвет текста
+
+  white-space: pre-wrap; /* Сохраняет переносы строк */
+  padding: 20px;
+  height: 100%;
+  overflow-y: auto;
+  //font-family: serif;
+  font-size: 0.875rem;
+  line-height: 1.5;
+
+  p {
+    margin-bottom: 1rem;
+    z-index: 1000;
+
+    &.empty-line {
+      height: 1rem;
+    }
+  }
+}
+
+.page-number {
+  position: absolute;
+  bottom: 1rem;
+  font-family: serif;
+  color: map-get($colors, hud);
+  font-size: 0.875rem;
+
+  &--left {
+    left: 1.5rem;
+  }
+
+  &--right {
+    right: 1.5rem;
+  }
+}
+
+.book-cover {
+  @include flex;
+  height: 100%;
+  color: map-get($colors, hud);
+  font-family: serif;
+  font-size: 1.25rem;
+}
+
+.page-edge {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 3rem;
+  opacity: 0.5;
+
+  &--left {
+    left: 0;
+    background: linear-gradient(to right, rgba(darken(#fff8dc, 10%), 0.5), transparent);
+  }
+
+  &--right {
+    right: 0;
+    background: linear-gradient(to left, rgba(darken(#fff8dc, 10%), 0.5), transparent);
+  }
+}
+
+.navigation {
+  margin-top: 1.5rem;
+  @include flex(row, center, center);
+  gap: 1rem;
+
+  &__button {
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    font-weight: bold;
+    background-color: map-get($colors, primary);
+    color: map-get($colors, font);
+    border: none;
+    cursor: pointer;
+    @include transition;
+
+    &:hover:not(&--disabled) {
+      background-color: darken(map-get($colors, primary), 10%);
+    }
+
+    &--disabled {
+      background-color: map-get($colors, non-active);
+      color: map-get($colors, secondary);
+      cursor: not-allowed;
+    }
+  }
+}
+
+.pagination-info {
+  margin-top: 1rem;
+  color: map-get($colors, secondary);
+  text-align: center;
+  z-index: 1000;
+}
+
+.loading-container {
+  @include flex;
+  width: 100%;
+  height: 16rem;
+}
+
+.loading-spinner {
+  height: 3rem;
+  width: 3rem;
+  border-radius: 50%;
+  border: 0.25rem solid rgba(map-get($colors, primary), 0.3);
+  border-top-color: map-get($colors, primary);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-container {
+  @include flex;
+  width: 100%;
+  height: 16rem;
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border-radius: 0.5rem;
+}

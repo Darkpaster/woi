@@ -1,0 +1,22 @@
+// Loading Spinner
+@use "../../game/globalStyles";
+
+.loading-spinner {
+  @include globalStyles.grid-center;
+  width: 100%;
+  height: 16rem;
+
+  &__element {
+    height: 3rem;
+    width: 3rem;
+    border-radius: 50%;
+    border: 0.25rem solid rgba(map-get(globalStyles.$colors, primary), 0.3);
+    border-top-color: map-get(globalStyles.$colors, primary);
+    animation: spin 1s linear infinite;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

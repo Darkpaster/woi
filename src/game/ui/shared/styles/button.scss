@@ -1,0 +1,48 @@
+// Button Components
+@use "../../game/globalStyles";
+
+.ui-button {
+  cursor: pointer;
+  font-size: 1em;
+  padding: 0.6em 0.8em;
+  @include globalStyles.transition;
+  @include globalStyles.ui-element;
+  border: 1px solid map-get(globalStyles.$colors, font);
+
+  &:hover:not(&--disabled) {
+    background-color: map-get(globalStyles.$colors, hud);
+  }
+
+  &--primary {
+    background-color: map-get(globalStyles.$colors, primary);
+    color: map-get(globalStyles.$colors, font);
+
+    &:hover:not(.ui-button--disabled) {
+      background-color: map-get(globalStyles.$colors, secondary-alt);
+    }
+  }
+
+  &--danger {
+    background-color: #dc2626;
+    color: map-get(globalStyles.$colors, font);
+
+    &:hover:not(.ui-button--disabled) {
+      background-color: #b91c1c;
+    }
+  }
+
+  &--success {
+    background-color: map-get(globalStyles.$colors, primary);
+    color: map-get(globalStyles.$colors, font);
+
+    &:hover:not(.ui-button--disabled) {
+      background-color: #16a34a;
+    }
+  }
+
+  &--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: map-get(globalStyles.$colors, non-active);
+  }
+}

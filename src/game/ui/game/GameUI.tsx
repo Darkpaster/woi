@@ -1,19 +1,22 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {pauseMusic, playMusic, resumeMusic} from '../../core/audio/music.ts';
-import {MainMenu} from "../features/menu/MainMenu.tsx";
-import {init, pauseLoop, player, startLoop} from "../../core/main.ts";
+import {MainMenu} from "../features/menu/ui/MainMenu.tsx";
+import {gameRTC, init, pauseLoop, player, startLoop} from "../../core/main.ts";
 import {actions, useKeyboard} from "../input/input.ts";
 import uiSlice, {toggleCharMenu, toggleInventory} from "../../../utils/stateManagement/uiSlice.ts";
 import {useMyDispatch, useMySelector} from "../../../utils/stateManagement/store.ts";
-import Auth from "../features/auth/Auth.tsx";
+import Auth from "../features/auth/ui/Auth.tsx";
 import {InGame} from "./InGame.tsx";
-import {ParticleSimulationWindow} from "../features/education/physics/ParticleSimulationWindow.tsx";
 
-import "../styles/uiComponents.scss"
-import "../styles/gameUI.scss"
-import "../styles/authMenu.scss"
-import "../styles/widgets.scss"
-import "../styles/windows.scss"
+import "./globalStyles.scss"
+
+import "../shared/styles/button.scss"
+import "../shared/styles/progressBar.scss"
+import "../shared/styles/tab.scss"
+import "../shared/styles/loadingSpinner.scss"
+import "../shared/styles/modalOverlay.scss"
+import "../shared/styles/error.scss"
+import "../shared/styles/tooltip.scss"
 
 let canvas: HTMLCanvasElement | null;
 
@@ -112,6 +115,7 @@ export const GameUI: React.FC = () => {
     };
 
     const handleMainMenu = () => {
+        gameRTC.close();
         setGameState('mainMenu');
         hideCanvas();
         // playMusic('main');

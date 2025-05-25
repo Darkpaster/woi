@@ -1,0 +1,13 @@
+// Tooltip
+@use "../../game/globalStyles";
+
+.tooltip {
+  position: absolute;
+  @include globalStyles.ui-element;
+  padding: 0.5rem;
+  font-size: 0.875rem;
+  max-width: 20rem;
+  z-index: 1001;
+  pointer-events: none;
+  white-space: pre-wrap;
+}

@@ -7,7 +7,6 @@ import {calcDistance} from "../../../../utils/math/2d.ts";
 import {randomInt} from "../../../../utils/math/random.ts";
 import {scaledTileSize} from "../../../../utils/math/general.ts";
 import {RarityTypes} from "../../types.ts";
-// import {v4 as uuidv4} from "uuid";
 
 export class Skill {
     get icon(): string | null | undefined {
@@ -144,7 +143,7 @@ export class Skill {
              realDamage -= this.owner.target.defense;
          }
          
-         this.owner.target!.dealDamage(realDamage, this.owner);
+         this.owner.target!.takeDamage(realDamage);
      }
 
      stop(): void {

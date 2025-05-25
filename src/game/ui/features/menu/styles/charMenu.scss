@@ -1,0 +1,44 @@
+// Character menu
+@import "menu";
+
+.char-menu-div {
+  width: 20vw;
+  height: 70vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  padding: 0 1em;
+
+  button {
+    bottom: 0;
+    display: block;
+    align-self: center;
+    justify-self: flex-end;
+  }
+}
+
+.char-list-div {
+  width: 100%;
+  height: 50vh;
+  border-bottom: 1px map-get($colors, font) solid;
+
+  div {
+    border: 2px map-get($colors, font) solid;
+    width: auto;
+    padding: 0.5em;
+    text-align: center;
+    cursor: pointer;
+    @include transition;
+    border-radius: 1em;
+  }
+}
+
+.char-div {
+  background: url("../../../../../assets/actors/player/Fire vizard/present.gif") no-repeat center;
+  background-size: 100% 100%;
+  width: 100%;
+  height: 20vh;
+  display: inherit;
+  justify-content: space-between;
+  border-bottom: 1px map-get($colors, font) solid;
+}

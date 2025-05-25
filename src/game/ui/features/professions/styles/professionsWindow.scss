@@ -1,0 +1,886 @@
+// ProfessionsWindow.scss - дополненная версия
+@import '../../../game/globalStyles';
+
+.profession-window {
+  @include ui-element;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 1000px;
+  height: 750px;
+  display: flex;
+  flex-direction: column;
+  font-family: "PixelFont";
+  box-shadow: 0 0 30px rgba(map-get($colors, active), 0.3);
+  backdrop-filter: blur(5px);
+
+  &__header {
+    @include flex(row, space-between, center);
+    padding: 1rem;
+    border-bottom: 1px solid map-get($colors, font);
+    background: linear-gradient(135deg,
+            rgba(map-get($colors, hud), 0.4),
+            rgba(map-get($colors, hud), 0.2));
+    min-height: 80px;
+    border-radius: 0.5em 0.5em 0 0;
+  }
+
+  &__tabs {
+    @include flex(row, flex-start, center);
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    overflow-x: auto;
+    @include scrollbar;
+    max-width: 800px;
+
+    &::-webkit-scrollbar {
+      height: 0.25rem;
+    }
+  }
+
+  &__close {
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    @include transition;
+    @include flex(row, center, center);
+    background-color: rgba(map-get($colors, red), 0.2);
+    border: 1px solid transparent;
+
+    &:hover {
+      background-color: map-get($colors, red);
+      border-color: rgba(map-get($colors, font), 0.5);
+      transform: scale(1.1);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+
+  &__body {
+    @include flex(row, flex-start, stretch);
+    flex: 1;
+    overflow: hidden;
+    background: linear-gradient(135deg,
+            rgba(map-get($colors, background), 0.95),
+            rgba(map-get($colors, background), 0.8));
+  }
+
+  &__info {
+    width: 350px;
+    background: linear-gradient(180deg,
+            rgba(map-get($colors, hud), 0.25),
+            rgba(map-get($colors, hud), 0.15));
+    border-right: 1px solid rgba(map-get($colors, font), 0.3);
+    padding: 1.5rem;
+    @include flex(column, flex-start, stretch);
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg,
+              transparent,
+              map-get($colors, active),
+              transparent);
+    }
+  }
+
+  &__abilities {
+    flex: 1;
+    padding: 1.5rem;
+    @include flex(column, flex-start, stretch);
+    gap: 2rem;
+    @include scrollbar;
+    overflow-y: auto;
+    background-image:
+            radial-gradient(circle at 20% 80%, rgba(map-get($colors, active), 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(map-get($colors, blue), 0.1) 0%, transparent 50%);
+  }
+
+  &__details {
+    width: 300px;
+    background: linear-gradient(180deg,
+            rgba(map-get($colors, hud), 0.25),
+            rgba(map-get($colors, hud), 0.15));
+    border-left: 1px solid rgba(map-get($colors, font), 0.3);
+    padding: 1.5rem;
+    @include flex(column, flex-start, stretch);
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg,
+              transparent,
+              map-get($colors, active),
+              transparent);
+    }
+  }
+}
+
+// Вкладки профессий
+.profession-tab {
+  @include flex(row, flex-start, center);
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  border-radius: 0.5rem;
+  @include transition;
+  border: 2px solid transparent;
+  min-width: 120px;
+  position: relative;
+  background: linear-gradient(135deg,
+          rgba(map-get($colors, background), 0.5),
+          rgba(map-get($colors, background), 0.3));
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 0.5rem;
+    background: linear-gradient(135deg,
+            rgba(map-get($colors, active), 0.1),
+            transparent);
+    opacity: 0;
+    @include transition;
+  }
+
+  &:hover {
+    background: linear-gradient(135deg,
+            rgba(map-get($colors, active), 0.3),
+            rgba(map-get($colors, active), 0.1));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(map-get($colors, active), 0.2);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  &--active {
+    background: linear-gradient(135deg,
+            map-get($colors, active),
+            darken(map-get($colors, active), 10%));
+    color: map-get($colors, black);
+    border-color: rgba(map-get($colors, font), 0.5);
+    box-shadow: 0 0 15px rgba(map-get($colors, active), 0.4);
+
+    &::before {
+      opacity: 0;
+    }
+  }
+
+  &__icon {
+    font-size: 1.5rem;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  }
+
+  &__info {
+    @include flex(column, flex-start, flex-start);
+  }
+
+  &__name {
+    font-size: 0.9rem;
+    font-weight: bold;
+    line-height: 1.2;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  }
+
+  &__level {
+    font-size: 0.75rem;
+    opacity: 0.8;
+  }
+}
+
+// Информация о профессии
+.profession-info {
+  @include flex(column, flex-start, stretch);
+  gap: 1.5rem;
+
+  &__header {
+    @include flex(row, flex-start, center);
+    gap: 1rem;
+  }
+
+  &__icon {
+    font-size: 3rem;
+    padding: 1rem;
+    background: radial-gradient(circle,
+            rgba(map-get($colors, active), 0.3),
+            rgba(map-get($colors, active), 0.1));
+    border-radius: 1rem;
+    border: 2px solid map-get($colors, active);
+    box-shadow:
+            inset 0 2px 4px rgba(map-get($colors, active), 0.2),
+            0 4px 8px rgba(map-get($colors, active), 0.1);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      border-radius: 1rem;
+      background: linear-gradient(45deg,
+              map-get($colors, active),
+              transparent,
+              map-get($colors, active));
+      opacity: 0.5;
+      z-index: -1;
+      animation: profession-glow 3s ease-in-out infinite alternate;
+    }
+  }
+
+  &__details {
+    flex: 1;
+  }
+
+  &__name {
+    margin: 0 0 0.5rem 0;
+    color: map-get($colors, active);
+    font-size: 1.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    background: linear-gradient(45deg,
+            map-get($colors, active),
+            lighten(map-get($colors, active), 20%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  &__description {
+    margin: 0;
+    color: rgba(map-get($colors, font), 0.8);
+    font-size: 0.9rem;
+    line-height: 1.4;
+    font-style: italic;
+  }
+
+  &__progress {
+    @include flex(column, flex-start, stretch);
+    gap: 0.5rem;
+  }
+}
+
+// Информация об уровне и опыте
+.level-info {
+  @include flex(row, space-between, center);
+  font-size: 0.9rem;
+
+  &__current {
+    font-weight: bold;
+    color: map-get($colors, active);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  }
+
+  &__exp {
+    color: rgba(map-get($colors, font), 0.8);
+  }
+}
+
+// Шкала опыта
+.exp-bar {
+  height: 12px;
+  background: linear-gradient(135deg,
+          rgba(map-get($colors, gray-600), 0.5),
+          rgba(map-get($colors, gray-700), 0.5));
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(map-get($colors, font), 0.3);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(180deg,
+            rgba(255, 255, 255, 0.2),
+            transparent);
+    border-radius: 6px 6px 0 0;
+  }
+
+  &__fill {
+    height: 100%;
+    background: linear-gradient(90deg,
+            map-get($colors, blue-400) 0%,
+            map-get($colors, blue) 30%,
+            map-get($colors, purple) 70%,
+            lighten(map-get($colors, purple), 10%) 100%);
+    @include transition(width, 0.8s);
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(map-get($colors, blue), 0.5);
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+      background: linear-gradient(180deg,
+              rgba(255, 255, 255, 0.4),
+              transparent);
+      border-radius: 5px 5px 0 0;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 20px;
+      height: 100%;
+      background: linear-gradient(90deg,
+              transparent,
+              rgba(255, 255, 255, 0.3));
+      animation: exp-shine 2s ease-in-out infinite;
+    }
+  }
+}
+
+// Секции способностей
+.abilities-section {
+  @include flex(column, flex-start, stretch);
+  gap: 1rem;
+
+  &__title {
+    margin: 0;
+    font-size: 1.25rem;
+    color: map-get($colors, active);
+    border-bottom: 2px solid rgba(map-get($colors, active), 0.3);
+    padding-bottom: 0.5rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 30%;
+      height: 2px;
+      background: linear-gradient(90deg,
+              map-get($colors, active),
+              transparent);
+      animation: title-glow 2s ease-in-out infinite alternate;
+    }
+  }
+}
+
+// Сетка способностей
+.abilities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+// Карточки способностей
+.ability-card {
+  @include flex(row, space-between, center);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  @include transition;
+  border: 2px solid;
+  position: relative;
+  background: linear-gradient(135deg,
+          rgba(map-get($colors, background), 0.7),
+          rgba(map-get($colors, background), 0.5));
+  backdrop-filter: blur(2px);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 0.5rem;
+    background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.1),
+            transparent);
+    opacity: 0;
+    @include transition;
+  }
+
+  &__icon {
+    font-size: 1.5rem;
+    margin-right: 0.75rem;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  }
+
+  &__info {
+    flex: 1;
+    @include flex(column, flex-start, flex-start);
+  }
+
+  &__name {
+    font-size: 0.9rem;
+    font-weight: bold;
+    line-height: 1.2;
+    margin-bottom: 0.25rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  }
+
+  &__level {
+    font-size: 0.75rem;
+    opacity: 0.8;
+  }
+
+  &__type {
+    @include flex(row, center, center);
+    padding: 0.25rem;
+    border-radius: 0.25rem;
+    background: linear-gradient(135deg,
+            rgba(map-get($colors, background), 0.7),
+            rgba(map-get($colors, background), 0.5));
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+
+  &--unlocked {
+    background: linear-gradient(135deg,
+            rgba(map-get($colors, green), 0.25),
+            rgba(map-get($colors, green), 0.15));
+    border-color: map-get($colors, green);
+    color: map-get($colors, font);
+    box-shadow: 0 2px 8px rgba(map-get($colors, green), 0.2);
+
+    &:hover {
+      background: linear-gradient(135deg,
+              rgba(map-get($colors, green), 0.35),
+              rgba(map-get($colors, green), 0.25));
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(map-get($colors, green), 0.3);
+
+      &::before {
+        opacity: 1;
+      }
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  &--locked {
+    background: linear-gradient(135deg,
+            rgba(map-get($colors, gray-600), 0.4),
+            rgba(map-get($colors, gray-600), 0.2));
+    border-color: map-get($colors, gray-500);
+    color: map-get($colors, gray-400);
+    cursor: not-allowed;
+
+    .ability-card__icon {
+      opacity: 0.5;
+      filter: grayscale(100%) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    }
+
+    &::after {
+      content: '🔒';
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }
+  }
+
+  &--selected {
+    background: linear-gradient(135deg,
+            rgba(map-get($colors, active), 0.4),
+            rgba(map-get($colors, active), 0.2)) !important;
+    border-color: map-get($colors, active) !important;
+    box-shadow:
+            0 0 20px rgba(map-get($colors, active), 0.6),
+            inset 0 1px 3px rgba(255, 255, 255, 0.2) !important;
+    animation: ability-selected 1.5s ease-in-out infinite alternate;
+
+    &::before {
+      opacity: 1;
+    }
+  }
+}
+
+// Детали способности
+.ability-details {
+  @include flex(column, flex-start, stretch);
+  gap: 1rem;
+
+  &__header {
+    @include flex(row, flex-start, center);
+    gap: 1rem;
+    border-bottom: 1px solid rgba(map-get($colors, font), 0.3);
+    padding-bottom: 1rem;
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 50%;
+      height: 1px;
+      background: linear-gradient(90deg,
+              map-get($colors, active),
+              transparent);
+    }
+  }
+
+  &__icon {
+    font-size: 2.5rem;
+    padding: 0.75rem;
+    background: radial-gradient(circle,
+            rgba(map-get($colors, active), 0.3),
+            rgba(map-get($colors, active), 0.1));
+    border-radius: 0.75rem;
+    border: 2px solid map-get($colors, active);
+    box-shadow:
+            inset 0 2px 4px rgba(map-get($colors, active), 0.2),
+            0 4px 8px rgba(map-get($colors, active), 0.1);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  }
+
+  &__info {
+    flex: 1;
+  }
+
+  &__name {
+    margin: 0 0 0.5rem 0;
+    color: map-get($colors, active);
+    font-size: 1.25rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  }
+
+  &__meta {
+    @include flex(column, flex-start, flex-start);
+    gap: 0.25rem;
+  }
+
+  &__description {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: rgba(map-get($colors, font), 0.9);
+    padding: 1rem;
+    background: linear-gradient(135deg,
+            rgba(map-get($colors, background), 0.7),
+            rgba(map-get($colors, background), 0.5));
+    border-radius: 0.5rem;
+    border-left: 3px solid map-get($colors, active);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg,
+              map-get($colors, active),
+              transparent);
+    }
+  }
+
+  &__cooldown,
+  &__effect {
+    font-size: 0.85rem;
+    padding: 0.75rem;
+    background: linear-gradient(135deg,
+            rgba(map-get($colors, blue), 0.3),
+            rgba(map-get($colors, blue), 0.1));
+    border-radius: 0.5rem;
+    border-left: 3px solid map-get($colors, blue);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg,
+              map-get($colors, blue),
+              transparent);
+    }
+  }
+
+  &__effect {
+    background: linear-gradient(135deg,
+            rgba(map-get($colors, purple), 0.3),
+            rgba(map-get($colors, purple), 0.1));
+    border-left-color: map-get($colors, purple);
+
+    &::before {
+      background: linear-gradient(90deg,
+              map-get($colors, purple),
+              transparent);
+    }
+  }
+
+  &__use-btn {
+    @include button-base;
+    background: linear-gradient(135deg,
+            map-get($colors, green),
+            darken(map-get($colors, green), 10%));
+    color: map-get($colors, white);
+    font-weight: bold;
+    padding: 0.75rem 1.5rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    box-shadow:
+            0 4px 8px rgba(map-get($colors, green), 0.3),
+            inset 0 1px 2px rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg,
+              transparent,
+              rgba(255, 255, 255, 0.3),
+              transparent);
+      @include transition(left, 0.5s);
+    }
+
+    &:hover {
+      background: linear-gradient(135deg,
+              lighten(map-get($colors, green), 5%),
+              map-get($colors, green));
+      box-shadow:
+              0 6px 12px rgba(map-get($colors, green), 0.4),
+              inset 0 1px 2px rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+
+      &::before {
+        left: 100%;
+      }
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow:
+              0 2px 4px rgba(map-get($colors, green), 0.3),
+              inset 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  &__locked {
+    font-size: 0.85rem;
+    color: map-get($colors, gray-400);
+    font-style: italic;
+    text-align: center;
+    padding: 1rem;
+    background: linear-gradient(135deg,
+            rgba(map-get($colors, gray-600), 0.3),
+            rgba(map-get($colors, gray-600), 0.1));
+    border-radius: 0.5rem;
+    border: 1px dashed map-get($colors, gray-500);
+    position: relative;
+
+    &::before {
+      content: '🔒';
+      position: absolute;
+      top: 0.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.2rem;
+      opacity: 0.7;
+    }
+  }
+}
+
+// Типы способностей
+.ability-type {
+  @include flex(row, center, center);
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+
+  &--active {
+    background: linear-gradient(135deg,
+            rgba(map-get($colors, yellow), 0.3),
+            rgba(map-get($colors, yellow), 0.1));
+    color: map-get($colors, yellow);
+    box-shadow: inset 0 1px 2px rgba(map-get($colors, yellow), 0.2);
+  }
+
+  &--passive {
+    background: linear-gradient(135deg,
+            rgba(map-get($colors, purple), 0.3),
+            rgba(map-get($colors, purple), 0.1));
+    color: map-get($colors, purple);
+    box-shadow: inset 0 1px 2px rgba(map-get($colors, purple), 0.2);
+  }
+}
+
+.ability-level {
+  font-size: 0.75rem;
+  color: rgba(map-get($colors, font), 0.7);
+}
+
+// Анимации
+@keyframes profession-glow {
+  0% { opacity: 0.3; }
+  100% { opacity: 0.7; }
+}
+
+@keyframes exp-shine {
+  0% { transform: translateX(-20px); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: translateX(20px); opacity: 0; }
+}
+
+@keyframes title-glow {
+  0% { width: 30%; }
+  100% { width: 60%; }
+}
+
+@keyframes ability-selected {
+  0% { box-shadow: 0 0 15px rgba(map-get($colors, active), 0.4); }
+  100% { box-shadow: 0 0 25px rgba(map-get($colors, active), 0.8); }
+}
+
+// Дополнительные эффекты при загрузке
+.profession-window {
+  animation: window-appear 0.5s ease-out;
+}
+
+@keyframes window-appear {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+// Адаптивность
+@media (max-width: 1200px) {
+  .profession-window {
+    width: 95vw;
+    height: 90vh;
+
+    &__info {
+      width: 300px;
+    }
+
+    &__details {
+      width: 280px;
+    }
+  }
+
+  .abilities-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+
+  .profession-tab {
+    min-width: 100px;
+    padding: 0.5rem 0.75rem;
+
+    &__name {
+      font-size: 0.8rem;
+    }
+
+    &__level {
+      font-size: 0.7rem;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .profession-window {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+
+    &__body {
+      flex-direction: column;
+    }
+
+    &__info,
+    &__details {
+      width: 100%;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    &__abilities {
+      flex: 1;
+      min-height: 0;
+    }
+  }
+
+  .abilities-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profession-tab {
+    min-width: 80px;
+    flex: 1;
+  }
+
+  .profession-info__header {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+
+  .ability-details__header {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+}
+
+// Дополнительные состояния для интерактивности
+.ability-card {
+  &--cooldown {
+    opacity: 0.6;
+    pointer-events: none;
+
+    &::after {
+      content: '⏳';
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      font-size: 0.8rem;
+      //animation: cooldown-pulse 1s ease-in-out infinite;
+    }
+  }
+}
+
+//@keyframes cooldown-pulse {

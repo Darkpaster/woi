@@ -1,0 +1,31 @@
+// Chat
+@import "../../../game/globalStyles";
+
+.chat-div {
+  position: absolute;
+  height: 25vh;
+  margin: 30px;
+  width: 25vw;
+  left: 0;
+  bottom: 0;
+
+  div {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+  }
+}
+
+#chat-input {
+  margin: 30px;
+  bottom: 0;
+  left: 0;
+  width: 25vw;
+  height: 20px;
+  align-self: flex-end;
+  position: fixed;
+}
