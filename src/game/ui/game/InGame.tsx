@@ -10,7 +10,10 @@ import InfoWindow from "../widgets/infoWindow/InfoWindow.tsx";
 import LoadingScreen from "../features/menu/LoadingScreen.tsx";
 import PlayerWidget from "../widgets/actor/player/PlayerWidget.tsx";
 import TargetWidget from "../widgets/actor/target/TargetWidget.tsx";
-import AchievementsWindow from "../features/achievements/ui/AchievementsWindow.tsx";
+import PartyWidget from "../widgets/actor/groupMembers/PartyWidget.tsx";
+import TradeWindow from "../features/trade/ui/TradeWindow.tsx";
+import QuestDialogDemo from "../features/quests/ui/QuestDialogDemo.tsx";
+import LootWindow from "../features/loot/ui/LootWindow.tsx";
 
 const check = isMounted();
 
@@ -66,6 +69,7 @@ export const InGame = () => {
                 {player!.target && (
                     <TargetWidget />
                 )}
+                <PartyWidget></PartyWidget>
 
                 <Panel/>
                 <Chat/>
@@ -78,7 +82,7 @@ export const InGame = () => {
             {/*    "Внезапно дилижанс остановился. Ты выглянул в окно, чтобы разглядеть что послужило причиной остановки, однако из-за сильной вьюги - рассмотреть что-либо не предоставлялось возможным. До пункта назначения был ещё минимум день пути, поэтому вариант с твоим прибытием - также отпадает в сторону. Какое-то время ты просто сидишь и ничего не предпринимаешь, ожидая, что кучер сам придёт и объяснит ситуацию. Однако, он так и не явился. После этого ты наконец решаешься выйти из дилижанса и проверить всё лично. Подойдя к лошадям ты замечаешь лежащим в кровавом снегу - мужчину. Сквозь метель ты еле разглядываешь его черты и одежду, после чего подступающая тревога не заставила себя долго ждать. В нём ты опознал кучера, который был ответственен за твою перевозку на фронт. Ты не понимал как это могло произойти, если бы это было нападением, то лошади подали тревогу, однако они не издали и звука, продолжая смирно стоять. (edited)\n" +*/}
             {/*    "Ты осмотрелся по сторонам, в поисках потенциальной угрозы, но убедившись, что ничего подходящего под неё не попало в твоё поле зрения - ты решаешься подойти к телу мужчины, чтобы выяснить причины его состояния. Быть может, его ещё можно спасти? (edited)\n"}/>}*/}
             {/*{*/}
-            {isCharMenuOpen && <AchievementsWindow></AchievementsWindow>}
+            {isCharMenuOpen && <LootWindow></LootWindow>}
             {
                 infoEntity && infoPosition && (<InfoWindow entity={infoEntity} position={infoPosition}/>)
             }

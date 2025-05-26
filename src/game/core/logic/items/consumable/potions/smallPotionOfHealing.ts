@@ -11,13 +11,13 @@ export class SmallPotionOfHealing extends Potion {
         super(ids);
         this.icon = redPotion;
         this.name = txtList().unknownPotion;
-        this.minPower = 10;
-        this.maxPower = 15;
+        this.minPower = 100;
+        this.maxPower = 150;
         this.description = formatString(txtList().unknownPotionDescription, this.minPower, this.maxPower);
         this.note = '\"Made by some amateur alchemist.\"';
     }
 
-    onUse(): void {
+    public onUse(): void {
         player!.heal(randomInt(this.minPower, this.maxPower));
     }
 }

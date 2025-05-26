@@ -145,9 +145,12 @@ export default class Player extends Actor {
         this._AA = true;
         this.image = setWerewolfHumanManager();
         this.name = "Георгий";
-        this._inventorySize = 20
+        this._inventorySize = 30
         this._inventory = new Array(this._inventorySize);
         this.spellBook = [new Slash(this), null, null, null, null, null, null, null, null, null];
+
+        this.pickUp(new SmallPotionOfHealing([1, 2, 3, 4, 5, 6, 7]));
+        this.pickUp(new SmallPotionOfHealing([8, 9, 10]));
 
         this._stats = {
             strength: 10,
@@ -222,7 +225,7 @@ export default class Player extends Actor {
         return counter;
     }
 
-    public getInventoryItems() {
+    public getInventoryItems(): Item[] {
         const free: Item[] = [];
         for (let i = 0; i < this.inventorySize; i++) {
             const item = this.inventory[i];
@@ -246,31 +249,50 @@ export default class Player extends Actor {
         return -1;
     }
 
+    public pickUp(item: Item): void {
+        console.log('Trying to pick up:', item.name, 'Stackable:', item.stackable);
+
+        if (item.stackable) {
+            const slot = this.findStackableSlot(item.name);
+            console.log('Stackable slot found:', slot);
+            if (slot !== -1) {
+                const existingItem = this.inventory[slot];
+                if (existingItem && existingItem.amount + item.amount <= existingItem.maxStackSize) {
+                    const combinedIds = [...existingItem.ids, ...item.ids];
+                    existingItem.amount = combinedIds;
+                    console.log('Item stacked successfully');
+                    return;
+                }
+            }
+
+            const freeSlot = this.findFreeSlot();
+            console.log('Free slot for stackable item:', freeSlot);
+            if (freeSlot === -1) {
+                console.log('No free space in inventory');
+                return;
+            }
+            this.inventory[freeSlot] = item;
+            console.log('Stackable item placed in slot:', freeSlot);
+        } else {
+            const slot = this.findFreeSlot();
+            console.log('Free slot for non-stackable item:', slot);
+            if (slot === -1) {
+                console.log('No free space in inventory');
+                return;
+            }
+            this.inventory[slot] = item;
+            console.log('Non-stackable item placed in slot:', slot);
+        }
+    }
+
     private findFreeSlot() {
         for (let i = 0; i < this.inventorySize; i++) {
             const item = this.inventory[i];
             if (!item) {
-                continue
+                return i;
             }
-            return i;
         }
         return -1;
-    }
-
-    public pickUp(item: Item): void {
-        if (item.stackable) {
-            const slot = this.findStackableSlot(item.name);
-            if (slot === -1) {
-                return //нет места
-            }
-            this.inventory[slot] = item;
-        } else {
-            const slot = this.findFreeSlot();
-            if (slot === -1) {
-                return; //нет места
-            }
-            this.inventory[slot] = item;
-        }
     }
 
     public drop(item: Item): void {
@@ -329,7 +351,6 @@ export default class Player extends Actor {
     // }
 
 
-    // Также исправим updatePlayer для более надежной работы в отрицательных координатах
     updatePlayer(): { x: number, y: number } {
         if (this._AA) {
             this.attackEvents();
@@ -457,7 +478,6 @@ export default class Player extends Actor {
         }
         this.target = nearest;
     }
-
 
     collision(): { x: boolean, y: boolean, slide?: { x: number, y: number } } {
         // Результат коллизии по осям X и Y

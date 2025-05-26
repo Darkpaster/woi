@@ -1,0 +1,175 @@
+@import '../../../game/globalStyles';
+
+.trade-window {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: url("src/assets/icons/worldmapicon.png") repeat;
+  border: 2px solid map-get($colors, hud);
+  outline: 1px solid map-get($colors, black);
+  border-radius: 8px;
+  color: map-get($colors, white);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+  z-index: 20;
+  max-height: 80vh;
+  max-width: 90vw;
+  min-width: 600px;
+  user-select: none;
+}
+
+.trade-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 2px solid map-get($colors, hud);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.trader-name {
+  margin: 0;
+  color: map-get($colors, yellow);
+  text-shadow: 1px 1px 1px map-get($colors, black);
+  font-size: 1.2rem;
+}
+
+.player-gold {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid map-get($colors, hud);
+}
+
+.gold-icon {
+  font-size: 1.2rem;
+}
+
+.gold-amount {
+  font-weight: bold;
+  color: map-get($colors, yellow);
+  text-shadow: 1px 1px 1px map-get($colors, black);
+}
+
+.close-button {
+  background: map-get($colors, red);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: darken(map-get($colors, red), 10%);
+  }
+}
+
+.trade-content {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  max-height: 60vh;
+  overflow: hidden;
+}
+
+.trade-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.section-title {
+  margin: 0 0 1rem 0;
+  color: map-get($colors, yellow);
+  text-shadow: 1px 1px 1px map-get($colors, black);
+  text-align: center;
+  font-size: 1rem;
+  border-bottom: 1px solid map-get($colors, hud);
+  padding-bottom: 0.5rem;
+}
+
+.trade-items-grid,
+.player-items-grid {
+  height: fit-content;
+  max-height: 50vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  @include scrollbar;
+  padding: 0.5rem;
+}
+
+.trade-item {
+  position: relative;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.item-price,
+.sell-price {
+  position: absolute;
+  bottom: 2px;
+  left: 2px;
+  background: rgba(0, 0, 0, 0.8);
+  color: map-get($colors, yellow);
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 0.1rem 0.3rem;
+  border-radius: 2px;
+  text-shadow: 1px 1px 1px map-get($colors, black);
+  pointer-events: none;
+}
+
+.sell-price {
+  background: rgba(0, 100, 0, 0.8);
+  color: map-get($colors, green);
+}
+
+.item-stock {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: rgba(0, 0, 0, 0.8);
+  color: map-get($colors, white);
+  font-size: 0.6rem;
+  font-weight: bold;
+  padding: 0.1rem 0.3rem;
+  border-radius: 2px;
+  text-shadow: 1px 1px 1px map-get($colors, black);
+  pointer-events: none;
+}
+
+.stock-text {
+  color: map-get($colors, gray-300);
+}
+
+.price-text {
+  color: map-get($colors, yellow);
+}
+
+.sell-price-text {
+  color: map-get($colors, green);
+}
+
+// Наследуем стили от инвентаря для ячеек
+.trade-items-grid .cell,
+.player-items-grid .cell {
+  @extend .cell;
+
+  &:hover:not(:disabled) {
+    background-color: map-get($colors, active);
+    transform: scale(1.05);
+    transition: all 0.2s ease;
+  }
+}

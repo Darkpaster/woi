@@ -1,0 +1,351 @@
+// QuestDialog.scss - стили для квестовых диалогов
+
+// Импорт основных переменных (предполагается, что они доступны)
+@import "../../../game/globalStyles";
+
+// Локальные переменные для диалогов
+$dialog-border-radius: 12px;
+$dialog-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+$dialog-backdrop-blur: 4px;
+$portrait-size: 48px;
+$close-button-size: 32px;
+
+// Миксины для анимаций
+@mixin dialog-transition($duration: 0.3s) {
+  transition: all $duration ease-out;
+}
+
+@mixin hover-lift {
+  &:hover:not(:disabled) {
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(map-get($colors, active), 0.3);
+  }
+}
+
+// Оверлей диалога
+.quest-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur($dialog-backdrop-blur);
+  @include flex(row, center, center);
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+// Основное окно диалога
+.quest-dialog {
+  background: linear-gradient(145deg,
+          rgba(map-get($colors, background), 0.95),
+          rgba(30, 30, 30, 0.95)
+  );
+  border: 2px solid map-get($colors, font);
+  border-radius: $dialog-border-radius;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow: hidden;
+  box-shadow: $dialog-shadow;
+  animation: slideIn 0.3s ease-out;
+  font-family: 'PixelFont', monospace;
+  position: relative;
+
+  // Декоративная линия сверху
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg,
+            transparent,
+            map-get($colors, active),
+            transparent
+    );
+  }
+}
+
+// Заголовок с персонажем
+.quest-dialog__header {
+  @include flex(row, space-between, center);
+  padding: 16px 20px;
+  background: linear-gradient(90deg,
+          rgba(map-get($colors, active), 0.2),
+          rgba(map-get($colors, active), 0.1)
+  );
+  border-bottom: 1px solid map-get($colors, active);
+}
+
+.quest-dialog__character {
+  @include flex(row, flex-start, center);
+  gap: 12px;
+}
+
+.quest-dialog__portrait {
+  width: $portrait-size;
+  height: $portrait-size;
+  border-radius: 50%;
+  background: map-get($colors, hud);
+  @include grid-center;
+  font-size: 24px;
+  border: 2px solid map-get($colors, active);
+  box-shadow: 0 0 10px rgba(map-get($colors, active), 0.3);
+  @include transition;
+
+  &:hover {
+    box-shadow: 0 0 15px rgba(map-get($colors, active), 0.5);
+  }
+}
+
+.quest-dialog__name {
+  font-size: 18px;
+  font-weight: bold;
+  color: map-get($colors, active);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.quest-dialog__close {
+  background: map-get($colors, red);
+  color: map-get($colors, white);
+  border: none;
+  border-radius: 50%;
+  width: $close-button-size;
+  height: $close-button-size;
+  @include grid-center;
+  cursor: pointer;
+  font-size: 16px;
+  @include transition;
+
+  &:hover {
+    background: adjust-color(map-get($colors, red), $lightness: -10%);
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// Содержимое диалога
+.quest-dialog__content {
+  padding: 20px;
+  max-height: 300px;
+  overflow-y: auto;
+  @include scrollbar;
+}
+
+.quest-dialog__text {
+  color: map-get($colors, font);
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+
+  // Стили для выделения важного текста
+  strong {
+    color: map-get($colors, active);
+  }
+
+  em {
+    color: map-get($colors, blue-400);
+    font-style: normal;
+  }
+}
+
+// Варианты ответов
+.quest-dialog__decisions {
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid map-get($colors, gray-700);
+  @include flex(column);
+  gap: 10px;
+}
+
+.quest-dialog__decision {
+  background: linear-gradient(145deg,
+          map-get($colors, hud),
+          adjust-color(map-get($colors, hud), $lightness: -10%)
+  );
+  color: map-get($colors, font);
+  border: 1px solid map-get($colors, active);
+  border-radius: 6px;
+  padding: 12px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  @include transition;
+  position: relative;
+  text-align: left;
+  font-family: 'PixelFont', monospace;
+  @include hover-lift;
+
+  &:active:not(:disabled) {
+    transform: translateX(2px);
+  }
+
+  // Состояние недоступности
+  &--disabled {
+    background: map-get($colors, non-active);
+    color: map-get($colors, gray-500);
+    border-color: map-get($colors, gray-600);
+    cursor: not-allowed;
+    opacity: 0.7;
+
+    &:hover {
+      transform: none;
+      box-shadow: none;
+    }
+  }
+
+  // Состояние важного выбора
+  &--important {
+    border-color: map-get($colors, yellow);
+    box-shadow: 0 0 8px rgba(map-get($colors, yellow), 0.3);
+  }
+
+  // Состояние опасного выбора
+  &--danger {
+    border-color: map-get($colors, red);
+    color: adjust-color(map-get($colors, font), $lightness: -5%);
+
+    &:hover:not(:disabled) {
+      box-shadow: 0 4px 12px rgba(map-get($colors, red), 0.3);
+    }
+  }
+}
+
+.quest-dialog__decision-lock {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  opacity: 0.7;
+  animation: pulse 2s infinite;
+}
+
+// Индикатор типа диалога
+.quest-dialog__type-indicator {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 12px;
+  font-size: 10px;
+  color: map-get($colors, gray-300);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+// Прогресс диалога (для квестов с несколькими этапами)
+.quest-dialog__progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(0, 0, 0, 0.3);
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: linear-gradient(90deg,
+            map-get($colors, active),
+            map-get($colors, yellow)
+    );
+    width: var(--progress, 0%);
+    @include transition(width, 0.5s);
+  }
+}
+
+// Анимации
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+// Адаптивность
+@media (max-width: 768px) {
+  .quest-dialog {
+    width: 95%;
+    max-height: 90vh;
+    margin: 20px;
+  }
+
+  .quest-dialog__header {
+    padding: 12px 16px;
+  }
+
+  .quest-dialog__portrait {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+
+  .quest-dialog__name {
+    font-size: 16px;
+  }
+
+  .quest-dialog__content {
+    padding: 16px;
+  }
+
+  .quest-dialog__text {
+    font-size: 14px;
+  }
+
+  .quest-dialog__decisions {
+    padding: 16px;
+    gap: 8px;
+  }
+
+  .quest-dialog__decision {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .quest-dialog {
+    width: 100%;
+    height: 100vh;
+    max-height: none;
+    border-radius: 0;
+    margin: 0;
+  }
+
+  .quest-dialog__content {
+    max-height: calc(100vh - 200px);
+  }
+}

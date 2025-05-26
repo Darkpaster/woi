@@ -21,13 +21,13 @@ export class FloatText {
 
     constructor({ text, x, y, color, crit }: FloatTextProps) {
         if (crit) {
-            this.x = randomInt(x - scaledTileSize() * 1, x + scaledTileSize() * 1);
+            this.x = randomInt(x - scaledTileSize() / 2, x + scaledTileSize() / 2);
             this.y = randomInt(y - scaledTileSize() * 2, y);
         } else {
             // this.x = randomInt(x - scaledTileSize() * 1, x + scaledTileSize() * 1);
             // this.y = randomInt(y - scaledTileSize(), y);
             this.x = x;
-            this.y = y;
+            this.y = randomInt(y - scaledTileSize() * 1, y);
         }
         this.text = text;
         this.lifeTime = new TimeDelay(1500);

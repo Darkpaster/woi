@@ -368,10 +368,10 @@ export abstract class Actor {
 
     public heal(value: number): void {
         const realValue: number = Math.min(value, this.HT - this.HP);
+        graphics?.floatTextList.push(new FloatText({text: realValue, x: this.x, y: this.y, color: "green", crit: false}));
         if (realValue > 0) {
             gameRTC.dealDamage( {value: -realValue, target: {targetId: this.id, targetType: this instanceof Player ? "player" : "mob"}} );
         }
-        graphics?.floatTextList.push(new FloatText({text: realValue, x: this.x, y: this.y, color: "green", crit: false}));
     }
 
 }
