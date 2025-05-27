@@ -13,7 +13,7 @@ type WindowProps = {
 const ModalWindow: React.FC<WindowProps> = ({ children = "Undefined", buttons = [{ name: txtList().ok }]}) => {
     const [visible, setVisible] = React.useState(true);
     return createPortal(
-        <dialog open={visible} style={{position: "relative", zIndex: 9999}}>
+        <dialog open={visible} style={{position: "relative", zIndex: 9999}} className={"ui-div ui-border"}>
             <div className='dialogDiv'>
                 <b className='windowContent'>{children}</b>
             </div>

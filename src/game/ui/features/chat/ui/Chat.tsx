@@ -95,7 +95,7 @@ const Chat: React.FC = () => {
 
     return (
         <>
-            <div className="ui-div chat-div">
+            <div className="ui-div chat-div ui-border">
                 <div>
                     {messages.map((msg: messageType, index) => (
                         <span key={index}>

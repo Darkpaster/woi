@@ -20,7 +20,7 @@ export const MainMenu: React.FC<MenuProps> = ({onStartGame, onMainMenu, onResume
         switch(param) {
             case 'main':
             case 'pause':
-                return (<div className={"ui-div menu-div"}>
+                return (<div className={"ui-div menu-div ui-border"}>
                     {tab === "main" &&
                         <button onClick={() => setTab('select')} className={"ui-div menu-button"}>{txtList().create}</button>}
                     {tab === "pause" && <button className={"ui-div menu-button"} onClick={onResume}>{txtList().ok}</button>}

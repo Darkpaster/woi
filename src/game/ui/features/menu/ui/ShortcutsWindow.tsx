@@ -18,7 +18,7 @@ interface ShortcutsWindowProps {
 
 const ShortcutsWindow: React.FC<ShortcutsWindowProps> = ({
                                                              onClose,
-                                                             theme = 'light'
+                                                             theme = 'dark'
                                                          }) => {
     const [keybinds, setKeybinds] = useState<Keybind[]>([
         { id: '1', action: 'Атака', key: 'A', category: 'Бой' },

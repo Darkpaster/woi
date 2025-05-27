@@ -5,6 +5,7 @@ import {WindowConfig, WindowType} from "../types.ts";
 import {player} from "../../../../core/main.ts";
 import WindowsPanel from "./WindowsPanel.tsx";
 import "../styles/panel.scss"
+import {actions} from "../../../input/input.ts";
 
 // Обновленный основной компонент Panel
 const Panel = () => {
@@ -34,20 +35,27 @@ const Panel = () => {
     };
 
     const handleWindowOpen = (windowType: WindowType) => {
-        // Здесь должна быть логика открытия окон
-        console.log(`Opening ${windowType} window`);
-        // Пример: dispatch(openWindow(windowType));
+        try {
+            actions[windowType]();
+        }catch (error) {
+            alert(`${windowType} does not exist!`);
+            // console.error(error);
+        }
     };
 
     // Конфигурация окон
     const windowConfigs: WindowConfig[] = [
-        { type: 'character', icon: '/icons/character.png', name: 'Персонаж', hotkey: 'C' },
-        { type: 'inventory', icon: '/icons/inventory.png', name: 'Инвентарь', hotkey: 'I' },
-        { type: 'guild', icon: '/icons/guild.png', name: 'Гильдия', hotkey: 'G' },
-        { type: 'profession', icon: '/icons/profession.png', name: 'Профессии', hotkey: 'P' },
-        { type: 'map', icon: '/icons/map.png', name: 'Карта', hotkey: 'M' },
-        { type: 'quest', icon: '/icons/quest.png', name: 'Квесты', hotkey: 'Q' },
-        { type: 'settings', icon: '/icons/settings.png', name: 'Настройки', hotkey: 'Esc' }
+        { type: 'characterWindow', icon: 'src/assets/icons/789_Lorc_RPG_icons/Icon.2_67.png', name: 'Персонаж', hotkey: 'C' },
+        { type: 'inventoryWindow', icon: 'src/assets/icons/789_Lorc_RPG_icons/Icon.6_37.png', name: 'Инвентарь', hotkey: 'B' },
+        { type: 'friendsWindow', icon: 'src/assets/icons/789_Lorc_RPG_icons/Icon.1_39.png', name: 'Друзья', hotkey: 'H' },
+        { type: 'spellBookWindow', icon: 'src/assets/icons/789_Lorc_RPG_icons/Icon.6_88.png', name: 'Книга Заклинаний', hotkey: 'I' },
+        { type: 'talentsWindow', icon: 'src/assets/icons/789_Lorc_RPG_icons/Icon.2_02.png', name: 'Таланты', hotkey: 'T' },
+        { type: 'achievementsWindow', icon: 'src/assets/icons/789_Lorc_RPG_icons/Icon.5_10.png', name: 'Достижения', hotkey: 'J' },
+        // { type: 'guild', icon: '/icons/guild.png', name: 'Гильдия', hotkey: 'G' },
+        { type: 'professionsWindow', icon: 'src/assets/icons/789_Lorc_RPG_icons/Icon.1_53.png', name: 'Профессии', hotkey: 'P' },
+        // { type: 'map', icon: '/icons/map.png', name: 'Карта', hotkey: 'M' },
+        { type: 'questsWindow', icon: 'src/assets/icons/789_Lorc_RPG_icons/Icon.6_26.png', name: 'Квесты', hotkey: 'G' },
+        { type: 'settingsWindow', icon: 'src/assets/icons/789_Lorc_RPG_icons/Icon.7_55.png', name: 'Настройки', hotkey: 'Esc' }
     ];
 
     return (
@@ -56,7 +64,7 @@ const Panel = () => {
             <SkillPanel
                 type="skills"
                 orientation="horizontal"
-                length={10}
+                length={9}
                 spellBook={spellBook}
                 onSkillUse={handleSkillUse}
                 onSkillReorder={handleSkillReorder}
@@ -65,8 +73,9 @@ const Panel = () => {
              {/*Панель окон (вертикальная, справа) */}
             <WindowsPanel
                 type="windows"
-                orientation="vertical"
-                length={7}
+                orientation="horizontal"
+                length={9}
+                position={{right: "0", top: "0"}}
                 windows={windowConfigs}
                 onWindowOpen={handleWindowOpen}
             />

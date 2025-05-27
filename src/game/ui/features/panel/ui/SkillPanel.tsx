@@ -1,4 +1,4 @@
-// components/SkillPanel.tsx
+// components/SkillPanel.tsx (обновленная версия)
 import React, { RefObject, useEffect, useRef, useState } from "react";
 import "../styles/panel.scss"
 import { actions } from "../../../input/input";
@@ -7,6 +7,7 @@ import { Skill } from "../../../../core/logic/skills/skill";
 import { SkillPanelProps } from "../types.ts";
 import {setInfoEntity, setInfoPosition} from "../../../../../utils/stateManagement/uiSlice.ts";
 import Icon from "../../../shared/ui/Icon.tsx";
+import {player} from "../../../../core/main.ts";
 
 const SkillPanel: React.FC<SkillPanelProps> = ({
                                                    orientation = 'horizontal',
@@ -19,6 +20,7 @@ const SkillPanel: React.FC<SkillPanelProps> = ({
                                                }) => {
     const [draggedSkill, setDraggedSkill] = useState<{ skill: Skill, index: number } | null>(null);
     const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+    const [externalDragData, setExternalDragData] = useState<any>(null);
 
     const dispatch = useMyDispatch();
     const panelRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
@@ -46,41 +48,119 @@ const SkillPanel: React.FC<SkillPanelProps> = ({
         if (!skill) return;
 
         e.dataTransfer.setData("text/plain", index.toString());
+        e.dataTransfer.setData("skill-panel", JSON.stringify({
+            index,
+            source: 'panel'
+        }));
         e.dataTransfer.effectAllowed = "move";
         setDraggedSkill({ skill, index });
     };
 
     const handleDragOver = (e: React.DragEvent) => {
         e.preventDefault();
-        e.dataTransfer.dropEffect = "move";
+
+        // Проверяем, что это перетаскивание навыка
+        const hasSkillData = e.dataTransfer.types.includes("skill-data") ||
+            e.dataTransfer.types.includes("skill-panel");
+
+        if (hasSkillData) {
+            e.dataTransfer.dropEffect = "move";
+        }
     };
 
     const handleDragEnter = (e: React.DragEvent, index: number) => {
         e.preventDefault();
-        setDragOverIndex(index);
+
+        // Проверяем, что это навык
+        const hasSkillData = e.dataTransfer.types.includes("skill-data") ||
+            e.dataTransfer.types.includes("skill-panel");
+
+        if (hasSkillData) {
+            setDragOverIndex(index);
+        }
     };
 
     const handleDragLeave = (e: React.DragEvent) => {
         e.preventDefault();
-        setDragOverIndex(null);
+
+        // Проверяем, что мы действительно покинули элемент, а не его дочерний элемент
+        const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+        const x = e.clientX;
+        const y = e.clientY;
+
+        if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+            setDragOverIndex(null);
+        }
     };
 
     const handleDrop = (e: React.DragEvent, targetIndex: number) => {
         e.preventDefault();
         setDragOverIndex(null);
 
-        if (!draggedSkill) return;
+        try {
+            // Проверяем, откуда идет перетаскивание
+            const skillPanelData = e.dataTransfer.getData("skill-panel");
+            const spellBookData = e.dataTransfer.getData("skill-data");
 
-        const sourceIndex = draggedSkill.index;
-        if (sourceIndex === targetIndex) return;
+            if (skillPanelData) {
+                // Перетаскивание внутри панели навыков
+                const data = JSON.parse(skillPanelData);
+                const sourceIndex = data.index;
 
-        onSkillReorder(sourceIndex, targetIndex);
+                if (sourceIndex === targetIndex) return;
+
+                onSkillReorder(sourceIndex, targetIndex);
+            } else if (spellBookData) {
+                // Перетаскивание из книги заклинаний
+                const data = JSON.parse(spellBookData);
+
+                if (data.source === 'spellbook') {
+                    // Находим навык по имени в доступных навыках игрока
+                    const skillName = data.name;
+                    const skill = findSkillByName(skillName);
+
+                    if (skill) {
+                        // Добавляем навык в панель
+                        addSkillToPanel(skill, targetIndex);
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Error handling drop:', error);
+        }
+
         setDraggedSkill(null);
+        setExternalDragData(null);
     };
 
     const handleDragEnd = () => {
         setDraggedSkill(null);
         setDragOverIndex(null);
+        setExternalDragData(null);
+    };
+
+    // Функция для поиска навыка по имени
+    const findSkillByName = (skillName: string): Skill | null => {
+        // Здесь нужно адаптировать под вашу структуру данных
+        // Предполагаем, что у игрока есть массив всех доступных навыков
+        // if (player?.allSkills) {
+        //     return player.allSkills.find((skill: Skill) => skill.name === skillName) || null;
+        // }
+        return null;
+    };
+
+    // Функция для добавления навыка в панель
+    const addSkillToPanel = (skill: Skill, targetIndex: number) => {
+        // Создаем копию навыка для панели или используем ссылку
+        const skillForPanel = { ...skill };
+
+        // Обновляем книгу заклинаний игрока
+        if (player && player.spellBook) {
+            player.spellBook[targetIndex] = skillForPanel;
+
+            // Если у вас есть callback для обновления состояния, вызовите его
+            // onSkillAdd?.(skillForPanel, targetIndex);
+        }
     };
 
     const getPositionClasses = () => {
@@ -131,12 +211,12 @@ const SkillPanel: React.FC<SkillPanelProps> = ({
             style={customStyle}
         >
             {slots.map((skill, index) => {
-                let displayText = String(index + 1);
+                let displayText;
                 let fontSize = '15px';
                 let textAlign = "end";
 
                 if (skill) {
-                    const left = skill.process.cooldown!.getLeftTime();
+                    const left = skill.process?.cooldown?.getLeftTime ? skill.process.cooldown.getLeftTime() : 0;
                     if (left > 0) {
                         displayText = (left / 1000).toFixed(1);
                         fontSize = '20px';
@@ -166,7 +246,8 @@ const SkillPanel: React.FC<SkillPanelProps> = ({
                                     maxDamage: skill.maxDamage,
                                     icon: skill.icon,
                                     cooldown: skill.cooldown,
-                                    rarity: "none"
+                                    rarity: skill.rarity || "common",
+                                    level: skill.level || 1
                                 }));
                             }
                         }}
@@ -188,12 +269,20 @@ const SkillPanel: React.FC<SkillPanelProps> = ({
                             displayText={displayText}
                             fontSize={fontSize}
                             textAlign={textAlign}
+                            // borderColor={skill ? getSkillRarityColor(skill) : undefined}
                         />
 
                         {/* Хоткей индикатор */}
                         {index < 9 && (
                             <div className="panel-slot__hotkey">
                                 {index + 1}
+                            </div>
+                        )}
+
+                        {/* Индикатор уровня навыка */}
+                        {skill && skill.level && (
+                            <div className="panel-slot__level">
+                                {skill.level}
                             </div>
                         )}
                     </button>

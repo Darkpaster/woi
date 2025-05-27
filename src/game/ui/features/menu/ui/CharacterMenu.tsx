@@ -122,7 +122,7 @@ export const CharacterMenu = ({onEnter, onBack}: { onEnter: () => void, onBack: 
     return (
         !screenLoading ? <>
             <button className={"ui-div"} onClick={mode === "create" ? () => setMode("select") : onBack}>{"<—"}</button>
-            <div className={"ui-div char-menu-div"}>
+            <div className={"ui-div char-menu-div ui-border"}>
 
                 {mode === "select" ? (
                     <>

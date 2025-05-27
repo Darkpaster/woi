@@ -2,15 +2,11 @@
 @use "buffsList";
 
 %widget-base {
-  background: url("src/assets/icons/worldmapicon.png") repeat;
   border-radius: 8px;
   padding: 0.5rem;
   color: map-get(globalStyles.$colors, white);
   width: 15rem;
   user-select: none;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
-  border: 2px solid map-get(globalStyles.$colors, hud);
-  outline: 1px solid map-get(globalStyles.$colors, black);
   position: fixed;
   top: 1rem;
   z-index: 10;

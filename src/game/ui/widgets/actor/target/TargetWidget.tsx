@@ -49,7 +49,7 @@ const TargetWidget: React.FC = () => {
 
     return (
         <>
-            <div className={`target-widget ${isEnemy ? 'enemy' : 'friendly'}`}>
+            <div className={`target-widget ${isEnemy ? 'enemy' : 'friendly'} ui-div ui-border`}>
                 <div className="target-header">
                     {/* Аватар цели */}
                     <div className="avatar-container">

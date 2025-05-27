@@ -84,7 +84,7 @@ const Auth: React.FC<props> = ({onLogin}: props) => {
     };
 
     return (
-        <div className={"ui-div auth-div"}>
+        <div className={"ui-div auth-div ui-border"}>
             <h2>
                 <center>{mode === 'login' ? 'Вход' : 'Регистрация'}</center>
             </h2>

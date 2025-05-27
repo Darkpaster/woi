@@ -1,0 +1,250 @@
+// styles/spellbook.scss
+@import '../../../game/globalStyles';
+
+.spellbook-window {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 500px;
+  padding: 20px;
+  background-color: map-get($colors, background);
+  color: map-get($colors, font);
+  display: flex;
+  flex-direction: column;
+  z-index: 15;
+
+  @include scrollbar;
+}
+
+.spellbook-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 2px solid map-get($colors, hud);
+  padding-bottom: 10px;
+
+  h2 {
+    margin: 0;
+    color: map-get($colors, active);
+    font-size: 1.5rem;
+  }
+}
+
+.spellbook-tabs {
+  display: flex;
+  gap: 10px;
+
+  .tab-button {
+    @include button-base;
+    padding: 8px 16px;
+    background-color: map-get($colors, non-active);
+    color: map-get($colors, font);
+    border: 1px solid map-get($colors, font);
+
+    &.active {
+      background-color: map-get($colors, active);
+      color: map-get($colors, black);
+      border-color: map-get($colors, active);
+    }
+
+    &:hover:not(.active) {
+      background-color: lighten(map-get($colors, non-active), 10%);
+    }
+  }
+}
+
+.spellbook-content {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 10px;
+  @include scrollbar;
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 15px;
+  padding: 10px 0;
+}
+
+.skill-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  padding: 8px;
+  border-radius: 8px;
+  background-color: rgba(map-get($colors, hud), 0.3);
+  @include transition;
+
+  &:hover {
+    background-color: rgba(map-get($colors, hud), 0.5);
+    transform: translateY(-2px);
+  }
+
+  &--unavailable {
+    opacity: 0.6;
+
+    &:hover {
+      background-color: rgba(map-get($colors, non-active), 0.3);
+      transform: none;
+    }
+  }
+
+  &--dragging {
+    opacity: 0.7;
+    transform: scale(0.95);
+  }
+
+  .cell {
+    width: $cell-size;
+    height: $cell-size;
+    margin-bottom: 8px;
+    position: relative;
+    background-color: map-get($colors, background);
+
+    &:hover {
+      background-color: map-get($colors, active);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+
+      &:hover {
+        background-color: map-get($colors, background);
+      }
+    }
+  }
+}
+
+.skill-level {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: rgba(map-get($colors, active), 0.9);
+  color: map-get($colors, black);
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  @include flex;
+  font-size: 11px;
+  font-weight: bold;
+  border: 1px solid map-get($colors, font);
+}
+
+.skill-type-indicator {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  @include flex;
+  font-size: 10px;
+  font-weight: bold;
+
+  &.active {
+    background: rgba(map-get($colors, red), 0.8);
+    color: white;
+  }
+
+  &.passive {
+    background: rgba(map-get($colors, blue), 0.8);
+    color: white;
+  }
+}
+
+.skill-locked-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  @include flex;
+  font-size: 20px;
+  border-radius: inherit;
+}
+
+.skill-name {
+  font-size: 12px;
+  text-align: center;
+  color: map-get($colors, font);
+  line-height: 1.2;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  .skill-slot:hover & {
+    color: map-get($colors, active);
+  }
+
+  .skill-slot--unavailable & {
+    color: map-get($colors, gray-500);
+  }
+}
+
+.empty-state {
+  @include flex(column);
+  height: 200px;
+  color: map-get($colors, gray-500);
+  font-style: italic;
+
+  p {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+}
+
+.spellbook-footer {
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid map-get($colors, hud);
+
+  .drag-hint {
+    margin: 0;
+    font-size: 12px;
+    color: map-get($colors, gray-400);
+    text-align: center;
+    font-style: italic;
+  }
+}
+
+// Анимации для drag and drop
+.skill-slot {
+  &[draggable="true"] {
+    cursor: grab;
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
+}
+
+// Адаптивность для меньших экранов
+@media (max-width: 768px) {
+  .spellbook-window {
+    width: 90vw;
+    height: 80vh;
+    padding: 15px;
+  }
+
+  .skills-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+  }
+
+  .spellbook-header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+
+    .spellbook-tabs {
+      justify-content: center;
+    }
+  }
+}

@@ -12,14 +12,15 @@ export interface SkillType {
 export interface UIState {
     isInventoryOpen: boolean;
     isCharMenuOpen: boolean;
+    isFriendsWindowOpen: boolean;
+    isAchievementsWindowOpen: boolean;
+    isTalentsWindowOpen: boolean;
+    isSpellBookWindowOpen: boolean;
+    isQuestsWindowOpen: boolean;
+    isProfessionsWindowOpen: boolean;
     gameState: 'mainMenu' | 'paused' | 'inGame';
     infoEntity: ItemType|SkillType|null,
     infoPosition: { left: number; top: number } | null;
-    // playerHealth: number,
-    // playerTotalHealth: number,
-    // targetHealth: number,
-    // targetTotalHealth: number,
-    // canvasRef: HTMLCanvasElement | null;
 }
 
 const initialState: UIState = {
@@ -28,11 +29,6 @@ const initialState: UIState = {
     gameState: "mainMenu",
     infoEntity: null,
     infoPosition: null,
-    // playerHealth: player!.HP,
-    // playerTotalHealth: player!.HT,
-    // targetHealth: player!.target.HP,
-    // targetTotalHealth: player!.target.HT,
-    // canvasRef: null,
 };
 
 const uiSlice = createSlice({
@@ -44,6 +40,24 @@ const uiSlice = createSlice({
         },
         toggleInventory(state) {
             state.isInventoryOpen = !state.isInventoryOpen;
+        },
+        toggleFriends(state) {
+            state.isFriendsWindowOpen = !state.isFriendsWindowOpen;
+        },
+        toggleTalents(state) {
+            state.isTalentsWindowOpen = !state.isTalentsWindowOpen;
+        },
+        toggleAchievements(state) {
+            state.isAchievementsWindowOpen = !state.isAchievementsWindowOpen;
+        },
+        toggleSpellBook(state) {
+            state.isSpellBookWindowOpen = !state.isSpellBookWindowOpen;
+        },
+        toggleProfessions(state) {
+            state.isProfessionsWindowOpen = !state.isProfessionsWindowOpen;
+        },
+        toggleQuests(state) {
+            state.isQuestsWindowOpen = !state.isQuestsWindowOpen;
         },
         toggleCharMenu(state) {
             state.isCharMenuOpen = !state.isCharMenuOpen;
@@ -60,5 +74,5 @@ const uiSlice = createSlice({
     },
 });
 
-export const { toggleInventory, toggleCharMenu, setInfoPosition, setInfoEntity } = uiSlice.actions;
+export const { toggleInventory, toggleCharMenu, toggleProfessions, toggleFriends, toggleQuests, toggleTalents, toggleAchievements, toggleSpellBook, setInfoPosition, setInfoEntity } = uiSlice.actions;
 export default uiSlice.reducer;

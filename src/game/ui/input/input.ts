@@ -9,14 +9,18 @@ export const bindings = {
     right: "d",
     pause: "Escape",
     inventory: "b",
-    fullscreen: "f11",
+    char: "c",
+    talents: "t",
+    spellBook: "i",
+    quests: "g",
+    professions: "p",
+    achievements: "j",
+    friends: "h",
     zoomIn: "=",
     zoomOut: "-",
     selectNearest: "Tab",
     shift: "Shift",
     enter: "Enter",
-    char: "c",
-    particle: "t",
     b1: "1",
     b2: "2",
     b3: "3",
@@ -45,16 +49,31 @@ export const actions = {
         player!.pressRight = down;
 
     },
-    pause: () => {
+    settingsWindow: () => {
 
     },
-    inventory: () => {
+    inventoryWindow: () => {
 
     },
-    fullscreen: () => {
+    characterWindow: () => {
 
     },
-    charWindow: () => {
+    talentsWindow: () => {
+
+    },
+    achievementsWindow: () => {
+
+    },
+    friendsWindow: () => {
+
+    },
+    questsWindow: () => {
+
+    },
+    professionsWindow: () => {
+
+    },
+    spellBookWindow: () => {
 
     },
     zoomIn: () => {
@@ -98,9 +117,9 @@ export const actions = {
     b8: () => {
 
     },
-    particles: () => {
+    b9: () => {
 
-    }
+    },
 }
 
 function clickOffsetX() {
@@ -171,10 +190,7 @@ export function useKeyboard(canvasRef: RefObject<HTMLCanvasElement | null>) {
 
             switch (event.key) {
                 case bindings.pause:
-                    actions.pause();
-                    break;
-                case bindings.inventory:
-                    actions.inventory();
+                    actions.settingsWindow();
                     break;
                 case bindings.left:
                     actions.left(false);
@@ -194,11 +210,29 @@ export function useKeyboard(canvasRef: RefObject<HTMLCanvasElement | null>) {
                 case bindings.enter:
                     actions.enter(event);
                     break;
-                case bindings.particle:
-                    actions.particles();
+                case bindings.inventory:
+                    actions.inventoryWindow();
                     break;
                 case bindings.char:
-                    actions.charWindow();
+                    actions.characterWindow();
+                    break;
+                case bindings.achievements:
+                    actions.achievementsWindow();
+                    break;
+                case bindings.friends:
+                    actions.friendsWindow();
+                    break;
+                case bindings.talents:
+                    actions.talentsWindow();
+                    break;
+                case bindings.quests:
+                    actions.questsWindow();
+                    break;
+                case bindings.spellBook:
+                    actions.spellBookWindow();
+                    break;
+                case bindings.professions:
+                    actions.professionsWindow();
                     break;
             }
         };

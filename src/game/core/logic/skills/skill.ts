@@ -9,6 +9,20 @@ import {scaledTileSize} from "../../../../utils/math/general.ts";
 import {RarityTypes} from "../../types.ts";
 
 export class Skill {
+    get experience(): number {
+        return this._experience;
+    }
+
+    set experience(value: number) {
+        this._experience = value;
+    }
+    get level(): number {
+        return this._level;
+    }
+
+    set level(value: number) {
+        this._level = value;
+    }
     get icon(): string | null | undefined {
         return this._sprite;
     }
@@ -58,13 +72,18 @@ export class Skill {
         this._name = value;
     }
 
-    private _name: string = "Item";
+    private _name: string = "Skill";
     // private _id: string = uuidv4();
     private _image?: AnimatedImageManager | null;
     private _sprite?: string | null;
     private _description: string = "No description";
     private _note?: string;
     private _rarity: RarityTypes = "none";
+
+    private _level: number = 1;
+    private _experience: number = 0;
+
+    public type: "active"|"passive" = "active";
 
     public animation: AnimatedEffect | null;
     public minDamage: number;

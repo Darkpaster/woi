@@ -1,0 +1,182 @@
+@import '../../../game/globalStyles';
+
+.trade-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7);
+  @include flex(row, center, center);
+  z-index: 1000;
+}
+
+.trade-window {
+  width: 600px;
+  height: 500px;
+  padding: 20px;
+  position: relative;
+  background-color: map-get($colors, background);
+  border: 2px solid map-get($colors, hud);
+
+  z-index: 99999;
+
+  .trade-header {
+    @include flex(row, space-between, center);
+    margin-bottom: 20px;
+
+    .player-info {
+      @include flex(row, flex-start, center);
+      gap: 10px;
+
+      .player-avatar {
+        width: 50px;
+        height: 50px;
+        border: 2px solid map-get($colors, hud);
+        border-radius: 50%;
+        overflow: hidden;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+
+      .player-name {
+        font-size: 18px;
+        color: map-get($colors, active);
+        font-weight: bold;
+      }
+    }
+
+    .close-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 30px;
+      height: 30px;
+      background-color: map-get($colors, red);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: bold;
+      @include flex(row, center, center);
+
+      &:hover {
+        background-color: map-get($colors, red-600);
+      }
+    }
+  }
+
+  .trade-content {
+    @include flex(row, space-between, flex-start);
+    height: 350px;
+    gap: 20px;
+
+    .trade-section {
+      @include flex(column, flex-start, center);
+      flex: 1;
+      height: 100%;
+
+      .trade-status-indicators {
+        @include flex(row, center, center);
+        gap: 8px;
+        margin-bottom: 15px;
+
+        .status-dot {
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          background-color: map-get($colors, gray-600);
+          border: 1px solid map-get($colors, gray-400);
+
+          &.ready {
+            background-color: map-get($colors, green);
+            box-shadow: 0 0 8px map-get($colors, green);
+          }
+        }
+      }
+
+      .trade-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 5px;
+        margin-bottom: 20px;
+
+        .trade-cell {
+          width: $cell-size;
+          height: $cell-size;
+          background-color: map-get($colors, gray-800);
+
+          &:hover {
+            background-color: map-get($colors, gray-700);
+          }
+        }
+      }
+
+      .trade-lock-area {
+        @include flex(column, center, center);
+        gap: 8px;
+        margin-top: auto;
+
+        .lock-text {
+          font-size: 12px;
+          color: map-get($colors, gray-400);
+          text-align: center;
+        }
+
+        .lock-slot {
+          width: $cell-size;
+          height: $cell-size;
+          background-color: map-get($colors, gray-700);
+          opacity: 0.7;
+        }
+      }
+    }
+  }
+
+  .trade-actions {
+    @include flex(row, center, center);
+    gap: 15px;
+    margin-top: 20px;
+
+    .trade-button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      @include transition;
+
+      &.ready-button {
+        background-color: map-get($colors, gray-600);
+        color: white;
+
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+
+      &.trade-action {
+        background-color: map-get($colors, green);
+        color: white;
+
+        &:hover {
+          background-color: map-get($colors, green-600);
+        }
+      }
+
+      &.cancel-action {
+        background-color: map-get($colors, red);
+        color: white;
+
+        &:hover {
+          background-color: map-get($colors, red-600);
+        }
+      }
+    }
+  }
+}

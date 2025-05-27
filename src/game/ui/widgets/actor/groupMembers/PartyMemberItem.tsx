@@ -20,7 +20,7 @@ export const PartyMemberItem: React.FC<PartyMemberItemProps> = ({ member, onClic
         >
             {/* Левая часть - аватар и уровень */}
             <div className="party-member-avatar">
-                <div className="mini-avatar">
+                <div className="mini-avatar" style={{backgroundImage: `url(${member.avatar})`}}>
                     {member.isLeader && <div className="leader-crown">👑</div>}
                     <div className="mini-level">{member.level}</div>
                 </div>
@@ -39,12 +39,13 @@ export const PartyMemberItem: React.FC<PartyMemberItemProps> = ({ member, onClic
                 <div className="party-member-bars">
                     <MiniStatusBar value={member.HP} max={member.HT} color="health" />
                     <MiniStatusBar value={member.MP} max={member.MT} color="mana" />
+                    <MiniStatusBar value={member.SP} max={member.ST} color="stamina" />
                 </div>
 
-                <div className="party-member-values">
-                    <span className="hp-text">{member.HP}</span>
-                    <span className="mp-text">{member.MP}</span>
-                </div>
+                {/*<div className="party-member-values">*/}
+                    {/*<span className="hp-text">{member.HP}</span>*/}
+                    {/*<span className="mp-text">{member.MP}</span>*/}
+                {/*</div>*/}
             </div>
         </div>
     );

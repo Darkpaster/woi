@@ -3,7 +3,14 @@ import {pauseMusic, playMusic, resumeMusic} from '../../core/audio/music.ts';
 import {MainMenu} from "../features/menu/ui/MainMenu.tsx";
 import {gameRTC, init, pauseLoop, player, startLoop} from "../../core/main.ts";
 import {actions, useKeyboard} from "../input/input.ts";
-import uiSlice, {toggleCharMenu, toggleInventory} from "../../../utils/stateManagement/uiSlice.ts";
+import uiSlice, {
+    toggleAchievements,
+    toggleCharMenu,
+    toggleFriends,
+    toggleInventory,
+    toggleProfessions, toggleQuests, toggleSpellBook,
+    toggleTalents
+} from "../../../utils/stateManagement/uiSlice.ts";
 import {useMyDispatch, useMySelector} from "../../../utils/stateManagement/store.ts";
 import Auth from "../features/auth/ui/Auth.tsx";
 import {InGame} from "./InGame.tsx";
@@ -38,8 +45,6 @@ export const GameUI: React.FC = () => {
     const [gameState, setGameState] = useState<'auth' | 'mainMenu' | 'inGame'>(document.cookie.includes("session_active") ? 'mainMenu' : 'auth');
     const [onPause, setOnPause] = useState(false);
 
-    const [particle, setParticle] = useState(false);
-
     const dispatch = useMyDispatch();
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -69,20 +74,32 @@ export const GameUI: React.FC = () => {
                 initButton?.click();
             }
 
-            actions.inventory = () => {
+            actions.inventoryWindow = () => {
                 dispatch(toggleInventory());
             }
-
-            actions.charWindow = () => {
+            actions.characterWindow = () => {
                 dispatch(toggleCharMenu());
             }
-
-            actions.pause = () => {
+            actions.settingsWindow = () => {
                 setOnPause(prev => !prev);
             }
-
-            actions.particles = () => {
-                setParticle(prev => !prev);
+            actions.talentsWindow = () => {
+                dispatch(toggleTalents());
+            }
+            actions.achievementsWindow = () => {
+                dispatch(toggleAchievements());
+            }
+            actions.friendsWindow = () => {
+                dispatch(toggleFriends());
+            }
+            actions.professionsWindow = () => {
+                dispatch(toggleProfessions());
+            }
+            actions.spellBookWindow = () => {
+                dispatch(toggleSpellBook());
+            }
+            actions.questsWindow = () => {
+                dispatch(toggleQuests());
             }
 
         }
@@ -122,33 +139,27 @@ export const GameUI: React.FC = () => {
         pauseLoop();
     };
 
-    const anotherModule = () => {
-        return (
-            <>
-                <header id="title" style={{display: gameState === 'inGame' ? 'none' : 'block'}}>
-                    The Aftermath Trail
-                </header>
-                <canvas id="canvas" ref={canvasRef}></canvas>
-
-                <div id="welcome-div">
-                    <span id="version" style={{display: gameState === 'inGame' ? 'none' : 'block', bottom: 0, right: 0, position: "absolute"}}>v1.0.0</span>
-                    {gameState === 'auth' && (
-                        <Auth onLogin={() => setGameState("mainMenu")} />
-                    )}
-                    {(gameState === 'mainMenu' || onPause) && (
-                        <MainMenu
-                            onStartGame={handleNewGame}
-                            onMainMenu={onPause ? handleMainMenu : undefined}
-                            onResume={() => setOnPause(false)}
-                        />
-                    )}
-                    {gameState === 'inGame' && <InGame />}
-                </div>
-            </>
-        )
-    }
-
     return (
-        anotherModule()
+        <>
+            <header id="title" style={{display: gameState === 'inGame' ? 'none' : 'block'}}>
+                The Aftermath Trail
+            </header>
+            <canvas id="canvas" ref={canvasRef}></canvas>
+
+            <div id="welcome-div">
+                <span id="version" style={{display: gameState === 'inGame' ? 'none' : 'block', bottom: 0, right: 0, position: "absolute"}}>v1.0.0</span>
+                {gameState === 'auth' && (
+                    <Auth onLogin={() => setGameState("mainMenu")} />
+                )}
+                {(gameState === 'mainMenu' || onPause) && (
+                    <MainMenu
+                        onStartGame={handleNewGame}
+                        onMainMenu={onPause ? handleMainMenu : undefined}
+                        onResume={() => setOnPause(false)}
+                    />
+                )}
+                {gameState === 'inGame' && <InGame />}
+            </div>
+        </>
     );
 };

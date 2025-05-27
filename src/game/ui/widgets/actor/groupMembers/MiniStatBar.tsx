@@ -4,7 +4,7 @@ import React from "react";
 interface MiniStatusBarProps {
     value: number;
     max: number;
-    color: 'health' | 'mana';
+    color: 'health' | 'mana' | "stamina";
 }
 
 export const MiniStatusBar: React.FC<MiniStatusBarProps> = ({ value, max, color }) => {

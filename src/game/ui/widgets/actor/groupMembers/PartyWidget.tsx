@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {PartyMemberItem} from "./PartyMemberItem.tsx";
 import "./partyWidget.scss"
+import {player} from "../../../../core/main.ts";
 
 // Интерфейс для участника группы
 export interface PartyMember {
@@ -12,6 +13,9 @@ export interface PartyMember {
     HT: number;
     MP: number;
     MT: number;
+    SP: number;
+    ST: number;
+    avatar?: string;
     isOnline: boolean;
     isLeader?: boolean;
 }
@@ -20,49 +24,58 @@ export interface PartyMember {
 const mockPartyMembers: PartyMember[] = [
     {
         id: "1",
-        name: "Артемий",
-        level: 25,
+        name: "Admin",
+        level: 1,
         characterClass: "воин",
-        HP: 850,
-        HT: 1000,
-        MP: 200,
-        MT: 300,
+        HP: player?.HP,
+        HT: player?.HT,
+        MP: 99999,
+        MT: 99999,
+        SP: 99999,
+        ST: 99999,
         isOnline: true,
-        isLeader: true
+        isLeader: true,
+        avatar: player?.icon
     },
     {
         id: "2",
-        name: "Эльфийка",
-        level: 23,
-        characterClass: "лучник",
-        HP: 420,
-        HT: 600,
-        MP: 480,
-        MT: 500,
+        name: "Хайкмунд",
+        level: 99,
+        characterClass: "воин",
+        HP: 999999,
+        HT: 999999,
+        MP: 0,
+        MT: 0,
+        SP: 999999,
+        ST: 999999,
         isOnline: true
     },
     {
-        id: "3",
-        name: "Магистр",
-        level: 27,
-        characterClass: "маг",
-        HP: 300,
-        HT: 400,
+        id: "99",
+        name: "Антон",
+        level: 99,
+        characterClass: "паладин",
+        HP: 999999,
+        HT: 999999,
         MP: 750,
         MT: 800,
-        isOnline: true
-    },
-    {
-        id: "4",
-        name: "Целитель",
-        level: 24,
-        characterClass: "жрец",
-        HP: 500,
-        HT: 650,
-        MP: 600,
-        MT: 700,
+        SP: 999999,
+        ST: 999999,
         isOnline: false
-    }
+    },
+    // {
+    //     id: "4",
+    //     name: "Целитель",
+    //     level: 24,
+    //     characterClass: "жрец",
+    //     HP: 500,
+    //     HT: 650,
+    //     MP: 600,
+    //     MT: 700,
+    //     SP: 53,
+    //     ST: 100,
+    //     isOnline: false
+    // }
 ];
 
 // Основной компонент виджета группы
@@ -75,9 +88,9 @@ const PartyWidget: React.FC = () => {
     };
 
     return (
-        <div className="party-widget">
+        <div className="party-widget ui-div ui-border">
             <div className="party-header">
-                <span className="party-title">Группа ({mockPartyMembers.filter(m => m.isOnline).length}/{mockPartyMembers.length})</span>
+                <span className="party-title">Группа ({mockPartyMembers.length}/{5})</span>
             </div>
 
             <div className="party-members">

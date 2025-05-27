@@ -1,5 +1,5 @@
 import Icon from "../../../shared/ui/Icon.tsx";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useMyDispatch} from "../../../../../utils/stateManagement/store.ts";
 import {player} from "../../../../core/main.ts";
 import Item from "../../../../core/logic/items/item.ts";
@@ -7,6 +7,7 @@ import {setInfoEntity, setInfoPosition} from "../../../../../utils/stateManageme
 import {RarityTypes} from "../../../../core/types.ts";
 import "../styles/inventory.scss"
 import ModalWindow from "../../../shared/ui/ModalWindow.tsx";
+import {Coins, X} from "lucide-react";
 
 export const getRarityColor = (rarity: RarityTypes): string => {
     switch (rarity) {
@@ -201,11 +202,11 @@ const InventoryWindow = () => {
     };
 
     return (
-        <div className="inventory-div ui-div cell-type">
+        <div className="inventory-div cell-type ui-border">
             {inventory.map((item, index) => (
                 <button
                     key={index}
-                    className={"ui-div cell"}
+                    className={"cell"}
                     draggable={!!item}
                     onDragStart={(e) => handleDragStart(e, item, index)}
                     onDragOver={handleDragOver}
@@ -232,6 +233,14 @@ const InventoryWindow = () => {
             {showDropConfirm && <ModalWindow buttons={[{ name: "да", onClick: confirmDrop }, {name: "нет", onClick: cancelDrop }]}>
                 {`Вы точно хотите выбросить ${showDropConfirm.item.name}?`}
             </ModalWindow>}
+            <div className={"currency-div"}>
+                <p>{player?.gold}</p>
+                <Coins size={20} color={"yellow"} />
+                <p>{24}</p>
+                <Coins size={20} color={"silver"} />
+                <p>{58}</p>
+                <Coins size={20} color={"#D17019FF"} />
+            </div>
         </div>
     );
 };

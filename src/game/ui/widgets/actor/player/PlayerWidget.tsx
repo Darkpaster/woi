@@ -28,7 +28,7 @@ const PlayerWidget: React.FC = () => {
 
     return (
         <div
-            className="player-widget"
+            className="player-widget ui-div ui-border"
             onContextMenu={handleContextMenu}
         >
             <div className="player-header">
@@ -59,19 +59,19 @@ const PlayerWidget: React.FC = () => {
                     value={player.HP}
                     max={player.HT}
                     color="health"
-                    label="Здоровье"
+                    // label="Здоровье"
                 />
                 <StatusBar
-                    value={player.MP}
-                    max={player.MT}
+                    value={999999}
+                    max={999999}
                     color="mana"
-                    label="Мана"
+                    // label="Мана"
                 />
                 <StatusBar
                     value={999999}
                     max={999999}
                     color="stamina"
-                    label="Выносливость"
+                    // label="Выносливость"
                 />
             </div>
 

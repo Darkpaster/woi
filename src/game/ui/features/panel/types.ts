@@ -7,7 +7,7 @@ export interface PanelSlot {
     isEmpty?: boolean;
 }
 
-export type WindowType = 'guild' | 'profession' | 'settings' | 'inventory' | 'character' | 'map' | 'quest';
+export type WindowType = 'professionsWindow' | 'settingsWindow' | 'inventoryWindow' | 'characterWindow' | 'questsWindow' | "friendsWindow" | "achievementsWindow" | "spellBookWindow" | "talentsWindow";
 
 export interface PanelConfig {
     type: 'skills' | 'windows';

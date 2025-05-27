@@ -26,7 +26,7 @@ enum FriendTab {
     SEARCH = 'search'
 }
 
-const FriendsList: React.FC = () => {
+const FriendsListWindow: React.FC = () => {
     const [activeTab, setActiveTab] = useState<FriendTab>(FriendTab.FRIENDS);
     const [friends, setFriends] = useState<User[]>([]);
     const [incomingRequests, setIncomingRequests] = useState<FriendRequest[]>([]);
@@ -319,4 +319,4 @@ const FriendsList: React.FC = () => {
     );
 };
 
-export default FriendsList;
+export default FriendsListWindow;

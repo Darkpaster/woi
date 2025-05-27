@@ -251,7 +251,7 @@ const SettingsWindow: React.FC<SettingsWindowProps> = ({
     };
 
     return (
-        <div className={windowClasses}>
+        <div className={windowClasses+" ui-border"}>
             <div className="shortcuts-window__header">
                 <h2 className="shortcuts-window__header-title">Настройки</h2>
                 <button

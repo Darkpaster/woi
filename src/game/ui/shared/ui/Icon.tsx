@@ -46,7 +46,6 @@ const Icon: React.FC<IconProps> = ({
                     position: 'absolute',
                     bottom: '2px',
                     right: '2px',
-                    backgroundColor: 'rgba(0,0,0,0.7)',
                     color: 'white',
                     padding: '0 2px',
                     borderRadius: '2px',

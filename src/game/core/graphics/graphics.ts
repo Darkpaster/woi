@@ -122,9 +122,9 @@ export class Graphics {
         if (player!.target) {
             ctx.drawImage(this.selector1.tile, player!.target.x || 0, player!.target.y || 0, scaledTileSize(), scaledTileSize());
         }
-        ctx.fillText(player!.name, player!.x, player!.y);
+        ctx.fillText(player!.name, player!.x, player!.y - player?.image?.currentAnimation.size.height / 2);
         // ctx.fillText(`total mobs: ${entityManager.mobs.size}`, player!.x + player.image.currentAnimation.size.width / 2 + 300, player!.y);
-        ctx.fillText(`mobs in chunk: ${entityManager.findMobsAt(player.x, player.y).length}`, player!.x + player.image.currentAnimation.size.width / 2 + 300, player!.y + 200);
+        // ctx.fillText(`mobs in chunk: ${entityManager.findMobsAt(player.x, player.y).length}`, player!.x + player.image.currentAnimation.size.width / 2 + 300, player!.y + 200);
         // ctx.fillText(`x:${player.x}, y:${player.y}`, player!.x + player.image.currentAnimation.widthSize / 2, player!.y);
     }
 
