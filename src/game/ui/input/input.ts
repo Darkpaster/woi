@@ -1,6 +1,7 @@
 import {useEffect, useState, useRef, RefObject} from "react";
 import {camera, entityManager, player} from "../../core/main.ts";
 import {scaledTileSize} from "../../../utils/math/general.ts";
+import Mob from "../../core/logic/actors/mobs/mob.ts";
 
 export const bindings = {
     up: "w",
@@ -35,19 +36,15 @@ export const bindings = {
 export const actions = {
     up: (down: boolean) => {
         player!.pressUp = down;
-
     },
     down: (down: boolean) => {
         player!.pressDown = down;
-
     },
     left: (down: boolean) => {
         player!.pressLeft = down;
-
     },
     right: (down: boolean) => {
         player!.pressRight = down;
-
     },
     settingsWindow: () => {
 
@@ -78,7 +75,6 @@ export const actions = {
     },
     zoomIn: () => {
         if (camera!.zoom < 4) camera!.zoom += 1;
-
     },
     zoomOut: () => {
         if (camera!.zoom > 1) camera!.zoom -= 1;
@@ -130,9 +126,35 @@ function clickOffsetY() {
     return player!.y - window.innerHeight / 2 + scaledTileSize();
 }
 
+// Функция для получения мобов в указанной позиции
+function getMobsAtPosition(worldX: number, worldY: number): Mob[] {
+    const mobs: Mob[] = [];
+    const clickRadius = scaledTileSize(); // Радиус клика
+
+    for (const mob of entityManager.mobs.values()) {
+        const distance = Math.sqrt(
+            Math.pow(mob.x - worldX, 2) + Math.pow(mob.y - worldY, 2)
+        );
+
+        if (distance <= clickRadius) {
+            mobs.push(mob);
+        }
+    }
+
+    return mobs;
+}
+
+// Функция для конвертации экранных координат в мировые
+function screenToWorld(screenX: number, screenY: number): { x: number, y: number } {
+    return {
+        x: screenX + clickOffsetX(),
+        y: screenY + clickOffsetY()
+    };
+}
+
 export function useKeyboard(canvasRef: RefObject<HTMLCanvasElement | null>) {
     const [keysPressed, setKeysPressed] = useState(new Set());
-    // const canvasRef = useRef(canvas);
+    const [hoveredMob, setHoveredMob] = useState<Mob | null>(null);
 
     useEffect(() => {
         const handleKeyDown = (event: { key: unknown; preventDefault: () => void; }) => {
@@ -190,6 +212,10 @@ export function useKeyboard(canvasRef: RefObject<HTMLCanvasElement | null>) {
 
             switch (event.key) {
                 case bindings.pause:
+                    if (player?.target) {
+                        player.target = null;
+                        break
+                    }
                     actions.settingsWindow();
                     break;
                 case bindings.left:
@@ -239,9 +265,74 @@ export function useKeyboard(canvasRef: RefObject<HTMLCanvasElement | null>) {
 
         const handleClick = (event: { clientX: number; clientY: number; }) => {
             if (player) {
-                // player.target =
-                //     Mob.getMobsOnTile(event.clientX + clickOffsetX(), event.clientY + clickOffsetY())[0] ||
-                //     null;
+                const worldPos = screenToWorld(event.clientX, event.clientY);
+                const mobsAtClick = getMobsAtPosition(worldPos.x, worldPos.y);
+
+                if (mobsAtClick.length > 0) {
+                    // Если кликнули на моба, выбираем ближайшего к центру клика
+                    let closestMob = mobsAtClick[0];
+                    let minDistance = Math.sqrt(
+                        Math.pow(closestMob.x - worldPos.x, 2) +
+                        Math.pow(closestMob.y - worldPos.y, 2)
+                    );
+
+                    for (const mob of mobsAtClick) {
+                        const distance = Math.sqrt(
+                            Math.pow(mob.x - worldPos.x, 2) +
+                            Math.pow(mob.y - worldPos.y, 2)
+                        );
+                        if (distance < minDistance) {
+                            closestMob = mob;
+                            minDistance = distance;
+                        }
+                    }
+
+                    player.target = closestMob;
+                } else {
+                    // Если кликнули не на моба, снимаем таргет
+                    player.target = null;
+                }
+            }
+        };
+
+        const handleMouseMove = (event: { clientX: number; clientY: number; }) => {
+            if (player) {
+                const worldPos = screenToWorld(event.clientX, event.clientY);
+                const mobsAtHover = getMobsAtPosition(worldPos.x, worldPos.y);
+
+                if (mobsAtHover.length > 0) {
+                    // Находим ближайшего моба для hover эффекта
+                    let closestMob = mobsAtHover[0];
+                    let minDistance = Math.sqrt(
+                        Math.pow(closestMob.x - worldPos.x, 2) +
+                        Math.pow(closestMob.y - worldPos.y, 2)
+                    );
+
+                    for (const mob of mobsAtHover) {
+                        const distance = Math.sqrt(
+                            Math.pow(mob.x - worldPos.x, 2) +
+                            Math.pow(mob.y - worldPos.y, 2)
+                        );
+                        if (distance < minDistance) {
+                            closestMob = mob;
+                            minDistance = distance;
+                        }
+                    }
+
+                    setHoveredMob(closestMob);
+
+                    // Меняем курсор на pointer при наведении на моба
+                    if (canvasRef.current) {
+                        canvasRef.current.style.cursor = 'pointer';
+                    }
+                } else {
+                    setHoveredMob(null);
+
+                    // Возвращаем обычный курсор
+                    if (canvasRef.current) {
+                        canvasRef.current.style.cursor = 'default';
+                    }
+                }
             }
         };
 
@@ -259,16 +350,17 @@ export function useKeyboard(canvasRef: RefObject<HTMLCanvasElement | null>) {
             canvasEl.addEventListener("keydown", handleKeyDown);
             canvasEl.addEventListener("keyup", handleKeyUp);
             canvasEl.addEventListener("click", handleClick);
+            canvasEl.addEventListener("mousemove", handleMouseMove);
             canvasEl.addEventListener("contextmenu", handleContextMenu);
             document.addEventListener("click", preventFocus);
         }
-
 
         return () => {
             if (canvasEl) {
                 canvasEl.removeEventListener("keydown", handleKeyDown);
                 canvasEl.removeEventListener("keyup", handleKeyUp);
                 canvasEl.removeEventListener("click", handleClick);
+                canvasEl.removeEventListener("mousemove", handleMouseMove);
                 canvasEl.removeEventListener("contextmenu", handleContextMenu);
                 document.removeEventListener("click", preventFocus);
             }
@@ -276,5 +368,9 @@ export function useKeyboard(canvasRef: RefObject<HTMLCanvasElement | null>) {
 
     }, []);
 
-    return keysPressed;
+    // Возвращаем как состояние клавиш, так и информацию о hover
+    return {
+        keysPressed,
+        hoveredMob
+    };
 }

@@ -1,0 +1,712 @@
+{ "frames": {
+   "GoblinShamananims #idle 0.aseprite": {
+    "frame": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #idle 1.aseprite": {
+    "frame": { "x": 96, "y": 0, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #idle 2.aseprite": {
+    "frame": { "x": 192, "y": 0, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #idle 3.aseprite": {
+    "frame": { "x": 288, "y": 0, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #idle 4.aseprite": {
+    "frame": { "x": 384, "y": 0, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #idle 5.aseprite": {
+    "frame": { "x": 480, "y": 0, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #atkR 0.aseprite": {
+    "frame": { "x": 0, "y": 96, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #atkR 1.aseprite": {
+    "frame": { "x": 96, "y": 96, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #atkR 2.aseprite": {
+    "frame": { "x": 192, "y": 96, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #atkR 3.aseprite": {
+    "frame": { "x": 288, "y": 96, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #atkR 4.aseprite": {
+    "frame": { "x": 384, "y": 96, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #atkR 5.aseprite": {
+    "frame": { "x": 480, "y": 96, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #atkR 6.aseprite": {
+    "frame": { "x": 576, "y": 96, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #atkR 7.aseprite": {
+    "frame": { "x": 672, "y": 96, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #atkR 8.aseprite": {
+    "frame": { "x": 768, "y": 96, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #atkR 9.aseprite": {
+    "frame": { "x": 864, "y": 96, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #IdleL 0.aseprite": {
+    "frame": { "x": 0, "y": 192, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #IdleL 1.aseprite": {
+    "frame": { "x": 96, "y": 192, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #IdleL 2.aseprite": {
+    "frame": { "x": 192, "y": 192, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #IdleL 3.aseprite": {
+    "frame": { "x": 288, "y": 192, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #IdleL 4.aseprite": {
+    "frame": { "x": 384, "y": 192, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #IdleL 5.aseprite": {
+    "frame": { "x": 480, "y": 192, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #WalkL 0.aseprite": {
+    "frame": { "x": 0, "y": 288, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #WalkL 1.aseprite": {
+    "frame": { "x": 96, "y": 288, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #WalkL 2.aseprite": {
+    "frame": { "x": 192, "y": 288, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #WalkL 3.aseprite": {
+    "frame": { "x": 288, "y": 288, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #WalkL 4.aseprite": {
+    "frame": { "x": 384, "y": 288, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #AtkL 0.aseprite": {
+    "frame": { "x": 0, "y": 384, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #AtkL 1.aseprite": {
+    "frame": { "x": 96, "y": 384, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #AtkL 2.aseprite": {
+    "frame": { "x": 192, "y": 384, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #AtkL 3.aseprite": {
+    "frame": { "x": 288, "y": 384, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #AtkL 4.aseprite": {
+    "frame": { "x": 384, "y": 384, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #AtkL 5.aseprite": {
+    "frame": { "x": 480, "y": 384, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #AtkL 6.aseprite": {
+    "frame": { "x": 576, "y": 384, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #AtkL 7.aseprite": {
+    "frame": { "x": 672, "y": 384, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #AtkL 8.aseprite": {
+    "frame": { "x": 768, "y": 384, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #AtkL 9.aseprite": {
+    "frame": { "x": 864, "y": 384, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #WalkR 0.aseprite": {
+    "frame": { "x": 0, "y": 480, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #WalkR 1.aseprite": {
+    "frame": { "x": 96, "y": 480, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #WalkR 2.aseprite": {
+    "frame": { "x": 192, "y": 480, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #WalkR 3.aseprite": {
+    "frame": { "x": 288, "y": 480, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #WalkR 4.aseprite": {
+    "frame": { "x": 384, "y": 480, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #iDLEuP 0.aseprite": {
+    "frame": { "x": 0, "y": 576, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #iDLEuP 1.aseprite": {
+    "frame": { "x": 96, "y": 576, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #iDLEuP 2.aseprite": {
+    "frame": { "x": 192, "y": 576, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #iDLEuP 3.aseprite": {
+    "frame": { "x": 288, "y": 576, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #iDLEuP 4.aseprite": {
+    "frame": { "x": 384, "y": 576, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #iDLEuP 5.aseprite": {
+    "frame": { "x": 480, "y": 576, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #WalkU 0.aseprite": {
+    "frame": { "x": 0, "y": 672, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #WalkU 1.aseprite": {
+    "frame": { "x": 96, "y": 672, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #WalkU 2.aseprite": {
+    "frame": { "x": 192, "y": 672, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #WalkU 3.aseprite": {
+    "frame": { "x": 288, "y": 672, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #WalkU 4.aseprite": {
+    "frame": { "x": 384, "y": 672, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #WalkU 5.aseprite": {
+    "frame": { "x": 480, "y": 672, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #AtkU 0.aseprite": {
+    "frame": { "x": 0, "y": 768, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #AtkU 1.aseprite": {
+    "frame": { "x": 96, "y": 768, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #AtkU 2.aseprite": {
+    "frame": { "x": 192, "y": 768, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #AtkU 3.aseprite": {
+    "frame": { "x": 288, "y": 768, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #AtkU 4.aseprite": {
+    "frame": { "x": 384, "y": 768, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #AtkU 5.aseprite": {
+    "frame": { "x": 480, "y": 768, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #AtkU 6.aseprite": {
+    "frame": { "x": 576, "y": 768, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #AtkU 7.aseprite": {
+    "frame": { "x": 672, "y": 768, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #AtkU 8.aseprite": {
+    "frame": { "x": 768, "y": 768, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #IdleD 0.aseprite": {
+    "frame": { "x": 0, "y": 864, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #IdleD 1.aseprite": {
+    "frame": { "x": 96, "y": 864, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #IdleD 2.aseprite": {
+    "frame": { "x": 192, "y": 864, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #IdleD 3.aseprite": {
+    "frame": { "x": 288, "y": 864, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #IdleD 4.aseprite": {
+    "frame": { "x": 384, "y": 864, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #IdleD 5.aseprite": {
+    "frame": { "x": 480, "y": 864, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #WalkD 0.aseprite": {
+    "frame": { "x": 0, "y": 960, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #WalkD 1.aseprite": {
+    "frame": { "x": 96, "y": 960, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #WalkD 2.aseprite": {
+    "frame": { "x": 192, "y": 960, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #WalkD 3.aseprite": {
+    "frame": { "x": 288, "y": 960, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #WalkD 4.aseprite": {
+    "frame": { "x": 384, "y": 960, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #WalkD 5.aseprite": {
+    "frame": { "x": 480, "y": 960, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #AtkD 0.aseprite": {
+    "frame": { "x": 0, "y": 1056, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #AtkD 1.aseprite": {
+    "frame": { "x": 96, "y": 1056, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #AtkD 2.aseprite": {
+    "frame": { "x": 192, "y": 1056, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #AtkD 3.aseprite": {
+    "frame": { "x": 288, "y": 1056, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #AtkD 4.aseprite": {
+    "frame": { "x": 384, "y": 1056, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #AtkD 5.aseprite": {
+    "frame": { "x": 480, "y": 1056, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #AtkD 6.aseprite": {
+    "frame": { "x": 576, "y": 1056, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #AtkD 7.aseprite": {
+    "frame": { "x": 672, "y": 1056, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #AtkD 8.aseprite": {
+    "frame": { "x": 768, "y": 1056, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   },
+   "GoblinShamananims #AtkD 9.aseprite": {
+    "frame": { "x": 864, "y": 1056, "w": 96, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 96 },
+    "sourceSize": { "w": 96, "h": 96 },
+    "duration": 100
+   }
+ },
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.5-x64",
+  "image": "GoblinShamananims.png",
+  "format": "RGBA8888",
+  "size": { "w": 960, "h": 1152 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "idle", "from": 0, "to": 5, "direction": "forward", "color": "#000000ff" },
+   { "name": "atkR", "from": 6, "to": 15, "direction": "forward", "color": "#000000ff" },
+   { "name": "IdleL", "from": 16, "to": 21, "direction": "forward", "color": "#000000ff" },
+   { "name": "WalkL", "from": 22, "to": 26, "direction": "forward", "color": "#000000ff" },
+   { "name": "AtkL", "from": 27, "to": 36, "direction": "forward", "color": "#000000ff" },
+   { "name": "WalkR", "from": 37, "to": 41, "direction": "forward", "color": "#000000ff" },
+   { "name": "iDLEuP", "from": 42, "to": 47, "direction": "forward", "color": "#000000ff" },
+   { "name": "WalkU", "from": 48, "to": 53, "direction": "forward", "color": "#000000ff" },
+   { "name": "AtkU", "from": 54, "to": 62, "direction": "forward", "color": "#000000ff" },
+   { "name": "IdleD", "from": 63, "to": 68, "direction": "forward", "color": "#000000ff" },
+   { "name": "WalkD", "from": 69, "to": 74, "direction": "forward", "color": "#000000ff" },
+   { "name": "AtkD", "from": 75, "to": 84, "direction": "forward", "color": "#000000ff" }
+  ],
+  "layers": [
+   { "name": "bod", "opacity": 255, "blendMode": "normal" },
+   { "name": "staff", "opacity": 255, "blendMode": "normal", "cels": [{ "frame": 37, "zIndex": -2 }, { "frame": 38, "zIndex": -2 }, { "frame": 39, "zIndex": -2 }, { "frame": 40, "zIndex": -2 }, { "frame": 41, "zIndex": -2 }, { "frame": 42, "zIndex": -2 }, { "frame": 43, "zIndex": -2 }, { "frame": 44, "zIndex": -2 }, { "frame": 45, "zIndex": -2 }, { "frame": 46, "zIndex": -2 }, { "frame": 47, "zIndex": -2 }, { "frame": 48, "zIndex": -2 }, { "frame": 49, "zIndex": -2 }, { "frame": 50, "zIndex": -2 }, { "frame": 51, "zIndex": -2 }, { "frame": 52, "zIndex": -2 }, { "frame": 53, "zIndex": -2 }, { "frame": 54, "zIndex": -2 }, { "frame": 55, "zIndex": -2 }, { "frame": 56, "zIndex": -2 }, { "frame": 57, "zIndex": -2 }, { "frame": 58, "zIndex": -2 }, { "frame": 59, "zIndex": -2 }, { "frame": 60, "zIndex": -2 }, { "frame": 61, "zIndex": -2 }, { "frame": 62, "zIndex": -2 }] },
+   { "name": "fx", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+  ]
+ }
+}

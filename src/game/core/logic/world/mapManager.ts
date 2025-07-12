@@ -2,7 +2,7 @@ import {player} from "../../main.ts";
 import {tileList, Tiles} from "../../graphics/tilesGenerator.ts";
 import {memoizeCalculation} from "../../../../utils/general/general.ts";
 import {settings} from "../../config/settings.ts";
-import {MapService, MapType} from "../../../ui/service/mapService.ts";
+import {MapService, MapType} from "../../../ui/features/menu/api/mapService.ts";
 import {TileImage} from "../../graphics/image.ts";
 import {scaledTileSize} from "../../../../utils/math/general.ts";
 
@@ -120,10 +120,11 @@ export class MapManager {
     }
 
     private keyToCoors(key: string) {
+        const commaIndex = key.indexOf(",");
         return {
-            startX: Number(key.substring(0, key.indexOf(","))),
-            startY: Number(key.substring(key.indexOf(",") + 1))
-        }
+            startX: Number(key.substring(0, commaIndex)),
+            startY: Number(key.substring(commaIndex + 1))
+        };
     }
 
     public getChunk(posX: number, posY: number, layer: string = "background"): Chunk {
@@ -147,83 +148,59 @@ export class MapManager {
     }
 
 
-
-
     /**
-     * Получает матрицу тайлов размером с экран для рендеринга вокруг позиции игрока
-     * @param layer - слой тайлов ("background", "foreground", "animated")
-     * @returns объект с матрицей тайлов и информацией о её размерах и позиции
+     * Получает матрицу тайлов только для видимой области экрана
      */
     public getScreenTileMatrix(layer: string = "background"): TileMatrix {
         const [tilesX, tilesY] = this.updateCalculation(settings.defaultTileScale);
-
         const pos = {x: player!.posX, y: player!.posY};
 
-        // Используем Math.floor вместо Math.round для корректного центрирования
-        // Определение границ отображаемой области
-        const bias = 30;
-        const startX = Math.floor(pos.x - tilesX) - bias;
-        const startY = Math.floor(pos.y - tilesY) - bias;
-        const endX = Math.ceil(pos.x + tilesX) + bias;
-        const endY = Math.ceil(pos.y + tilesY) + bias;
+        // Определяем границы видимой области без лишнего bias
+        const startX = Math.floor(pos.x - tilesX) + 1;
+        const startY = Math.floor(pos.y - tilesY) + 1;
+        const endX = Math.ceil(pos.x + tilesX) + 3;
+        const endY = Math.ceil(pos.y + tilesY) + 3;
 
-        // Создание матрицы нужного размера
         const width = endX - startX;
         const height = endY - startY;
         const matrix: number[][] = Array(height).fill(0).map(() => Array(width).fill(0));
 
-        // Получаем все чанки, которые могут содержать нужные нам тайлы
-        const chunkKeys = new Set<string>();
-        for (let worldY = startY; worldY <= endY; worldY++) {
-            for (let worldX = startX; worldX <= endX; worldX++) {
-                chunkKeys.add(this.getTilePosKey(worldX, worldY));
-            }
-        }
+        // Выбираем нужную коллекцию чанков
+        const chunks = layer === "background" ? this.backgroundChunks :
+            layer === "foreground" ? this.foregroundChunks :
+                this.animatedChunks;
 
-        // Определяем, какую коллекцию чанков использовать
-        let chunks: Map<string, number[][]>;
-        if (layer === "background") {
-            chunks = this.backgroundChunks;
-        } else if (layer === "foreground") {
-            chunks = this.foregroundChunks;
-        } else {
-            chunks = this.animatedChunks;
-        }
+        // Заполняем матрицу только для видимой области
+        for (let worldY = startY; worldY < endY; worldY++) {
+            for (let worldX = startX; worldX < endX; worldX++) {
+                // Вычисляем координаты чанка (с учетом отрицательных координат)
+                const chunkX = Math.floor(worldX / MapManager.CHUNK_SIZE);
+                const chunkY = Math.floor(worldY / MapManager.CHUNK_SIZE);
+                const chunkKey = `${chunkX * MapManager.CHUNK_SIZE},${chunkY * MapManager.CHUNK_SIZE}`;
 
-        // Проходим по всем чанкам и копируем их данные в нашу матрицу
-        chunkKeys.forEach(chunkKey => {
-            if (!chunks.has(chunkKey)) return;
+                const chunk = chunks.get(chunkKey);
 
-            const chunkData = chunks.get(chunkKey)!;
-            const { startX: chunkStartX, startY: chunkStartY } = this.keyToCoors(chunkKey);
+                if (chunk) {
+                    // Вычисляем локальные координаты внутри чанка
+                    const localX = worldX - (chunkX * MapManager.CHUNK_SIZE);
+                    const localY = worldY - (chunkY * MapManager.CHUNK_SIZE);
 
-            // Вычисляем относительные координаты в матрице и чанке
-            for (let chunkY = 0; chunkY < MapManager.CHUNK_SIZE; chunkY++) {
-                const worldY = chunkStartY + chunkY;
-                if (worldY < startY || worldY >= endY) continue;
+                    // Обеспечиваем положительные индексы для массива
+                    const arrayX = localX >= 0 ? localX : MapManager.CHUNK_SIZE + localX;
+                    const arrayY = localY >= 0 ? localY : MapManager.CHUNK_SIZE + localY;
 
-                for (let chunkX = 0; chunkX < MapManager.CHUNK_SIZE; chunkX++) {
-                    const worldX = chunkStartX + chunkX;
-                    if (worldX < startX || worldX >= endX) continue;
-
-                    const matrixX = worldX - startX;
-                    const matrixY = worldY - startY;
-
-                    if (chunkData[chunkY] && chunkData[chunkY][chunkX] !== undefined) {
-                        matrix[matrixY][matrixX] = chunkData[chunkY][chunkX];
+                    if (chunk[arrayY] && chunk[arrayY][arrayX] !== undefined) {
+                        const matrixX = worldX - startX;
+                        const matrixY = worldY - startY;
+                        matrix[matrixY][matrixX] = chunk[arrayY][arrayX];
                     }
                 }
             }
-        });
+        }
 
-        return {
-            matrix,
-            startX,
-            startY,
-            width,
-            height
-        };
+        return { matrix, startX, startY, width, height };
     }
+
 
     /**
      * Получает матрицу тайлов размером 3-4 экрана для обновления данных вокруг позиции игрока

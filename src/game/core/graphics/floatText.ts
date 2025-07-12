@@ -16,6 +16,8 @@ export class FloatText {
     private y: number;
     private readonly text: string | number;
     private readonly lifeTime: TimeDelay;
+    private floatingSpeed: TimeDelay = new TimeDelay(50);
+    private readonly moveUnit = window.innerHeight / 250;
     private readonly fillStyle: string;
     private readonly crit: boolean;
 
@@ -46,7 +48,9 @@ export class FloatText {
     }
 
     update(): boolean {
-        this.y--;
+        if (this.floatingSpeed.timeIsUp()) {
+            this.y -= this.moveUnit;
+        }
         return !!this.lifeTime.timeIsUp();
     }
 }

@@ -1,175 +1,245 @@
-@import '../../../game/globalStyles';
-
 .trade-window {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: url("src/assets/icons/worldmapicon.png") repeat;
-  border: 2px solid map-get($colors, hud);
-  outline: 1px solid map-get($colors, black);
+  width: 400px;
+  height: 600px;
+  background-color: #2c1810;
+  border: 2px solid #8b4513;
   border-radius: 8px;
-  color: map-get($colors, white);
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
-  z-index: 20;
-  max-height: 80vh;
-  max-width: 90vw;
-  min-width: 600px;
-  user-select: none;
-}
-
-.trade-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  border-bottom: 2px solid map-get($colors, hud);
-  background: rgba(0, 0, 0, 0.3);
-}
-
-.trader-name {
-  margin: 0;
-  color: map-get($colors, yellow);
-  text-shadow: 1px 1px 1px map-get($colors, black);
-  font-size: 1.2rem;
-}
-
-.player-gold {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: rgba(0, 0, 0, 0.5);
-  padding: 0.5rem;
-  border-radius: 4px;
-  border: 1px solid map-get($colors, hud);
-}
-
-.gold-icon {
-  font-size: 1.2rem;
-}
-
-.gold-amount {
-  font-weight: bold;
-  color: map-get($colors, yellow);
-  text-shadow: 1px 1px 1px map-get($colors, black);
-}
-
-.close-button {
-  background: map-get($colors, red);
   color: white;
-  border: none;
-  border-radius: 50%;
-  width: 2rem;
-  height: 2rem;
-  font-size: 1.2rem;
-  font-weight: bold;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  font-family: serif;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+  z-index: 1000;
 
-  &:hover {
-    background: darken(map-get($colors, red), 10%);
+  .trade-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 15px;
+    border-bottom: 2px solid #8b4513;
+    background-color: rgba(0, 0, 0, 0.3);
+
+    .trader-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      .trader-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #4a5c2a;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid #8b4513;
+        font-size: 20px;
+      }
+
+      .trader-name {
+        color: #ffd700;
+        font-size: 16px;
+        font-weight: bold;
+      }
+    }
+
+    .close-button {
+      background: #8b0000;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 25px;
+      height: 25px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:hover {
+        background: darken(#8b0000, 10%);
+      }
+    }
   }
-}
 
-.trade-content {
-  display: flex;
-  gap: 1rem;
-  padding: 1rem;
-  max-height: 60vh;
-  overflow: hidden;
-}
+  .trade-content {
+    height: calc(100% - 140px);
+    display: flex;
+    flex-direction: column;
 
-.trade-section {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
+    .merchant-items {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 5px;
+      align-content: start;
 
-.section-title {
-  margin: 0 0 1rem 0;
-  color: map-get($colors, yellow);
-  text-shadow: 1px 1px 1px map-get($colors, black);
-  text-align: center;
-  font-size: 1rem;
-  border-bottom: 1px solid map-get($colors, hud);
-  padding-bottom: 0.5rem;
-}
+      .trade-item {
+        position: relative;
+        width: 80px;
+        height: 80px;
+        background-color: rgba(0, 0, 0, 0.3);
+        border: 2px solid;
+        border-radius: 4px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.1s;
+        padding: 0;
 
-.trade-items-grid,
-.player-items-grid {
-  height: fit-content;
-  max-height: 50vh;
-  overflow-y: auto;
-  overflow-x: hidden;
-  @include scrollbar;
-  padding: 0.5rem;
-}
+        &:hover:not(.disabled) {
+          transform: scale(1.05);
+        }
 
-.trade-item {
-  position: relative;
+        &.disabled {
+          cursor: not-allowed;
+          opacity: 0.5;
+        }
 
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+        .item-icon {
+          font-size: 24px;
+        }
+
+        .item-amount {
+          position: absolute;
+          top: 2px;
+          right: 2px;
+          font-size: 10px;
+          background-color: rgba(0, 0, 0, 0.8);
+          color: white;
+          padding: 1px 3px;
+          border-radius: 2px;
+        }
+
+        .item-price {
+          position: absolute;
+          bottom: 2px;
+          left: 2px;
+          font-size: 10px;
+          background-color: rgba(0, 0, 0, 0.8);
+          color: #ffd700;
+          padding: 1px 3px;
+          border-radius: 2px;
+          display: flex;
+          align-items: center;
+          gap: 2px;
+        }
+
+        .item-stock {
+          position: absolute;
+          top: 2px;
+          left: 2px;
+          font-size: 9px;
+          background-color: rgba(0, 0, 0, 0.8);
+          color: #ccc;
+          padding: 1px 3px;
+          border-radius: 2px;
+        }
+      }
+    }
+
+    .player-inventory {
+      border-top: 2px solid #8b4513;
+      padding: 10px;
+      background-color: rgba(0, 0, 0, 0.2);
+      max-height: 200px;
+      overflow-y: auto;
+
+      .inventory-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 3px;
+        margin-bottom: 10px;
+
+        .inventory-item {
+          position: relative;
+          width: 50px;
+          height: 50px;
+          background-color: rgba(0, 0, 0, 0.3);
+          border: 2px solid;
+          border-radius: 4px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: transform 0.1s;
+          padding: 0;
+
+          &:hover:not(.empty) {
+            transform: scale(1.05);
+          }
+
+          &.empty {
+            cursor: default;
+          }
+
+          .item-icon {
+            font-size: 16px;
+          }
+
+          .item-amount {
+            position: absolute;
+            top: 1px;
+            right: 1px;
+            font-size: 8px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 1px 2px;
+            border-radius: 2px;
+          }
+
+          .sell-price {
+            position: absolute;
+            bottom: 1px;
+            left: 1px;
+            font-size: 8px;
+            background-color: rgba(0, 100, 0, 0.8);
+            color: #90ee90;
+            padding: 1px 2px;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            gap: 1px;
+          }
+        }
+      }
+    }
   }
-}
 
-.item-price,
-.sell-price {
-  position: absolute;
-  bottom: 2px;
-  left: 2px;
-  background: rgba(0, 0, 0, 0.8);
-  color: map-get($colors, yellow);
-  font-size: 0.7rem;
-  font-weight: bold;
-  padding: 0.1rem 0.3rem;
-  border-radius: 2px;
-  text-shadow: 1px 1px 1px map-get($colors, black);
-  pointer-events: none;
-}
+  .currency-display {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 10px 15px;
+    border-top: 2px solid #8b4513;
+    background-color: rgba(0, 0, 0, 0.3);
+    gap: 15px;
 
-.sell-price {
-  background: rgba(0, 100, 0, 0.8);
-  color: map-get($colors, green);
-}
+    .currency-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
 
-.item-stock {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  background: rgba(0, 0, 0, 0.8);
-  color: map-get($colors, white);
-  font-size: 0.6rem;
-  font-weight: bold;
-  padding: 0.1rem 0.3rem;
-  border-radius: 2px;
-  text-shadow: 1px 1px 1px map-get($colors, black);
-  pointer-events: none;
-}
+      .currency-amount {
+        font-size: 14px;
+        font-weight: bold;
+      }
 
-.stock-text {
-  color: map-get($colors, gray-300);
-}
+      &.gold .currency-amount {
+        color: #ffd700;
+      }
 
-.price-text {
-  color: map-get($colors, yellow);
-}
+      &.silver .currency-amount {
+        color: #c0c0c0;
+      }
 
-.sell-price-text {
-  color: map-get($colors, green);
-}
-
-// Наследуем стили от инвентаря для ячеек
-.trade-items-grid .cell,
-.player-items-grid .cell {
-  @extend .cell;
-
-  &:hover:not(:disabled) {
-    background-color: map-get($colors, active);
-    transform: scale(1.05);
-    transition: all 0.2s ease;
+      &.copper .currency-amount {
+        color: #cd7f32;
+      }
+    }
   }
 }

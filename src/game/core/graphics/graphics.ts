@@ -61,7 +61,11 @@ export class Graphics {
     }
 
     public render(): void {
-        if (this.ctx) {
+        if (this.ctx && this.canvas) {
+            this.ctx.save();                       // Сохраняем текущие трансформации (например, от камеры)
+            this.ctx.setTransform(1, 0, 0, 1, 0, 0); // Сброс трансформации (координаты теперь в "экранных" координатах)
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            this.ctx.restore();
             this.renderTilemap();
             this.renderActors();
             this.renderEffects();
@@ -120,7 +124,12 @@ export class Graphics {
         this.renderAfterList = [];
 
         if (player!.target) {
-            ctx.drawImage(this.selector1.tile, player!.target.x || 0, player!.target.y || 0, scaledTileSize(), scaledTileSize());
+            const targetWidth = player?.target.image.currentAnimation.size.width;
+            const targetHeight = player?.target.image.currentAnimation.size.height;
+            ctx.strokeStyle = "red";
+            ctx.beginPath();
+            ctx.arc(player!.target.x || 0, player!.target.y || 0, Math.max(targetHeight / 3, targetWidth / 3), 0, 2 * Math.PI)
+            ctx.stroke();
         }
         ctx.fillText(player!.name, player!.x, player!.y - player?.image?.currentAnimation.size.height / 2);
         // ctx.fillText(`total mobs: ${entityManager.mobs.size}`, player!.x + player.image.currentAnimation.size.width / 2 + 300, player!.y);
@@ -148,46 +157,53 @@ export class Graphics {
             }
         }
     }
-
     private renderTilemap(): void {
         this.ctx!.fillStyle = "black";
-        // const map = worldMap.getIndexingChunks();
-        const background = worldMap.getScreenTileMatrix("background");
-        const foreground = worldMap.getScreenTileMatrix("foreground");
-        const animated = worldMap.getScreenTileMatrix("animated");
-        for (const screen of [background, foreground, animated]) {
-            // for (const chunk of layer) {
-                const chunkData = screen.matrix;
-                const offsetX = screen.startX;
-                const offsetY = screen.startY;
-                for (let i: number = 0; i < chunkData.length; i++) {
-                    for (let j: number = 0; j < chunkData[i].length; j++) {
-                        const tileIndex: number = chunkData[i][j];
-                        const tile = tileList[tileIndex];
-                        if (!tile) {
-                            continue
+
+        const layers = [
+            worldMap.getScreenTileMatrix("background"),
+            worldMap.getScreenTileMatrix("foreground"),
+            worldMap.getScreenTileMatrix("animated")
+        ];
+
+        for (const screen of layers) {
+            const { matrix, startX, startY } = screen;
+
+            for (let i = 0; i < matrix.length; i++) {
+                for (let j = 0; j < matrix[i].length; j++) {
+                    const tileIndex = matrix[i][j];
+                    const tile = tileList[tileIndex];
+
+                    if (!tile) continue;
+
+                    const x = (j + startX) * scaledTileSize();
+                    const y = (i + startY) * scaledTileSize();
+                    const size = scaledTileSize();
+
+                    const drawTile = () => {
+                        this.ctx!.drawImage(tile.image.tile, x, y, size, size);
+                        if (this._debugMode) {
+                            this.ctx?.strokeRect(x, y, size, size);
+                            this.ctx!.fillText(`x:${j + startX},y:${i + startY}`, x, y);
                         }
-                        if (tile.props.renderAfter) {
-                            this.renderAfterList.push(() => {
-                                this.ctx!.drawImage(tile.image.tile, (j + offsetX) * scaledTileSize(), (i + offsetY) * scaledTileSize(),
-                                    scaledTileSize(), scaledTileSize());
-                                if (this._debugMode) {
-                                    this.ctx?.strokeRect((j + offsetX) * scaledTileSize(), (i + offsetY) * scaledTileSize(), scaledTileSize(), scaledTileSize())
-                                    this.ctx!.fillText(`x:${j + offsetX},y:${i + offsetY}`, (j + offsetX) * scaledTileSize(), (i + offsetY) * scaledTileSize());
-                                }
-                            })
-                        } else {
-                            this.ctx!.drawImage(tile.image.tile, (j + offsetX) * scaledTileSize(), (i + offsetY) * scaledTileSize(),
-                                scaledTileSize(), scaledTileSize());
-                            if (this._debugMode) {
-                                this.ctx?.strokeRect((j + offsetX) * scaledTileSize(), (i + offsetY) * scaledTileSize(), scaledTileSize(), scaledTileSize())
-                                this.ctx!.fillText(`x:${j + offsetX},y:${i + offsetY}`, (j + offsetX) * scaledTileSize(), (i + offsetY) * scaledTileSize());
-                            }
-                        }
+                    };
+
+                    if (tile.props.renderAfter) {
+                        this.renderAfterList.push(drawTile);
+                    } else {
+                        drawTile();
                     }
                 }
-                this.ctx?.strokeRect(screen.startX * scaledTileSize(), screen.startY * scaledTileSize(), chunkData[0].length * scaledTileSize(), chunkData.length * scaledTileSize())
-            // }
+            }
+
+            if (this._debugMode) {
+                this.ctx?.strokeRect(
+                    startX * scaledTileSize(),
+                    startY * scaledTileSize(),
+                    matrix[0].length * scaledTileSize(),
+                    matrix.length * scaledTileSize()
+                );
+            }
         }
     }
 }

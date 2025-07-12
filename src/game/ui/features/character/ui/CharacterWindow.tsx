@@ -290,7 +290,7 @@ const CharacterWindow = () => {
     const bottomEquipment = ['mainHand', 'offHand'];
 
     return (
-        <div className="character-window">
+        <div className="character-window ui-div ui-border">
             {/* Header with close button */}
             <div className="character-header">
                 <div className="character-header__content">

@@ -3,8 +3,6 @@
 
 .character-window {
   height: 60vh;
-  background-color: map-get(globalStyles.$colors, gray-900);
-  color: map-get(globalStyles.$colors, font);
   padding: 1rem;
   position: relative;
 

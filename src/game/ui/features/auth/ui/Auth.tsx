@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useCookies} from "react-cookie";
-import UseAuthAPI from "../../../service/hooks/authAPI.ts";
+import UseAuthAPI from "../api/authAPI.ts";
 import "../styles/auth.scss"
 
 type props = {

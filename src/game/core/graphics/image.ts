@@ -150,7 +150,7 @@ export class AnimatedImage {
         this._framesNumber = framesNumber;
         this._disposable = disposable;
         this._imageSize = imageSize;
-        this._framesRate = new TimeDelay(Math.floor(framesRate * settings.delay()));
+        this._framesRate = new TimeDelay(Math.floor(1000 / framesRate));
         this._prevScale = settings.defaultTileScale;
 
         this._image.src = src;

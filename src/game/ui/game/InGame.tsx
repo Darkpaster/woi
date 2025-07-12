@@ -19,6 +19,7 @@ import ProfessionsWindow from "../features/professions/ui/ProfessionsWindow.tsx"
 import QuestsWindow from "../features/quests/ui/QuestsWindow.tsx";
 import FriendsListWindow from "../features/friends/ui/FriendsListWindow.tsx";
 import SpellBookWindow from "../features/spellBook/ui/SpellBookWindow.tsx";
+import TradeWindow from "../features/trade/ui/TradeWindow.tsx";
 
 const check = isMounted();
 
@@ -90,7 +91,7 @@ export const InGame = () => {
             {isInventoryOpen && <InventoryWindow/>}
             {isCharMenuOpen && <CharacterWindow/>}
             {isTalentsWindowOpen && <TalentsWindow/>}
-            {isAchievementsWindowOpen && <AchievementsWindow/>}
+            {isAchievementsWindowOpen && <TradeWindow onClose={() => null}/>}
             {isProfessionsWindowOpen && <ProfessionsWindow/>}
             {isQuestsWindowOpen && <QuestsWindow/>}
             {isFriendsWindowOpen && <FriendsListWindow/>}
