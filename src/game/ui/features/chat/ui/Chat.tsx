@@ -1,6 +1,6 @@
 import React, {ReactElement, useEffect, useRef, useState} from "react";
 import {io, Socket} from "socket.io-client";
-import {entityManager, gameRTC, initWS, player} from "../../../../core/main.ts";
+import {entityManager, gameRTC, initWebSocket, player} from "../../../../core/main.ts";
 import {isMounted} from "../../../game/GameUI.tsx";
 import {actions} from "../../../input/input.ts";
 import MessageBubble from "./MessageBubble.tsx";
@@ -34,7 +34,7 @@ const Chat: React.FC = () => {
             return
         }
 
-        initWS();
+        initWebSocket();
 
         actions.enter = (event) => {
             event.preventDefault();

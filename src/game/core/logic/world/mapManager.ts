@@ -1,45 +1,16 @@
-import {player} from "../../main.ts";
-import {tileList, Tiles} from "../../graphics/tilesGenerator.ts";
-import {memoizeCalculation} from "../../../../utils/general/general.ts";
-import {settings} from "../../config/settings.ts";
-import {MapService, MapType} from "../../../ui/features/menu/api/mapService.ts";
-import {TileImage} from "../../graphics/image.ts";
-import {scaledTileSize} from "../../../../utils/math/general.ts";
+import { player } from "../../main.ts";
+import { tileList, Tiles } from "../../graphics/tilesGenerator.ts";
+import { memoizeCalculation } from "../../../../utils/general/general.ts";
+import { settings } from "../../config/settings.ts";
+import { MapService, MapType } from "../../../ui/features/menu/api/mapService.ts";
+import { TileImage } from "../../graphics/image.ts";
 
-interface ChunkData {
-    data: number[];   // одномерный массив тайлов
-    width: number;    // ширина чанка в тайлах
-    height: number;   // высота чанка в тайлах
-    x: number;
-    y: number;
-}
-
-interface Layer {
-    name: string;
+interface ChunkCoordinates {
     startX: number;
-    startY: number; //-256 -160, 0, -16
-    width: number;    // общая ширина слоя (в тайлах)
-    height: number;   // общая высота слоя (в тайлах)
-    chunks: ChunkData[];
+    startY: number;
 }
 
-interface ParsedChunks {
-    backgroundChunks: Map<string, number[][]>;
-    foregroundChunks: Map<string, number[][]>;
-    animatedChunks: Map<string, number[][]>;
-}
-
-type Chunk = {
-    startX: number, startY: number, chunk: number[][]
-}
-
-type IndexingChunks = {
-    backgroundChunks: Chunk[]
-    foregroundChunks: Chunk[]
-    animatedChunks: Chunk[]
-}
-
-type TileMatrix = {
+interface TileMatrix {
     matrix: number[][];
     startX: number;
     startY: number;
@@ -47,24 +18,31 @@ type TileMatrix = {
     height: number;
 }
 
+interface Chunk extends ChunkCoordinates {
+    chunk: number[][];
+}
+
+interface WorldMap {
+    backgroundChunks: Map<string, number[][]>;
+    foregroundChunks: Map<string, number[][]>;
+    animatedChunks: Map<string, number[][]>;
+}
 
 export class MapManager {
-    private backgroundChunks: Map<string, number[][]> = new Map();
-    private foregroundChunks: Map<string, number[][]> = new Map();
-    private animatedChunks: Map<string, number[][]> = new Map();
+    static readonly CHUNK_SIZE = 32;
 
-    private mapService: MapService = new MapService();
+    private readonly backgroundChunks = new Map<string, number[][]>();
+    private readonly foregroundChunks = new Map<string, number[][]>();
+    private readonly animatedChunks = new Map<string, number[][]>();
+    private readonly mapService = new MapService();
 
-    private updateCalculation = memoizeCalculation(([tileSize]) => {
-        // Вычисляем количество видимых тайлов по оси Y и X
-        const tilesY: number = Math.ceil(window.innerHeight / (tileSize * settings.tileSize) / 2);
-        const tilesX: number = Math.ceil(window.innerWidth / (tileSize * settings.tileSize) / 2);
-        return [tilesX, tilesY]
-    })
+    private readonly calculateVisibleTiles = memoizeCalculation(([tileSize]) => {
+        const tilesY = Math.ceil(window.innerHeight / (tileSize * settings.tileSize) / 2);
+        const tilesX = Math.ceil(window.innerWidth / (tileSize * settings.tileSize) / 2);
+        return [tilesX, tilesY];
+    });
 
-    public static readonly CHUNK_SIZE: 32 = 32;
-
-    public getWorldMap() {
+    getWorldMap(): WorldMap {
         return {
             backgroundChunks: this.backgroundChunks,
             foregroundChunks: this.foregroundChunks,
@@ -72,208 +50,147 @@ export class MapManager {
         };
     }
 
-    public async initWorld() {
-        return new Promise((resolve, reject) => {
-            try {
+    async initWorld(): Promise<MapType> {
+        try {
+            await this.loadTiles();
+            const map = await this.mapService.getMap();
 
-                this.fetchTiles().then(async data => {
+            this.loadChunks(map.backgroundChunks, this.backgroundChunks);
+            this.loadChunks(map.foregroundChunks, this.foregroundChunks);
+            this.loadChunks(map.animatedChunks, this.animatedChunks);
 
-                    const map: MapType = await this.mapService.getMap()
-
-                    for (const [coor, matrix] of Object.entries(map.backgroundChunks)) {
-                        this.backgroundChunks.set(coor, matrix);
-                    }
-                    for (const [coor, matrix] of Object.entries(map.foregroundChunks)) {
-                        this.foregroundChunks.set(coor, matrix);
-                    }
-                    for (const [coor, matrix] of Object.entries(map.animatedChunks)) {
-                        this.animatedChunks.set(coor, matrix);
-                    }
-
-                    resolve(map);
-                })
-            } catch (err) {
-                console.error("Error while parsing map:", err);
-                reject("Error while parsing map");
-            }
-        })
+            return map;
+        } catch (error) {
+            console.error("Error initializing world:", error);
+            throw new Error("Failed to initialize world");
+        }
     }
 
-    private async fetchTiles() {
-        const tiles: Tiles = await this.mapService.getTiles()
+    private async loadTiles(): Promise<Tiles> {
+        const tiles = await this.mapService.getTiles();
+
         for (const [globalId, tile] of Object.entries(tiles)) {
-            const img = new TileImage(tile.image.startsWith('data:')
+            const imageData = tile.image.startsWith('data:')
                 ? tile.image
-                : 'data:image/png;base64,' + tile.image, 0, 0);
+                : `data:image/png;base64,${tile.image}`;
+
+            const img = new TileImage(imageData, 0, 0);
             console.log(img.tile);
+
             tile.image = img;
             tileList[globalId] = tile;
         }
+
         return tileList;
     }
 
+    private loadChunks(source: Record<string, number[][]>, target: Map<string, number[][]>): void {
+        for (const [coordinate, matrix] of Object.entries(source)) {
+            target.set(coordinate, matrix);
+        }
+    }
 
-    private getTilePosKey(xPos: number, yPos: number): string { //тайлы в тайлы без остатка
+    private getChunkKey(xPos: number, yPos: number): string {
         const col = xPos - (xPos % MapManager.CHUNK_SIZE);
         const row = yPos - (yPos % MapManager.CHUNK_SIZE);
         return `${Math.round(col)},${Math.round(row)}`;
     }
 
-    private keyToCoors(key: string) {
-        const commaIndex = key.indexOf(",");
+    private parseChunkKey(key: string): ChunkCoordinates {
+        const [startX, startY] = key.split(",").map(Number);
+        return { startX, startY };
+    }
+
+    private getChunkCollection(layer: string): Map<string, number[][]> {
+        switch (layer) {
+            case "background":
+                return this.backgroundChunks;
+            case "foreground":
+                return this.foregroundChunks;
+            case "animated":
+                return this.animatedChunks;
+            default:
+                return this.backgroundChunks;
+        }
+    }
+
+    getChunk(posX: number, posY: number, layer = "background"): Chunk {
+        const key = this.getChunkKey(posX, posY);
+        const chunks = this.getChunkCollection(layer);
+        const coordinates = this.parseChunkKey(key);
+        const chunk = chunks.get(key);
+
         return {
-            startX: Number(key.substring(0, commaIndex)),
-            startY: Number(key.substring(commaIndex + 1))
+            ...coordinates,
+            chunk: chunk || []
         };
     }
 
-    public getChunk(posX: number, posY: number, layer: string = "background"): Chunk {
-        const key = this.getTilePosKey(posX, posY);
-        let chunks: Map<string, number[][]> | null = null;
-        if (layer === "background") {
-            chunks = this.getWorldMap().backgroundChunks;
-        } else if (layer === "foreground") {
-            chunks = this.getWorldMap().foregroundChunks;
-        } else {
-            chunks = this.getWorldMap().animatedChunks;
-        }
-        return {...this.keyToCoors(key), chunk: chunks.get(key)!}
-    }
-
-    public getTile(posX: number, posY: number, layer: string = "background") { //работает только с игроком
-        // const chunk = this.getChunk(posX, posY, layer);
+    getTile(posX: number, posY: number, layer = "background"): number {
         const screen = this.getScreenTileMatrix(layer);
-        return screen.matrix[posY - screen.startY][posX - screen.startX];
-        // return tileList[chunk.chunk[Math.abs(posY % MapManager.CHUNK_SIZE)][Math.abs(posX % MapManager.CHUNK_SIZE)]];
+        const matrixX = posX - screen.startX;
+        const matrixY = posY - screen.startY;
+
+        if (matrixY < 0 || matrixY >= screen.matrix.length ||
+            matrixX < 0 || matrixX >= screen.matrix[0].length) {
+            return 0;
+        }
+
+        return screen.matrix[matrixY][matrixX];
     }
 
+    getScreenTileMatrix(layer = "background"): TileMatrix {
+        const [tilesX, tilesY] = this.calculateVisibleTiles(settings.defaultTileScale);
+        const pos = { x: player!.posX, y: player!.posY };
 
-    /**
-     * Получает матрицу тайлов только для видимой области экрана
-     */
-    public getScreenTileMatrix(layer: string = "background"): TileMatrix {
-        const [tilesX, tilesY] = this.updateCalculation(settings.defaultTileScale);
-        const pos = {x: player!.posX, y: player!.posY};
-
-        // Определяем границы видимой области без лишнего bias
         const startX = Math.floor(pos.x - tilesX) + 1;
         const startY = Math.floor(pos.y - tilesY) + 1;
         const endX = Math.ceil(pos.x + tilesX) + 3;
         const endY = Math.ceil(pos.y + tilesY) + 3;
 
-        const width = endX - startX;
-        const height = endY - startY;
-        const matrix: number[][] = Array(height).fill(0).map(() => Array(width).fill(0));
-
-        // Выбираем нужную коллекцию чанков
-        const chunks = layer === "background" ? this.backgroundChunks :
-            layer === "foreground" ? this.foregroundChunks :
-                this.animatedChunks;
-
-        // Заполняем матрицу только для видимой области
-        for (let worldY = startY; worldY < endY; worldY++) {
-            for (let worldX = startX; worldX < endX; worldX++) {
-                // Вычисляем координаты чанка (с учетом отрицательных координат)
-                const chunkX = Math.floor(worldX / MapManager.CHUNK_SIZE);
-                const chunkY = Math.floor(worldY / MapManager.CHUNK_SIZE);
-                const chunkKey = `${chunkX * MapManager.CHUNK_SIZE},${chunkY * MapManager.CHUNK_SIZE}`;
-
-                const chunk = chunks.get(chunkKey);
-
-                if (chunk) {
-                    // Вычисляем локальные координаты внутри чанка
-                    const localX = worldX - (chunkX * MapManager.CHUNK_SIZE);
-                    const localY = worldY - (chunkY * MapManager.CHUNK_SIZE);
-
-                    // Обеспечиваем положительные индексы для массива
-                    const arrayX = localX >= 0 ? localX : MapManager.CHUNK_SIZE + localX;
-                    const arrayY = localY >= 0 ? localY : MapManager.CHUNK_SIZE + localY;
-
-                    if (chunk[arrayY] && chunk[arrayY][arrayX] !== undefined) {
-                        const matrixX = worldX - startX;
-                        const matrixY = worldY - startY;
-                        matrix[matrixY][matrixX] = chunk[arrayY][arrayX];
-                    }
-                }
-            }
-        }
-
-        return { matrix, startX, startY, width, height };
+        return this.buildTileMatrix(startX, startY, endX, endY, layer);
     }
 
+    getUpdateTileMatrix(multiplier = 3, layer = "background"): TileMatrix {
+        const [tilesX, tilesY] = this.calculateVisibleTiles(settings.defaultTileScale);
+        const pos = { x: player!.posX, y: player!.posY };
 
-    /**
-     * Получает матрицу тайлов размером 3-4 экрана для обновления данных вокруг позиции игрока
-     * @param multiplier - множитель размера области (3 или 4)
-     * @param layer - слой тайлов ("background", "foreground", "animated")
-     * @returns объект с матрицей тайлов и информацией о её размерах и позиции
-     */
-    public getUpdateTileMatrix(multiplier: number = 3, layer: string = "background"): TileMatrix {
-        const [tilesX, tilesY] = this.updateCalculation(settings.defaultTileScale);
-
-        const pos = {x: player!.posX, y: player!.posY};
-
-        // Определение границ обновляемой области (multiplier раз больше экрана)
         const startX = Math.floor(pos.x - tilesX * multiplier);
         const startY = Math.floor(pos.y - tilesY * multiplier);
         const endX = Math.ceil(pos.x + tilesX * multiplier);
         const endY = Math.ceil(pos.y + tilesY * multiplier);
 
-        // Создание матрицы нужного размера
+        return this.buildTileMatrix(startX, startY, endX, endY, layer);
+    }
+
+    private buildTileMatrix(startX: number, startY: number, endX: number, endY: number, layer: string): TileMatrix {
         const width = endX - startX;
         const height = endY - startY;
         const matrix: number[][] = Array(height).fill(0).map(() => Array(width).fill(0));
+        const chunks = this.getChunkCollection(layer);
 
-        // Получаем все чанки, которые могут содержать нужные нам тайлы
-        const chunkKeys = new Set<string>();
-        for (let worldY = startY; worldY <= endY; worldY++) {
-            for (let worldX = startX; worldX <= endX; worldX++) {
-                chunkKeys.add(this.getTilePosKey(worldX, worldY));
-            }
-        }
+        for (let worldY = startY; worldY < endY; worldY++) {
+            for (let worldX = startX; worldX < endX; worldX++) {
+                const chunkX = Math.floor(worldX / MapManager.CHUNK_SIZE);
+                const chunkY = Math.floor(worldY / MapManager.CHUNK_SIZE);
+                const chunkKey = `${chunkX * MapManager.CHUNK_SIZE},${chunkY * MapManager.CHUNK_SIZE}`;
+                const chunk = chunks.get(chunkKey);
 
-        // Определяем, какую коллекцию чанков использовать
-        let chunks: Map<string, number[][]>;
-        if (layer === "background") {
-            chunks = this.backgroundChunks;
-        } else if (layer === "foreground") {
-            chunks = this.foregroundChunks;
-        } else {
-            chunks = this.animatedChunks;
-        }
+                if (!chunk) continue;
 
-        // Проходим по всем чанкам и копируем их данные в нашу матрицу
-        chunkKeys.forEach(chunkKey => {
-            if (!chunks.has(chunkKey)) return;
+                const localX = worldX - (chunkX * MapManager.CHUNK_SIZE);
+                const localY = worldY - (chunkY * MapManager.CHUNK_SIZE);
+                const arrayX = localX >= 0 ? localX : MapManager.CHUNK_SIZE + localX;
+                const arrayY = localY >= 0 ? localY : MapManager.CHUNK_SIZE + localY;
 
-            const chunkData = chunks.get(chunkKey)!;
-            const { startX: chunkStartX, startY: chunkStartY } = this.keyToCoors(chunkKey);
-
-            // Вычисляем относительные координаты в матрице и чанке
-            for (let chunkY = 0; chunkY < MapManager.CHUNK_SIZE; chunkY++) {
-                const worldY = chunkStartY + chunkY;
-                if (worldY < startY || worldY >= endY) continue;
-
-                for (let chunkX = 0; chunkX < MapManager.CHUNK_SIZE; chunkX++) {
-                    const worldX = chunkStartX + chunkX;
-                    if (worldX < startX || worldX >= endX) continue;
-
+                if (chunk[arrayY]?.[arrayX] !== undefined) {
                     const matrixX = worldX - startX;
                     const matrixY = worldY - startY;
-
-                    if (chunkData[chunkY] && chunkData[chunkY][chunkX] !== undefined) {
-                        matrix[matrixY][matrixX] = chunkData[chunkY][chunkX];
-                    }
+                    matrix[matrixY][matrixX] = chunk[arrayY][arrayX];
                 }
             }
-        });
+        }
 
-        return {
-            matrix,
-            startX,
-            startY,
-            width,
-            height
-        };
+        return { matrix, startX, startY, width, height };
     }
 }

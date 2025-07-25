@@ -4,16 +4,13 @@ import { graphics } from "../main.ts";
 import { AnimationList } from "./static/animatedSprites.ts";
 import { scaledTileSize } from "../../../utils/math/general.ts";
 
-// Типы для направлений и состояний
 export type Direction = "left" | "right" | "up" | "down";
 
-// Интерфейс для размеров спрайта
 interface SpriteSize {
     width: number;
     height: number;
 }
 
-// Интерфейс для конфигурации анимации
 interface AnimationConfig {
     name: string;
     src: string;
@@ -36,14 +33,12 @@ export class AnimatedImageManager {
         this._flipX = flipX;
         this._horizontalSheet = horizontalSheet;
 
-        // Устанавливаем анимацию по умолчанию
         this._currentAnimation = this._list["idle"] || this._list[Object.keys(this._list)[0]];
 
         if (!this._currentAnimation) {
             throw new Error("AnimationList не содержит анимаций");
         }
 
-        // Устанавливаем менеджер для всех анимаций
         this._initializeAnimations();
     }
 
@@ -89,16 +84,13 @@ export class AnimatedImageManager {
 
         const prevAnimation = this._currentAnimation;
 
-        // Если предыдущая анимация одноразовая и не завершена, продолжаем её
         if (prevAnimation.disposable && !prevAnimation.endOfAnimation) {
             prevAnimation.render(ctx, this._isFlipped, x, y, direction);
             return;
         }
 
-        // Рендерим новую анимацию
         this._isFlipped = animation.render(ctx, this._isFlipped, x, y, direction);
 
-        // Сбрасываем кадр если сменилась анимация
         if (prevAnimation.name !== animation.name) {
             prevAnimation.reset();
         }
@@ -106,16 +98,10 @@ export class AnimatedImageManager {
         this._currentAnimation = animation;
     }
 
-    /**
-     * Проверяет, существует ли анимация
-     */
     hasAnimation(name: string): boolean {
         return name in this._list;
     }
 
-    /**
-     * Возвращает список доступных анимаций
-     */
     getAnimationNames(): string[] {
         return Object.keys(this._list);
     }
@@ -164,7 +150,6 @@ export class AnimatedImage {
         };
     }
 
-    // Геттеры
     get image(): HTMLImageElement { return this._image; }
     get name(): string { return this._name; }
     get framesNumber(): number { return this._framesNumber; }
@@ -175,7 +160,6 @@ export class AnimatedImage {
     get isLoaded(): boolean { return this._isLoaded; }
     get size(): SpriteSize { return { width: this._widthSize, height: this._heightSize }; }
 
-    // Сеттеры
     set manager(value: AnimatedImageManager) { this._manager = value; }
     set currentFrame(value: number) { this._currentFrame = Math.max(0, Math.min(value, this._framesNumber - 1)); }
 
@@ -224,26 +208,19 @@ export class AnimatedImage {
         }
     }
 
-    /**
-     * Рендерит анимацию
-     */
     render(ctx: CanvasRenderingContext2D, isFlipped: boolean, x: number, y: number, direction: Direction): boolean {
         if (!this._isLoaded) return isFlipped;
 
         this._updateSizeIfNeeded();
 
-        // Сбрасываем флаг окончания анимации
         if (this._endOfAnimation) {
             this._endOfAnimation = false;
         }
 
-        // Определяем нужно ли отражать спрайт
         const shouldFlip = this._shouldFlipSprite(isFlipped, direction);
 
-        // Рендерим спрайт
         this._renderSprite(ctx, shouldFlip, x, y);
 
-        // Обновляем анимацию
         if (this._framesRate.timeIsUp()) {
             this._nextFrame();
         }
@@ -259,9 +236,6 @@ export class AnimatedImage {
         return direction === "left" || (isFlipped && direction !== "right");
     }
 
-    /**
-     * Рендерит спрайт на канвасе
-     */
     private _renderSprite(ctx: CanvasRenderingContext2D, flipX: boolean, x: number, y: number): void {
         const spriteWidth = this._image.width / this._framesNumber;
         const spriteHeight = this._image.height;

@@ -16,14 +16,12 @@ const SettingsWindow: React.FC<SettingsWindowProps> = ({
                                                        }) => {
     const [activeCategory, setActiveCategory] = useState<string>('Основные');
 
-    // Состояние для настроек
     const [showFPS, setShowFPS] = useState(settings.showFPS || false);
     const [maxFPS, setMaxFPS] = useState(settings.fps || 60);
     const [language, setLanguage] = useState(settings.language || 'ru');
     const [musicVolume, setMusicVolume] = useState(50);
     const [soundVolume, setSoundVolume] = useState(50);
 
-    // Графические настройки
     const [resolution, setResolution] = useState('1920x1080');
     const [fullscreen, setFullscreen] = useState(false);
     const [vsync, setVsync] = useState(true);

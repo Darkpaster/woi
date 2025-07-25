@@ -1,51 +1,64 @@
-import {settings} from "../config/settings.ts";
-import {camera, entityManager, graphics, player} from "../main.ts";
-import {scaledTileSize} from "../../../utils/math/general.ts";
+import { settings } from "../config/settings.ts";
+import { camera, entityManager, graphics, player } from "../main.ts";
+import { scaledTileSize } from "../../../utils/math/general.ts";
 
 export function update(): void {
-    camera!.update(player!.updatePlayer(), player!.x, player!.y);
-    entityManager.findMobsAt(player.x, player.y).forEach((mob, index) => {
-        entityManager.updateMob(mob);
-    })
-    if (graphics.debugMode) {
-        graphics.ctx!.font = "11px PixelFont";
-    } else {
-        graphics.ctx!.font = 7 * settings.defaultTileScale + "px PixelFont";
+    if (!player || !camera || !graphics) {
+        console.warn("Core game objects not initialized");
+        return;
     }
-    // updateInGameUI();
-    // for (const mob of Mob.mobList) {
-    //     mob.update();
-    // }
-    // Actor.actorList = Actor.actorList.filter((actor) => actor.isAlive());
-    // if (canvas!.id !== document.activeElement!.id) {
-    //     canvas!.focus();
-    // }
+
+    updatePlayer();
+    updateMobs();
+    updateGraphicsContext();
 }
 
 export function updateZoom(zoomIn: boolean): void {
-    const prevPosX: number = player!.posX;
-    const prevPosY: number = player!.posY;
-    // const prevPos: Array<{ x: number; y: number }> = [];
+    if (!player || !camera) {
+        console.warn("Player or camera not initialized for zoom update");
+        return;
+    }
 
-    // for (const mob of Mob.mobList) {
-    //     prevPos.push({ x: mob.posX, y: mob.posY });
-    // }
+    const previousPosition = {
+        x: player.posX,
+        y: player.posY
+    };
 
     settings.defaultTileScale += zoomIn ? 1 : -1;
 
-    const offsetX: number = prevPosX * scaledTileSize();
-    const offsetY: number = prevPosY * scaledTileSize();
+    const newX = previousPosition.x * scaledTileSize();
+    const newY = previousPosition.y * scaledTileSize();
 
-    camera!.update(player!.setCoordinates(offsetX, offsetY), player!.x, player!.y);
+    camera.update(player.setCoordinates(newX, newY), player.x, player.y);
+}
 
-    // player.image.update(zoomIn ? 1 : -1);
+function updatePlayer(): void {
+    const playerMovement = player!.updatePlayer();
+    camera!.update(playerMovement, player!.x, player!.y);
+}
 
-    // for (let i: number = 0; i < Mob.mobList.length; i++) {
-    //     const mob: Mob = Mob.mobList[i];
-    //     const offsetX: number = prevPos[i].x * scaledTileSize();
-    //     const offsetY: number = prevPos[i].y * scaledTileSize();
-    //
-    //     // mob.image.update(zoomIn ? 1 : -1);
-    //     mob.setCoordinates(offsetX, offsetY);
-    // }
+function updateMobs(): void {
+    const nearbyMobs = entityManager.findMobsAt(player!.x, player!.y);
+
+    for (const mob of nearbyMobs) {
+        entityManager.updateMob({
+            actorId: mob.id,
+            name: mob.name,
+            x: mob.x / settings.defaultTileScale,
+            y: mob.y / settings.defaultTileScale,
+            renderState: mob.renderState,
+            health: mob.HP
+        });
+    }
+}
+
+function updateGraphicsContext(): void {
+    const context = graphics!.ctx;
+    if (!context) return;
+
+    const fontSize = graphics!.debugMode
+        ? "11px PixelFont"
+        : `${7 * settings.defaultTileScale}px PixelFont`;
+
+    context.font = fontSize;
 }

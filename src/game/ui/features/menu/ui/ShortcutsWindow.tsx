@@ -20,7 +20,7 @@ const ShortcutsWindow: React.FC<ShortcutsWindowProps> = ({
                                                              onClose,
                                                              theme = 'dark'
                                                          }) => {
-    const [keybinds, setKeybinds] = useState<Keybind[]>([
+    const [keybinds, setKeybinds] = useState<Keybind[]>([ //заглушки
         { id: '1', action: 'Атака', key: 'A', category: 'Бой' },
         { id: '2', action: 'Блок', key: 'S', category: 'Бой' },
         { id: '3', action: 'Умение 1', key: '1', category: 'Умения' },

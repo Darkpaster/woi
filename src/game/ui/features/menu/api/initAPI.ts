@@ -15,7 +15,7 @@ type apiProps = {
     onLoad: (data: any) => void,
     deps?: any[]
 }
-
+//rewrite this module
 const UseInitAPI = ({url, method = 'GET', body = null, onLoad = () => alert("default!"), deps = []}: apiProps) => {
     const isMounted = useIsMount();
     const [data, setData] = useState<any|null>(null);

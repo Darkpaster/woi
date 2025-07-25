@@ -1,4 +1,6 @@
-import {gameRTC, initWS, player} from "../../core/main.ts";
+// InGame.tsx - CODE REVIEW COMMENTS
+
+import {gameRTC, initWebSocket, player} from "../../core/main.ts";
 import {memo, useEffect, useState} from "react";
 import {useMyDispatch, useMySelector} from "../../../utils/stateManagement/store.ts";
 import {toggleCharMenu, UIState} from "../../../utils/stateManagement/uiSlice.ts";
@@ -21,18 +23,30 @@ import FriendsListWindow from "../features/friends/ui/FriendsListWindow.tsx";
 import SpellBookWindow from "../features/spellBook/ui/SpellBookWindow.tsx";
 import TradeWindow from "../features/trade/ui/TradeWindow.tsx";
 
+// ISSUE 1: Повторное создание функции isMounted
+// ❌ Проблема: Дублирование кода, импорт из другого компонента
 const check = isMounted();
 
+// SUGGESTIONS FOR IMPROVEMENT:
+// 1. Создать отдельный хук useGameLoop для игровой логики
+// 2. Мемоизировать тяжелые селекторы
+// 3. Добавить типизацию для player объекта
+// 4. Использовать useCallback для обработчиков
+// 5. Разделить UI логику и игровую логику
+
 export const InGame = () => {
+    // ISSUE 2: Небезопасное обращение к player без проверки на null
+    // ❌ Проблема: player! может быть null, что приведет к ошибке
     const [health, setHealth] = useState(player!.HP);
     const [maxHealth, setMaxHealth] = useState(player!.HT);
     const [targetHealth, setTargetHealth] = useState(player!.target ? player!.target.HP : 0);
     const [targetMaxHealth, setTargetMaxHealth] = useState(player!.target ? player!.target.HT : 100);
 
     const [loading, setLoading] = useState(false);
-
     const dispatch = useMyDispatch();
 
+    // ISSUE 3: Множественные селекторы - можно оптимизировать
+    // ❌ Проблема: Каждый селектор создает отдельную подписку
     const infoEntity = useMySelector((state: { ui: UIState }) => state.ui.infoEntity);
     const infoPosition = useMySelector((state: { ui: UIState }) => state.ui.infoPosition);
     const isInventoryOpen = useMySelector((state: { ui: UIState }) => state.ui.isInventoryOpen);
@@ -44,69 +58,99 @@ export const InGame = () => {
     const isAchievementsWindowOpen = useMySelector((state: { ui: UIState }) => state.ui.isAchievementsWindowOpen);
     const isCharMenuOpen = useMySelector((state: { ui: UIState }) => state.ui.isCharMenuOpen);
 
-
     useEffect(() => {
-
-
+        // ISSUE 4: Мутация объекта memoize без useState
+        // ❌ Проблема: Прямая мутация объекта, не React way
         const memoize = {x: player.x, y: player.y}
 
+        // ISSUE 5: Частые проверки в setInterval (каждые 50мс)
+        // ❌ Проблема: Может повлиять на производительность
         const interval = setInterval(() => {
+            // Небезопасные обращения к player
             setHealth(player!.HP);
             setMaxHealth(player!.HT);
+
             if (player!.target) {
                 setTargetHealth(player!.target.HP);
                 setTargetMaxHealth(player!.target.HT);
             }
+
+            // ISSUE 6: Проверка позиции в каждом тике
             if (player.x !== memoize.x || player.y !== memoize.y) {
-                // console.log(`x: ${player.x}, y: ${player.y}`)
-                gameRTC.sendPlayerPosition();
+                gameRTC.sendPlayerPosition(); // Может выбросить ошибку
                 [memoize.x, memoize.y] = [player.x, player.y];
             }
         }, 50);
 
+        // ISSUE 7: Закомментированный код
         // setTimeout(() => setLoading(false), randomInt(500, 700));
 
         return () => {
             clearInterval(interval)
         };
-    }, []);
+    }, []); // ISSUE 8: Пустой массив зависимостей при использовании внешних переменных
 
+    // ISSUE 9: Условный рендеринг с тернарным оператором для большого JSX
     return (
-        !loading ? (<div id="interface-layer">
-            <div id="static-interface">
-                {/*<CharWidget value={health} max={maxHealth} className={"stat-bar"}/>*/}
-                {/*{player!.target && (*/}
-                {/*    <CharWidget value={targetHealth} max={targetMaxHealth} className={"stat-bar-enemy"}/>*/}
-                {/*)}*/}
+        !loading ? (
+            <div id="interface-layer">
+                <div id="static-interface">
+                    {/* ISSUE 10: Закомментированный код в JSX */}
+                    {/*<CharWidget value={health} max={maxHealth} className={"stat-bar"}/>*/}
+                    {/*{player!.target && (*/}
+                    {/*    <CharWidget value={targetHealth} max={targetMaxHealth} className={"stat-bar-enemy"}/>*/}
+                    {/*)}*/}
 
-                <PlayerWidget />
-                {player!.target && (
-                    <TargetWidget />
+                    <PlayerWidget />
+                    {player!.target && (
+                        <TargetWidget />
+                    )}
+                    <PartyWidget></PartyWidget>
+
+                    <Panel/>
+                    <Chat/>
+                </div>
+
+                {/* ISSUE 11: Множественные условные рендеринги без группировки */}
+                {isInventoryOpen && <InventoryWindow/>}
+                {isCharMenuOpen && <CharacterWindow/>}
+                {isTalentsWindowOpen && <TalentsWindow/>}
+
+                {/* ISSUE 12: Неправильное отображение компонента */}
+                {/* TradeWindow отображается при isAchievementsWindowOpen */}
+                {isAchievementsWindowOpen && <TradeWindow onClose={() => null}/>}
+
+                {isProfessionsWindowOpen && <ProfessionsWindow/>}
+                {isQuestsWindowOpen && <QuestsWindow/>}
+                {isFriendsWindowOpen && <FriendsListWindow/>}
+                {isSpellBookWindowOpen && <SpellBookWindow/>}
+
+                {/* ISSUE 13: Много закомментированного кода */}
+                {/*{isCharMenuOpen && <ExchangeWindow onTradeComplete={() => dispatch(toggleCharMenu())}></ExchangeWindow>}*/}
+
+                {/* Огромный блок закомментированного кода с книгой */}
+
+                {infoEntity && infoPosition && (
+                    <InfoWindow entity={infoEntity} position={infoPosition}/>
                 )}
-                <PartyWidget></PartyWidget>
-
-                <Panel/>
-                <Chat/>
             </div>
-            {isInventoryOpen && <InventoryWindow/>}
-            {isCharMenuOpen && <CharacterWindow/>}
-            {isTalentsWindowOpen && <TalentsWindow/>}
-            {isAchievementsWindowOpen && <TradeWindow onClose={() => null}/>}
-            {isProfessionsWindowOpen && <ProfessionsWindow/>}
-            {isQuestsWindowOpen && <QuestsWindow/>}
-            {isFriendsWindowOpen && <FriendsListWindow/>}
-            {isSpellBookWindowOpen && <SpellBookWindow/>}
-            {/*{isCharMenuOpen && <ExchangeWindow onTradeComplete={() => dispatch(toggleCharMenu())}></ExchangeWindow>}*/}
-            {/*{isCharMenuOpen && <BookWindow title={"Хуя у меня пресак мощный"} content={"Шёл шестой день дороги. Метель в эту ночь была особенно неистовой... И утихать явно не собиралась. Нет. Не в ближайшее время. Единственным твоим спасением от этих ужасных условий пути - была лишь тёплая мантия и книги. И если первое - защищало твоё тело, то книги - оберегали рассудок от мрачных мыслей о безнадёжности твоего путешествия.\n" +*/}
-            {/*    "\n" +*/}
-            {/*    "Наверное, стоит обозначить как ты вообще попал в эту ситуацию, не так ли? Если ветер ещё не отшиб остатки твоей памяти, то ты прекрасно помнишь, что ты - выходец магической академии, адепт кафедры Пути Восстановления и Пути Изменения. Тебя отправили на фронт, с целью практики и усовершенствования своих навыков на раненых солдатах. Война. От одного лишь этого слова у тебя стынет кровь в жилах. Тебя всегда ужасало тяга людей к насилию, наверное поэтому ты и отдал предпочтение наиболее созидательным ответвлениям магии. Но увы, от насилия как явления - тебя это не уберегло. Ты чувствуешь, что тебе всё равно придётся с ним столкнуться. И уже скоро.\n" +*/}
-            {/*    "\n" +*/}
-            {/*    "Внезапно дилижанс остановился. Ты выглянул в окно, чтобы разглядеть что послужило причиной остановки, однако из-за сильной вьюги - рассмотреть что-либо не предоставлялось возможным. До пункта назначения был ещё минимум день пути, поэтому вариант с твоим прибытием - также отпадает в сторону. Какое-то время ты просто сидишь и ничего не предпринимаешь, ожидая, что кучер сам придёт и объяснит ситуацию. Однако, он так и не явился. После этого ты наконец решаешься выйти из дилижанса и проверить всё лично. Подойдя к лошадям ты замечаешь лежащим в кровавом снегу - мужчину. Сквозь метель ты еле разглядываешь его черты и одежду, после чего подступающая тревога не заставила себя долго ждать. В нём ты опознал кучера, который был ответственен за твою перевозку на фронт. Ты не понимал как это могло произойти, если бы это было нападением, то лошади подали тревогу, однако они не издали и звука, продолжая смирно стоять. (edited)\n" +*/}
-            {/*    "Ты осмотрелся по сторонам, в поисках потенциальной угрозы, но убедившись, что ничего подходящего под неё не попало в твоё поле зрения - ты решаешься подойти к телу мужчины, чтобы выяснить причины его состояния. Быть может, его ещё можно спасти? (edited)\n"}/>}*/}
-            {/*{*/}
-            {
-                infoEntity && infoPosition && (<InfoWindow entity={infoEntity} position={infoPosition}/>)
-            }
-        </div>) : (<LoadingScreen></LoadingScreen>)
+        ) : (
+            <LoadingScreen></LoadingScreen>
+        )
     )
 }
+
+// РЕКОМЕНДАЦИИ ПО РЕФАКТОРИНГУ:
+/*
+1. Создать хук usePlayerState для управления состоянием игрока
+2. Использовать useMemo для оптимизации селекторов:
+   const uiState = useMySelector(state => state.ui, shallowEqual);
+3. Добавить проверки на null для player
+4. Вынести игровой цикл в отдельный хук useGameLoop
+5. Создать компонент WindowManager для управления окнами
+6. Удалить закомментированный код
+7. Добавить обработку ошибок для gameRTC вызовов
+8. Использовать requestAnimationFrame вместо setInterval для плавности
+9. Добавить типизацию для player и других игровых объектов
+10. Создать константы для интервалов обновления
+*/

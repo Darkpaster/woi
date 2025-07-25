@@ -1,5 +1,7 @@
 // globalStyles.scss - основные стили и переменные
 
+//TODO: Удалить лишние стили во всех файлах + заменить устаревшие методы
+
 $colors: (
         background: rgba(48, 48, 48, 0.9),
         non-active: #2F4F2F,
@@ -42,6 +44,22 @@ $rarities: (
 );
 
 $cell-size: 3.5rem;
+
+$menu-panel-width: 20vw;
+$menu-panel-height: 60vh;
+$char-menu-height: 70vh;
+$char-list-height: 50vh;
+$char-preview-height: 20vh;
+
+@mixin full-height-panel {
+  width: $menu-panel-width;
+  height: $menu-panel-height;
+  display: flex;
+}
+
+@mixin bordered-bottom {
+  border-bottom: 1px solid map-get($colors, font);
+}
 
 @mixin flex($direction: row, $justify: center, $align: center) {
   display: flex;

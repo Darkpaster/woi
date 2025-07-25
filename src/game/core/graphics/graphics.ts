@@ -109,7 +109,7 @@ export class Graphics {
             // ctx.fillText(mob.x + " "+mob.y, mob!.x + mob.image.currentAnimation.widthSize / 2, mob!.y);
         }
 
-        entityManager.findPlayerAt(player.x, player.y).forEach((player, index) => {
+        entityManager.findPlayersAt(player.x, player.y).forEach((player, index) => {
             player.image!.render(player.renderState, ctx, player.x, player.y, player.direction);
         })
 
